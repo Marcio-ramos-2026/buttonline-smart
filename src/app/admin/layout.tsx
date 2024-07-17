@@ -18,7 +18,7 @@ const userNavigation = [
   { name: 'Sign out', href: '#' },
 ]
 
-export default function Example({ children }: { children: ReactNode }) {
+export default function LayoutAdmin({ children }: { children: ReactNode }) {
 
   return (
     <AdminContextProvider>
