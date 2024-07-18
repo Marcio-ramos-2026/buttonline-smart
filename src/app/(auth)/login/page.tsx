@@ -1,8 +1,13 @@
 "use client";
 
 import { loginAction } from "@/app/actions/login";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input/input";
+import { InputPassword } from "@/components/ui/input/inputPassword";
+import { Mail } from "lucide-react";
 import Image from "next/image";
 import { useFormState } from "react-dom";
+import { useFormStatus } from 'react-dom'
 
 const initialState = {
   message: "",
@@ -10,8 +15,7 @@ const initialState = {
 
 export default function LoginPage() {
   const [state, formAction] = useFormState(loginAction, initialState);
-
-  console.log("state", state);
+  const { pending } = useFormStatus()
 
   return (
     <>
@@ -32,60 +36,36 @@ export default function LoginPage() {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form action={formAction} className="space-y-6">
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Email address
-              </label>
               <div className="mt-2">
-                <input
-                  id="email"
+                <Input
                   name="email"
-                  // type="email"
                   autoComplete="email"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  label="Email"
+                  icon={<Mail />}
                 />
               </div>
-              {state?.errors?.email && <p className="text-red-400 font-semibold pl-3">{state?.errors?.email?.[0]}</p>}
+              {state?.errors?.email && (
+                <p className="text-red-400 font-semibold pl-3">
+                  {state?.errors?.email?.[0]}
+                </p>
+              )}
             </div>
 
             <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Password
-                </label>
-                <div className="text-sm">
-                  <a
-                    href="#"
-                    className="font-semibold text-indigo-600 hover:text-indigo-500"
-                  >
-                    Forgot password?
-                  </a>
-                </div>
-              </div>
               <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-                {state?.errors?.password && <p className="text-red-400 font-semibold pl-3">{state?.errors?.password?.[0]}</p>}
+                <InputPassword label="Senha" name="password" />
+                {state?.errors?.password && (
+                  <p className="text-red-400 font-semibold pl-3">
+                    {state?.errors?.password?.[0]}
+                  </p>
+                )}
               </div>
             </div>
 
             <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Sign in
-              </button>
+              <Button full type="submit">
+                Entrar
+              </Button>
 
               {state?.message && (
                 <p className="text-red-400 font-semibold">{state.message}</p>
