@@ -8,6 +8,8 @@ import { Mail } from "lucide-react";
 import Image from "next/image";
 import { useFormState } from "react-dom";
 import { useFormStatus } from 'react-dom'
+import { signIn, signOut } from "next-auth/react"
+// import { signOut } from "@/auth";
 
 const initialState = {
   message: "",
@@ -16,6 +18,8 @@ const initialState = {
 export default function LoginPage() {
   const [state, formAction] = useFormState(loginAction, initialState);
   const { pending } = useFormStatus()
+
+  console.log('state returns', state)
 
   return (
     <>
@@ -67,11 +71,17 @@ export default function LoginPage() {
                 Entrar
               </Button>
 
+              <Button full type="button" onClick={() => signOut()}>
+                batata
+              </Button>
+
               {state?.message && (
                 <p className="text-red-400 font-semibold">{state.message}</p>
               )}
             </div>
           </form>
+
+          {/* <Teste /> */}
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Not a member?{" "}

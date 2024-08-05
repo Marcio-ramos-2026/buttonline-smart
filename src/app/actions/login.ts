@@ -1,6 +1,7 @@
 "use server";
 
-import { signIn } from "../api/auth/[...nextauth]/route";
+
+import { signIn } from '@/auth';
 import { z } from 'zod'
  
 const schema = z.object({
@@ -25,19 +26,14 @@ export async function loginAction(prevState: any, formData: FormData) {
     }
   }
 
-  if (rawFormData.email !== 'fernando@email.com') {
+  try {
+    await signIn('credentials', formData)
+  } catch (e) {
+    console.log("errorrrrrrrrrrrrrr", e);
     return {
-      message: 'Email inválido'
+      message: ''
     }
   }
-
-  if (rawFormData.password !== '1234') {
-    return {
-      message: 'Senha inválida'
-    }
-  }
-
-  await signIn('credentials', formData)
 
   return {
     message: "",

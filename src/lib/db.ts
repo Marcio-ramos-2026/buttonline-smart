@@ -14,7 +14,17 @@ export const conn = new Pool({
 export async function queryUsers() {
   const res = await conn.query("SELECT * FROM users");
 
-  // console.log("query", res);
+  if (res.rows.length < 1) throw Error('Usuários não encontrados.')
+
+  return res.rows
+}
+
+export async function findUserByEmail(email: string) {
+  const res = await conn.query("SELECT * FROM users WHERE email = $1", [email]);
+
+  if (res.rows.length < 1) return null
+
+  return res.rows[0]
 }
 
 export async function insertUser(name: string, email: string, password: string) {
