@@ -38,6 +38,4 @@ export async function insertUser(name: string, email: string, password: string) 
     message: 'Senha obrigatória'
   }
   const res = await conn.query('INSERT INTO users(name, email, password) VALUES($1, $2, $3)', [name, email, password]);
-
-  console.log('insert', res)
 }

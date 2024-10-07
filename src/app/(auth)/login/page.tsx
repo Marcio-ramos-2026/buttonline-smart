@@ -5,11 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input/input";
 import { InputPassword } from "@/components/ui/input/inputPassword";
 import { Mail } from "lucide-react";
-import Image from "next/image";
 import { useFormState } from "react-dom";
 import { useFormStatus } from 'react-dom'
-import { signIn, signOut } from "next-auth/react"
-// import { signOut } from "@/auth";
 
 const initialState = {
   message: "",
@@ -25,13 +22,6 @@ export default function LoginPage() {
     <>
       <div className="flex min-h-full flex-1 flex-col items-center justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <Image
-            width={100}
-            height={100}
-            alt="Your Company"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            className="mx-auto h-10 w-auto"
-          />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Sign in to your account
           </h2>
@@ -69,10 +59,6 @@ export default function LoginPage() {
             <div>
               <Button full type="submit">
                 Entrar
-              </Button>
-
-              <Button full type="button" onClick={() => signOut()}>
-                batata
               </Button>
 
               {state?.message && (
