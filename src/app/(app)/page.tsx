@@ -1,5 +1,3 @@
-"use client";
-
 import { Input } from "@/components/ui/input/input";
 import clsx from "clsx";
 import {
@@ -183,6 +181,7 @@ export default function Home() {
             icon={<Search />}
             iconPlacement="start"
             placeholder="Pesquisar"
+            className="text-textForefround"
           />
           <div className="grid grid-cols-2 h-[95%] gap-3 overflow-y-auto scrollBar py-3 pr-1.5">
             <div className="flex flex-col gap-2">

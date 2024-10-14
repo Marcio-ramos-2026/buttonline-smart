@@ -1,6 +1,9 @@
+'use client'
+
 import { FileSearch, House, UserRound, UsersRound } from "lucide-react";
 import NavbarMobile from "./mobile";
-import { Navbar } from "./navbarDefault";
+import { NavbarAdmin } from "./navbarAdmin";
+
 const navigation = [
     { name: "Home", href: "#", icon: House, current: true },
     { name: "Clientes", href: "#", icon: UsersRound, current: false },
@@ -9,7 +12,7 @@ const navigation = [
   ];
 
 export default function NavbarAdminRoot() {
-  const Nav =  <Navbar navigation={navigation} />
+  const Nav =  <NavbarAdmin navigation={navigation} />
 
   return (
     <>
