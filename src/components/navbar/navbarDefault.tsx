@@ -27,8 +27,8 @@ type NavigationType = {
 export const Navbar = ({ navigation }: NavigationType) => {
   const router = useRouter();
   return (
-    <nav className="bg-primary fixed top-0 w-full container mx-auto">
-      <div className="flex justify-end items-center h-12">
+    <nav className="bg-primary fixed top-0 w-full z-50 border-b border-b-gray-800/10">
+      <div className="flex justify-end items-center h-12 px-10">
         <button
           onClick={() => {
             signOut({ redirect: false });

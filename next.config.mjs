@@ -6,6 +6,14 @@ const nextConfig = {
 				protocol: 'https',
 				hostname: 'tailwindui.com'
 			},
+            {
+				protocol: 'https',
+				hostname: 'images.memphistours.com'
+			},
+			{
+				protocol: 'https',
+				hostname: 'encrypted-tbn0.gstatic.com'
+			},
         ],
         dangerouslyAllowSVG: true,
     }
