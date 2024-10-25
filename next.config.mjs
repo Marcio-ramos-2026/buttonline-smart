@@ -1,12 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
-        remotePatterns: [
+	images: {
+		remotePatterns: [
 			{
 				protocol: 'https',
 				hostname: 'tailwindui.com'
 			},
-            {
+			{
 				protocol: 'https',
 				hostname: 'images.memphistours.com'
 			},
@@ -14,9 +14,11 @@ const nextConfig = {
 				protocol: 'https',
 				hostname: 'encrypted-tbn0.gstatic.com'
 			},
-        ],
-        dangerouslyAllowSVG: true,
-    }
+		],
+		dangerouslyAllowSVG: true,
+	},
+	reactStrictMode: false
+
 };
 
 export default nextConfig;
