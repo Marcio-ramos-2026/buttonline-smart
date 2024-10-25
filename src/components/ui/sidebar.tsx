@@ -270,6 +270,7 @@ const SidebarTrigger = React.forwardRef<
     <Button
       ref={ref}
       data-sidebar="trigger"
+      variant='outline'
       className={cn("h-7 w-7", className)}
       onClick={(event) => {
         onClick?.(event)
@@ -278,7 +279,6 @@ const SidebarTrigger = React.forwardRef<
       {...props}
     >
       <PanelLeft />
-      <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
 })
