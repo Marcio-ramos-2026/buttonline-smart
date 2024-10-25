@@ -2,9 +2,7 @@ import { Sequelize } from '@sequelize/core';
 import { PostgresDialect } from '@sequelize/postgres';
 import { Potato } from './entities/user';
 
-
-
-const sequelize = new Sequelize({
+export const dataSource = {
   dialect: PostgresDialect,
   user: "default",
   password: "N3wXpgJS2tHl",
@@ -13,4 +11,7 @@ const sequelize = new Sequelize({
   database: "verceldb",
   ssl: true,
   models: [Potato]
-});
+}
+
+export const sequelize = new Sequelize(dataSource);
+
