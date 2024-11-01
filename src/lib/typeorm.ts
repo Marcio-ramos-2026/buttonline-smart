@@ -9,8 +9,8 @@ const AppDataSource = new DataSource({
     username: "default",
     password: "N3wXpgJS2tHl",
     database: "verceldb",
-    entities: [Potato],
-    migrations: ['src/migration/**/*.ts'],
+    entities: [__dirname + '/entity/**/*.ts'],
+    migrations: [__dirname + '/migration/**/*.ts'],
     synchronize: true,
     logging: false,
 })
