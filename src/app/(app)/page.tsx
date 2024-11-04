@@ -360,11 +360,9 @@ const NavMobile = ({ items }: { items: typeof data.navMain }) => {
     active?: boolean;
     cotent: ({ content }: { content: string }) => Element;
   }>();
-
-  console.log("STATE OPEN", open);
   return (
     <Tabs className="w-full h-full">
-      <TabsList className="flex justify-start flex-nowrap h-full overflow-x-auto scrollBar">
+      <TabsList className="flex justify-start flex-nowrap h-full overflow-x-auto scrollBar relative z-50">
         {items.map((item) => (
           <TabsTrigger
             key={item.title}
@@ -393,7 +391,7 @@ const NavMobile = ({ items }: { items: typeof data.navMain }) => {
               <TabsContent
                 value={item.id}
                 key={item.id}
-                className="absolute bottom-14 w-full h-80 p-10 z-50 border-t border-t-gray-300 rounded-t-lg bg-sidebar data-[state=active]:animate-fade-in-up data-[state=inactive]:animate-fade-out-down"
+                className="absolute bottom-14 z-10 w-full h-56 px-4 pt-6 border-t border-t-gray-300 rounded-t-lg bg-sidebar data-[state=active]:animate-fade-in-up data-[state=inactive]:animate-fade-out-down"
               >
                 <button
                   type="button"
