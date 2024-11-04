@@ -3,21 +3,47 @@
 import { useFabricContext } from "@/context/fabric";
 
 import * as fabric from "fabric";
+import coracaox from '../../../public/BUTTONLINE_CORAÇÃO_FURO_TRACEJADO.svg'
 
 export default function Comp() {
   const { canvas } = useFabricContext();
 
   const test = async () => {
-    console.log("tet");
+    // const path = 'M 230 230 A 45 45, 0, 1, 1, 275 275 L 275 230 Z';
+ 
+    const path = await fabric.loadSVGFromURL('/BUTTONLINE_CORAÇÃO_FURO_TRACEJADO.svg')
 
-    const x = await fabric.FabricImage.fromURL(
-      "https://static.wixstatic.com/media/d40923_64569dd49a3a45c5b075dfe21d291463~mv2.jpg/v1/crop/x_2,y_46,w_1000,h_658/fill/w_400,h_260,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/d40923_64569dd49a3a45c5b075dfe21d291463~mv2.jpg",
+   
+
+    const image = await fabric.FabricImage.fromURL(
+      "https://static.mundoeducacao.uol.com.br/mundoeducacao/2021/06/bumba-meu-boi.jpg",
       {},
-      { opacity: 0.85 }
+      { opacity: 1,backgroundColor: 'black',borderColor:'black',hasBorders: true}
     );
 
-    canvas.add(x);
+    const group = new fabric.Group(path.objects as fabric.FabricObject[], {
+      originX: 'center',
+      originY: 'center',
+      
+      scaleX:4,
+      scaleY:4,
+      width: image.width,
+
+   })
+
+   image.clipPath = group
+
+    canvas?.add(image);
   };
 
-  return <button onClick={test}>iamge</button>;
+  return <button onClick={test}>Image</button>;
+}
+
+
+export const CanvasClip = () => {
+  const { canvas,clip } = useFabricContext();
+
+  return <button onClick={()=>{
+    clip()
+  }}>CLIP</button>;
 }
