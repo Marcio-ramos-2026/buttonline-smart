@@ -53,7 +53,7 @@ export default function FabricContextProvider({ children }: IEditorProvider) {
     if (!canvasEl.current) return;
 
     // Create a new fabric.Canvas with proper width/height adjustments
-    const canvasInstance = new fabric.Canvas(canvasEl.current, {});
+    const canvasInstance = new fabric.Canvas(canvasEl.current, {backgroundColor:'blue'});
 
     // Set the canvas dimensions directly on the fabric canvas instance
     canvasInstance.setDimensions({ width: 800, height: 600 });
@@ -61,22 +61,36 @@ export default function FabricContextProvider({ children }: IEditorProvider) {
     const centerY = canvasInstance.height / 2;
 
     const circle = new fabric.Circle({
-      radius: fabric.util.parseUnit('65mm'),
-      // width: fabric.util.parseUnit('65mm'),
-      // height: fabric.util.parseUnit('65mm'),
-      fill:'transparent',
-      stroke:'#000',
-      strokeWidth:4,
-      
-      
-      selectable:false,
-      moveCursor:'default',
-      top: centerY,
-      left: centerX,
-      originX: 'center',
-      originY: 'center',
+        radius: fabric.util.parseUnit('65mm'),
+        // width: fabric.util.parseUnit('65mm'),
+        // height: fabric.util.parseUnit('65mm'),
+        fill:'transparent',
+        stroke:'#000',
+        strokeWidth:4,
+        
+        
+        selectable:false,
+        moveCursor:'default',
+        top: centerY,
+        left: centerX,
+        originX: 'center',
+        originY: 'center',
+  
+      })
 
-    })
+    fabric.FabricImage.fromURL(
+        "https://static.mundoeducacao.uol.com.br/mundoeducacao/2021/06/bumba-meu-boi.jpg",
+        {},
+        { opacity: 1,backgroundColor: 'black',borderColor:'black',hasBorders: true}
+      ).then((img)=>{
+        img.clipPath = circle
+        canvasInstance.add(img)
+        canvasInstance.renderAll()
+
+      });
+  
+
+    
 
     // canvasInstance.clipPath = getClip(canvasInstance);
 
@@ -122,6 +136,13 @@ export const useEditorContext = () => {
 };
 
 export const RenderCanvas = () => {
-    const { canvasEl } = useEditorContext()
-    return (<canvas ref={canvasEl} className="border" />)
+    const { canvasEl, canvas } = useEditorContext()
+
+    useEffect(()=>{
+        if(!window) return
+
+        
+    },[])
+
+    return (<canvas ref={canvasEl} />)
 }

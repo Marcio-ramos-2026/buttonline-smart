@@ -105,8 +105,8 @@ const data = {
   ],
 };
 
-export default function Page(props) {
-  console.log('props',props)
+export default function Page() {
+  
   return (
     <FabricContextProvider>
       <SidebarProvider
