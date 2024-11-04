@@ -7,14 +7,14 @@ import {
   UsersRound,
 } from "lucide-react"
 import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
+import { NavUser } from "@/components/nav-user-admin"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar-admin"
 
 // This is sample data.
 const data = {

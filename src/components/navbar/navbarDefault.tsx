@@ -27,16 +27,16 @@ type NavigationType = {
 export const Navbar = ({ navigation }: NavigationType) => {
   const router = useRouter();
   return (
-    <nav className="bg-primary fixed top-0 w-full z-50 border-b border-b-gray-800/10">
-      <div className="flex justify-end items-center h-12 px-10">
+    <nav className="bg-primary fixed top-0 w-full z-50 border-b border-b-gray-800/10 block md:hidden">
+      <div className="flex justify-end items-center h-10 px-3">
         <button
           onClick={() => {
             signOut({ redirect: false });
             router.push("/login");
           }}
-          className="text-rose-600 bg-rose-400/25 rounded-full h-8 w-8 flex items-center justify-center"
+          className="text-rose-600 bg-rose-400/25 rounded-full h-7 w-7 flex items-center justify-center"
         >
-          <LogOutIcon className="h-5 w-5 " />
+          <LogOutIcon className="h-4 w-4" />
         </button>
       </div>
     </nav>

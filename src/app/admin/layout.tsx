@@ -5,7 +5,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
   TesteTrigger,
-} from "@/components/ui/sidebar";
+} from "@/components/ui/sidebar-admin";
 
 const userNavigation = [
   { name: "Your profile", href: "#" },
