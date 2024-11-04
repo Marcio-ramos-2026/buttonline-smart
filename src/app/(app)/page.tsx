@@ -55,6 +55,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import FabricContextProvider, { RenderCanvas } from "@/context/editor";
 
 // This is sample data
 const data = {
@@ -104,46 +105,52 @@ const data = {
   ],
 };
 
-export default function Page() {
+export default function Page(props) {
+  console.log('props',props)
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "350px",
-        } as React.CSSProperties
-      }
-      className="min-h-[calc(100svh-40px)] relative"
-    >
-      <AppSidebar />
-      <SidebarInset className="min-h-[calc(100svh-40px)]">
-        <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-4">
-          <SidebarTrigger className="-ml-1 hidden md:flex" />
-          <Separator
-            orientation="vertical"
-            className="mr-2 h-4 hidden md:flex"
-          />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">All Inboxes</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Inbox</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </header>
-        {/* <div className="flex flex-1 flex-col gap-4 p-4">
-          {Array.from({ length: 24 }).map((_, index) => (
-            <div
-              key={index}
-              className="aspect-video h-12 w-full rounded-lg bg-muted/50"
+    <FabricContextProvider>
+      <SidebarProvider
+        style={
+          {
+            "--sidebar-width": "350px",
+          } as React.CSSProperties
+        }
+        className="min-h-[calc(100svh-40px)] relative"
+      >
+        <AppSidebar />
+        <SidebarInset className="min-h-[calc(100svh-40px)]">
+          <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-4">
+            <SidebarTrigger className="-ml-1 hidden md:flex" />
+            <Separator
+              orientation="vertical"
+              className="mr-2 h-4 hidden md:flex"
             />
-          ))}
-        </div> */}
-      </SidebarInset>
-    </SidebarProvider>
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="#">All Inboxes</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Inbox</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </header>
+          <div className="flex justify-center items-center w-full h-full bg-gray-100">
+            <RenderCanvas />
+          </div>
+          {/* <div className="flex flex-1 flex-col gap-4 p-4">
+            {Array.from({ length: 24 }).map((_, index) => (
+              <div
+                key={index}
+                className="aspect-video h-12 w-full rounded-lg bg-muted/50"
+              />
+            ))}
+          </div> */}
+        </SidebarInset>
+      </SidebarProvider>
+    </FabricContextProvider>
   );
 }
 
