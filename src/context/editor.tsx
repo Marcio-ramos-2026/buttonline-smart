@@ -56,7 +56,7 @@ export default function FabricContextProvider({ children }: IEditorProvider) {
     const canvasInstance = new fabric.Canvas(canvasEl.current, {backgroundColor:'blue'});
 
     // Set the canvas dimensions directly on the fabric canvas instance
-    canvasInstance.setDimensions({ width: 800, height: 600 });
+    // canvasInstance.setDimensions({ width: 800, height: 600 });
     const centerX = canvasInstance.width / 2;
     const centerY = canvasInstance.height / 2;
 
@@ -78,22 +78,7 @@ export default function FabricContextProvider({ children }: IEditorProvider) {
   
       })
 
-    fabric.FabricImage.fromURL(
-        "https://static.mundoeducacao.uol.com.br/mundoeducacao/2021/06/bumba-meu-boi.jpg",
-        {},
-        { opacity: 1,backgroundColor: 'black',borderColor:'black',hasBorders: true}
-      ).then((img)=>{
-        img.clipPath = circle
-        canvasInstance.add(img)
-        canvasInstance.renderAll()
-
-      });
-  
-
-    
-
     // canvasInstance.clipPath = getClip(canvasInstance);
-
 
     canvasInstance.add(circle)
 
@@ -140,9 +125,34 @@ export const RenderCanvas = () => {
 
     useEffect(()=>{
         if(!window) return
+        if(!canvas) return
+        if(!canvasEl) return
 
-        
-    },[])
+        const resize = () => {
+            
+            // canvasEl.current?.setAttribute('display','none')
+            const canvasParent = canvasEl.current?.parentElement?.parentElement
+            const rect = canvasParent?.getBoundingClientRect()
+            if(!rect) return
+            
+            console.log('canvasParent',canvasParent)
+            // console.log('canvasParent',canvasParent,{width:rect.width,height:rect.height})
+            // canvasEl.current?.removeAttribute('display')
+            canvas.setDimensions({width:rect.width,height:rect.height})
+            // canvas.renderAll()
+        }
+
+        resize()
+        const onResize = () => {
+            resize()
+        }
+
+        window.addEventListener('resize',onResize)
+
+        return ()=>{
+            window.removeEventListener('resize',onResize)
+        }
+    },[canvas])
 
     return (<canvas ref={canvasEl} />)
 }

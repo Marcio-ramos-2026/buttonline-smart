@@ -55,7 +55,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import FabricContextProvider, { RenderCanvas } from "@/context/editor";
+import FabricContextProvider, { RenderCanvas, useEditorContext } from "@/context/editor";
 
 // This is sample data
 const data = {
@@ -137,7 +137,7 @@ export default function Page() {
               </BreadcrumbList>
             </Breadcrumb>
           </header>
-          <div className="flex justify-center items-center w-full h-full bg-gray-100">
+          <div className="w-full h-full bg-black">
             <RenderCanvas />
           </div>
           {/* <div className="flex flex-1 flex-col gap-4 p-4">
