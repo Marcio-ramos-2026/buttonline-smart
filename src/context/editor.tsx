@@ -10,6 +10,15 @@ import React, {
 } from "react";
 import * as fabric from "fabric";
 
+import {useResizeObserver} from "@/hooks/useResizeObserver";
+
+import resolveConfig from 'tailwindcss/resolveConfig'
+import tailwindConfig from '../../tailwind.config'
+import { useDebounceCallback } from "@/hooks/useDebounceCallback";
+
+const {theme} = resolveConfig(tailwindConfig)
+
+
 type IEditorProvider = {
   children: React.ReactNode;
 };
@@ -26,22 +35,25 @@ const getClip = (canvas: fabric.Canvas) => {
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
 
-  return new fabric.Circle({
-    radius: fabric.util.parseUnit("65mm"),
-    // width: fabric.util.parseUnit('65mm'),
-    // height: fabric.util.parseUnit('65mm'),
-    fill: "transparent",
-    stroke: "#000",
-    strokeWidth: 4,
+    let radius = (canvas.height*0.6) / 2
+    if(radius >= 800) radius = 800
 
-    selectable: false,
-    moveCursor: "default",
+  return new fabric.Circle({
+    radius:radius,
+    fill:'white',
+    stroke:'#000',
+    strokeWidth:4,
+    
+    selectable:false,
+    moveCursor:'default',
     top: centerY,
     left: centerX,
-    originX: "center",
-    originY: "center",
-  });
-};
+    originX: 'center',
+    originY: 'center',
+    hoverCursor: 'default'
+
+  })
+}
 
 export default function FabricContextProvider({ children }: IEditorProvider) {
   const [canvas, setcanvas] = useState<fabric.Canvas | null>(null);
@@ -50,39 +62,23 @@ export default function FabricContextProvider({ children }: IEditorProvider) {
 
   useEffect(() => {
     if (!canvasEl.current) return;
-
+    
     // Create a new fabric.Canvas with proper width/height adjustments
-    const canvasInstance = new fabric.Canvas(canvasEl.current, {
-      backgroundColor: "blue",
-    });
-
-    // Set the canvas dimensions directly on the fabric canvas instance
-    // canvasInstance.setDimensions({ width: 800, height: 600 });
-    const centerX = canvasInstance.width / 2;
-    const centerY = canvasInstance.height / 2;
-
-    const circle = new fabric.Circle({
-      radius: fabric.util.parseUnit("65mm"),
-      // width: fabric.util.parseUnit('65mm'),
-      // height: fabric.util.parseUnit('65mm'),
-      fill: "transparent",
-      stroke: "#000",
-      strokeWidth: 4,
-
-      selectable: false,
-      moveCursor: "default",
-      top: centerY,
-      left: centerX,
-      originX: "center",
-      originY: "center",
-    });
-
-    // canvasInstance.clipPath = getClip(canvasInstance);
-
-    canvasInstance.add(circle);
+    const canvasInstance = new fabric.Canvas(canvasEl.current, {backgroundColor:theme.colors.gray[100],})
 
     // Make the fabric.Canvas instance available to your app if needed
     setcanvas(canvasInstance);
+
+    // canvasInstance.on('mouse:wheel', function(opt) {
+    //   var delta = opt.e.deltaY;
+    //   var zoom = canvasInstance.getZoom();
+    //   zoom *= 0.999 ** delta;
+    //   if (zoom > 20) zoom = 20;
+    //   if (zoom < 0.01) zoom = 0.01;
+    //   canvasInstance.setZoom(zoom);
+    //   opt.e.preventDefault();
+    //   opt.e.stopPropagation();
+    // })
 
     // Clean up on component unmount
     return () => {
@@ -122,40 +118,31 @@ export const useEditorContext = () => {
 };
 
 export const RenderCanvas = () => {
-  const { canvasEl, canvas } = useEditorContext();
+    const { canvasEl,canvas } = useEditorContext()
+    const containerRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!window) return;
-    if (!canvas) return;
-    if (!canvasEl) return;
+    const rectBound = containerRef.current?.getBoundingClientRect()
+    const {width = rectBound?.width ?? 0, height = rectBound?.height ?? 0} = useResizeObserver({
+      ref: containerRef
+    })
+    
+    useEffect(()=>{
+      if(!canvas) return
+      if(!height || !width) return
+      canvas.setDimensions({width:width,height:height})
+    },[canvas,height,width])
 
-    // console.log("CANVAS", canvas);
-    // console.log("CANVAS ELEMENT", canvasEl);
+    useEffect(()=>{
+      if(!canvas) return
+      const clip = getClip(canvas)
 
-    const resize = () => {
-      // canvasEl.current?.setAttribute('display','none')
-      const canvasParent = canvasEl.current?.parentElement?.parentElement;
-      const rect = canvasParent?.getBoundingClientRect();
-      if (!rect) return;
+      canvas.add(clip)
+      canvas.renderAll()
+    },[canvas])
 
-      // console.log('canvasParent',canvasParent)
-      // console.log('canvasParent',canvasParent,{width:rect.width,height:rect.height})
-      // canvasEl.current?.removeAttribute('display')
-      canvas.setDimensions({ width: rect.width, height: rect.height });
-      // canvas.renderAll()
-    };
-
-    resize();
-    const onResize = () => {
-      resize();
-    };
-
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      window.removeEventListener("resize", onResize);
-    };
-  }, [canvas, canvasEl]);
-
-  return <canvas ref={canvasEl} />;
-};
+    return (
+        <div ref={containerRef} className="bg-gray-100 h-full w-full">
+            <canvas ref={canvasEl} />
+        </div>
+    )
+}

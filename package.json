@@ -24,6 +24,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "fabric": "^6.4.3",
+    "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.454.0",
     "next": "14.2.5",
     "next-auth": "^5.0.0-beta.18",
@@ -36,6 +37,7 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.7",
+    "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^20",
     "@types/pg": "^8.11.6",
     "@types/react": "^18",
@@ -44,6 +46,7 @@
     "eslint-config-next": "14.2.5",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "use-resize-observer": "^9.1.0"
   }
 }
