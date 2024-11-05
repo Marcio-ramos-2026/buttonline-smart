@@ -38,21 +38,79 @@ const getClip = (canvas: fabric.Canvas) => {
     let radius = (canvas.height*0.6) / 2
     if(radius >= 800) radius = 800
 
-  return new fabric.Circle({
-    radius:radius,
-    fill:'white',
-    stroke:'#000',
-    strokeWidth:4,
-    
-    selectable:false,
-    moveCursor:'default',
-    top: centerY,
-    left: centerX,
-    originX: 'center',
-    originY: 'center',
-    hoverCursor: 'default'
+    const first = new fabric.Circle({
+      radius:radius,
+      fill:'white',
+      stroke:'#000',
+      strokeWidth:4,
+      
+      selectable:false,
+      moveCursor:'default',
+      top: centerY,
+      left: centerX,
+      originX: 'center',
+      originY: 'center',
+      hoverCursor: 'default'
+    })
+    if(!first) return
 
-  })
+    const second = new fabric.Circle({
+      radius:radius-20,
+      fill:'transparent',
+      stroke:'#000',
+      strokeWidth:4,
+      strokeDashArray: [10,10],
+      
+      selectable:false,
+      moveCursor:'default',
+      top: centerY,
+      left: centerX,
+      originX: 'center',
+      originY: 'center',
+      hoverCursor: 'default',
+      excludeFromExport: true
+    })
+    if(!second) return
+
+    const third = new fabric.Circle({
+      radius:radius-40,
+      fill:'transparent',
+      stroke:'#000',
+      strokeWidth:1,
+      
+      selectable:false,
+      moveCursor:'default',
+      top: centerY,
+      left: centerX,
+      originX: 'center',
+      originY: 'center',
+      hoverCursor: 'default',
+      excludeFromExport: true
+    })
+    if(!third) return
+    
+    return new fabric.Group([first,second,third],{
+      selectable:false,
+      moveCursor:'default',
+      hoverCursor: 'default',
+    })
+
+
+  // return new fabric.Circle({
+  //   radius:radius,
+  //   fill:'white',
+  //   stroke:'#000',
+  //   strokeWidth:4,
+    
+  //   selectable:false,
+  //   moveCursor:'default',
+  //   top: centerY,
+  //   left: centerX,
+  //   originX: 'center',
+  //   originY: 'center',
+  //   hoverCursor: 'default'
+
+  // })
 }
 
 export default function FabricContextProvider({ children }: IEditorProvider) {
@@ -136,7 +194,7 @@ export const RenderCanvas = () => {
       if(!canvas) return
       const clip = getClip(canvas)
 
-      canvas.add(clip)
+      canvas.add(clip as fabric.Group)
       canvas.renderAll()
     },[canvas])
 

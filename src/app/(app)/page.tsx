@@ -425,11 +425,9 @@ const NavMobile = ({ items }: { items: typeof data.navMain }) => {
 function AddText() {
   const { canvas } = useEditorContext();
 
-  const textBox = new fabric.Textbox("Texto teste", {
-    left: 50,
-    top: 50,
-    width: 150,
-    fontSize: 20,
+  const textBox = new fabric.Textbox("Texto", {
+    width: 140,
+    fontSize: 60,
     fill: "red",
     lockSkewingX: true,
     lockScalingFlip: true,
@@ -438,6 +436,8 @@ function AddText() {
 
   textBox.controls.mt.visible = false
   textBox.controls.mb.visible = false
+
+  canvas?.centerObject(textBox)
   return (
     <div className="flex gap-3 flex-col">
       <button
