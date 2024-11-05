@@ -10,6 +10,15 @@ import React, {
 } from "react";
 import * as fabric from "fabric";
 
+import {useResizeObserver} from "@/hooks/useResizeObserver";
+
+import resolveConfig from 'tailwindcss/resolveConfig'
+import tailwindConfig from '../../tailwind.config'
+import { useDebounceCallback } from "@/hooks/useDebounceCallback";
+
+const {theme} = resolveConfig(tailwindConfig)
+
+
 type IEditorProvider = {
   children: React.ReactNode;
 };
@@ -53,15 +62,16 @@ export default function FabricContextProvider({ children }: IEditorProvider) {
     if (!canvasEl.current) return;
 
     // Create a new fabric.Canvas with proper width/height adjustments
-    const canvasInstance = new fabric.Canvas(canvasEl.current, {backgroundColor:'blue'});
+    const canvasInstance = new fabric.Canvas(canvasEl.current, {backgroundColor:theme.colors.gray[100]});
 
     // Set the canvas dimensions directly on the fabric canvas instance
-    // canvasInstance.setDimensions({ width: 800, height: 600 });
+    // canvasInstance.setDimensions({ width: '100%', height: '100%' },{cssOnly: true});
+    canvasInstance.renderAll()
     const centerX = canvasInstance.width / 2;
     const centerY = canvasInstance.height / 2;
 
     const circle = new fabric.Circle({
-        radius: fabric.util.parseUnit('65mm'),
+        radius: 50,
         // width: fabric.util.parseUnit('65mm'),
         // height: fabric.util.parseUnit('65mm'),
         fill:'transparent',
@@ -121,38 +131,30 @@ export const useEditorContext = () => {
 };
 
 export const RenderCanvas = () => {
-    const { canvasEl, canvas } = useEditorContext()
+    const { canvasEl,canvas } = useEditorContext()
+    const containerRef = useRef<HTMLDivElement>(null)
+
+    const [{ width, height }, setSize] = useState<{width?: number; height?: number}>({
+      width: undefined,
+      height: undefined,
+    })
+  
+    const onResize = useDebounceCallback(setSize, 200)
 
     useEffect(()=>{
-        if(!window) return
-        if(!canvas) return
-        if(!canvasEl) return
+      if(!canvas) return
+      if(!height || !width) return
+      canvas.setDimensions({width:width,height:height})
+    },[width,height,canvas])
+  
+    useResizeObserver({
+      ref: containerRef,
+      onResize,
+    })
 
-        const resize = () => {
-            
-            // canvasEl.current?.setAttribute('display','none')
-            const canvasParent = canvasEl.current?.parentElement?.parentElement
-            const rect = canvasParent?.getBoundingClientRect()
-            if(!rect) return
-            
-            console.log('canvasParent',canvasParent)
-            // console.log('canvasParent',canvasParent,{width:rect.width,height:rect.height})
-            // canvasEl.current?.removeAttribute('display')
-            canvas.setDimensions({width:rect.width,height:rect.height})
-            // canvas.renderAll()
-        }
-
-        resize()
-        const onResize = () => {
-            resize()
-        }
-
-        window.addEventListener('resize',onResize)
-
-        return ()=>{
-            window.removeEventListener('resize',onResize)
-        }
-    },[canvas])
-
-    return (<canvas ref={canvasEl} />)
+    return (
+        <div ref={containerRef} className="bg-black h-full w-full">
+            <canvas ref={canvasEl} />
+        </div>
+    )
 }

@@ -137,9 +137,9 @@ export default function Page() {
               </BreadcrumbList>
             </Breadcrumb>
           </header>
-          <div className="w-full h-full bg-black">
-            <RenderCanvas />
-          </div>
+          <main className="h-full">
+              <RenderCanvas />
+          </main>
           {/* <div className="flex flex-1 flex-col gap-4 p-4">
             {Array.from({ length: 24 }).map((_, index) => (
               <div
