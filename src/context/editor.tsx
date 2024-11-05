@@ -35,11 +35,12 @@ const getClip = (canvas: fabric.Canvas) => {
   const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
 
+    let radius = (canvas.height*0.6) / 2
+    if(radius >= 800) radius = 800
+
   return new fabric.Circle({
-    radius: fabric.util.parseUnit('65mm'),
-    // width: fabric.util.parseUnit('65mm'),
-    // height: fabric.util.parseUnit('65mm'),
-    fill:'transparent',
+    radius:radius,
+    fill:'white',
     stroke:'#000',
     strokeWidth:4,
     
@@ -49,6 +50,7 @@ const getClip = (canvas: fabric.Canvas) => {
     left: centerX,
     originX: 'center',
     originY: 'center',
+    hoverCursor: 'default'
 
   })
 }
@@ -60,40 +62,23 @@ export default function FabricContextProvider({ children }: IEditorProvider) {
 
   useEffect(() => {
     if (!canvasEl.current) return;
-
+    
     // Create a new fabric.Canvas with proper width/height adjustments
-    const canvasInstance = new fabric.Canvas(canvasEl.current, {backgroundColor:theme.colors.gray[100]});
-
-    // Set the canvas dimensions directly on the fabric canvas instance
-    // canvasInstance.setDimensions({ width: '100%', height: '100%' },{cssOnly: true});
-    canvasInstance.renderAll()
-    const centerX = canvasInstance.width / 2;
-    const centerY = canvasInstance.height / 2;
-
-    const circle = new fabric.Circle({
-        radius: 50,
-        // width: fabric.util.parseUnit('65mm'),
-        // height: fabric.util.parseUnit('65mm'),
-        fill:'transparent',
-        stroke:'#000',
-        strokeWidth:4,
-        
-        
-        selectable:false,
-        moveCursor:'default',
-        top: centerY,
-        left: centerX,
-        originX: 'center',
-        originY: 'center',
-  
-      })
-
-    // canvasInstance.clipPath = getClip(canvasInstance);
-
-    canvasInstance.add(circle)
+    const canvasInstance = new fabric.Canvas(canvasEl.current, {backgroundColor:theme.colors.gray[100],})
 
     // Make the fabric.Canvas instance available to your app if needed
     setcanvas(canvasInstance);
+
+    // canvasInstance.on('mouse:wheel', function(opt) {
+    //   var delta = opt.e.deltaY;
+    //   var zoom = canvasInstance.getZoom();
+    //   zoom *= 0.999 ** delta;
+    //   if (zoom > 20) zoom = 20;
+    //   if (zoom < 0.01) zoom = 0.01;
+    //   canvasInstance.setZoom(zoom);
+    //   opt.e.preventDefault();
+    //   opt.e.stopPropagation();
+    // })
 
     // Clean up on component unmount
     return () => {
@@ -134,26 +119,27 @@ export const RenderCanvas = () => {
     const { canvasEl,canvas } = useEditorContext()
     const containerRef = useRef<HTMLDivElement>(null)
 
-    const [{ width, height }, setSize] = useState<{width?: number; height?: number}>({
-      width: undefined,
-      height: undefined,
+    const rectBound = containerRef.current?.getBoundingClientRect()
+    const {width = rectBound?.width ?? 0, height = rectBound?.height ?? 0} = useResizeObserver({
+      ref: containerRef
     })
-  
-    const onResize = useDebounceCallback(setSize, 200)
-
+    
     useEffect(()=>{
       if(!canvas) return
       if(!height || !width) return
       canvas.setDimensions({width:width,height:height})
-    },[width,height,canvas])
-  
-    useResizeObserver({
-      ref: containerRef,
-      onResize,
-    })
+    },[canvas,height,width])
+
+    useEffect(()=>{
+      if(!canvas) return
+      const clip = getClip(canvas)
+
+      canvas.add(clip)
+      canvas.renderAll()
+    },[canvas])
 
     return (
-        <div ref={containerRef} className="bg-black h-full w-full">
+        <div ref={containerRef} className="bg-gray-100 h-full w-full">
             <canvas ref={canvasEl} />
         </div>
     )
