@@ -55,7 +55,11 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import FabricContextProvider, { RenderCanvas, useEditorContext } from "@/context/editor";
+import FabricContextProvider, {
+  RenderCanvas,
+  useEditorContext,
+} from "@/context/editor";
+import * as fabric from "fabric";
 
 // This is sample data
 const data = {
@@ -82,7 +86,7 @@ const data = {
       id: "3",
       icon: Baseline,
       title: "Texto",
-      content: Teste,
+      content: AddText,
     },
     {
       id: "4",
@@ -106,7 +110,6 @@ const data = {
 };
 
 export default function Page() {
-  
   return (
     <FabricContextProvider>
       <SidebarProvider
@@ -418,3 +421,34 @@ const NavMobile = ({ items }: { items: typeof data.navMain }) => {
     </Tabs>
   );
 };
+
+function AddText() {
+  const { canvas } = useEditorContext();
+
+  const textBox = new fabric.Textbox("Texto teste", {
+    left: 50,
+    top: 50,
+    width: 150,
+    fontSize: 20,
+    fill: "red",
+    lockSkewingX: true,
+    lockScalingFlip: true,
+    splitByGrapheme: true,
+  });
+
+  textBox.controls.mt.visible = false
+  textBox.controls.mb.visible = false
+  return (
+    <div className="flex gap-3 flex-col">
+      <button
+        type="button"
+        onClick={() => {
+          canvas?.add(textBox);
+        }}
+        className="border border-gray-300 rounded-lg px-2 py-1"
+      >
+        Texto teste
+      </button>
+    </div>
+  );
+}
