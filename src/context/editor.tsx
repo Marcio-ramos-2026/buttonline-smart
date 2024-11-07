@@ -27,6 +27,7 @@ type IEditorContext = {
   canvas: fabric.Canvas | null;
   canvasEl: RefObject<HTMLCanvasElement>;
   clip: () => void;
+  editable?: string;
 };
 
 const FabricContext = createContext<IEditorContext | null>(null);
