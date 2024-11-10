@@ -11,20 +11,14 @@ import {
   Folder,
   ImageIcon,
   LogOut,
+  Redo2,
   Sparkles,
+  Undo2,
   X,
   SquareDashed,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,7 +48,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import FabricContextProvider, {
   RenderCanvas,
@@ -62,6 +56,8 @@ import FabricContextProvider, {
 } from "@/context/editor";
 import * as fabric from "fabric";
 import { TabIcons } from "@/components/editor/icons";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import clsx from "clsx";
 
 // This is sample data
 const data = {
@@ -130,29 +126,17 @@ export default function Page() {
               orientation="vertical"
               className="mr-2 h-4 hidden md:flex"
             />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">All Inboxes</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Inbox</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+            <div className="flex gap-3 items-center">
+              <div className="flex gap-1">
+                <Undo2 className="w-5 h-5" />
+                <Redo2 className="w-5 h-5" />
+              </div>
+              <EditableBar />
+            </div>
           </header>
           <main className="h-full">
             <RenderCanvas />
           </main>
-          {/* <div className="flex flex-1 flex-col gap-4 p-4">
-            {Array.from({ length: 24 }).map((_, index) => (
-              <div
-                key={index}
-                className="aspect-video h-12 w-full rounded-lg bg-muted/50"
-              />
-            ))}
-          </div> */}
         </SidebarInset>
       </SidebarProvider>
     </FabricContextProvider>
@@ -421,7 +405,7 @@ function AddText() {
     fill: "red",
     lockSkewingX: true,
     lockScalingFlip: true,
-    splitByGrapheme: true,
+    splitByGrapheme: true
   });
 
   textBox.controls.mt.visible = false;
@@ -442,3 +426,99 @@ function AddText() {
     </div>
   );
 }
+
+const EditableBar = () => {
+  const { canvas } = useEditorContext();
+  //TODO arrumar para o tipo do objeto
+  const [object, setObject] = useState<fabric.Textbox>();
+
+  const fontSizes = [12, 14, 16, 24, 28, 32, 36, 40, 44, 48, 60, 70]
+
+  const handleChangeSize = (e: string) => {
+    if (!object || !canvas) return
+    object.set({ fontSize: Number(e) })
+    //TODO evento customizado: deve ser mudado
+    //@ts-ignore
+    canvas.fire('modified', { target: object })
+    // setObject((prev: any) => {
+    //   return { ...prev, fontSize: Number(e)}
+    // })
+    // object.setCoords()
+    // object.dirty = true
+    canvas.renderAll()
+  }
+
+  useEffect(() => {
+    if (!canvas) return;
+    canvas.on("selection:created", (canva) => {
+      if (canva.selected.length > 1) {
+        //@ts-ignore
+        setObject(canva.selected);
+        return;
+      }
+      //@ts-ignore
+      setObject(canva.selected[0]);
+    });
+
+    canvas.on('selection:updated', (canva) => {
+      console.log('new canvas', canva)
+      if (canva.selected.length > 1) {
+        //@ts-ignore
+        setObject(canva.selected);
+        return;
+      }
+      //@ts-ignore
+      setObject(canva.selected[0]);
+    })
+
+    //@ts-ignore
+    canvas.on('modified', (canva) => {
+      console.log('text RESING', canva)
+      // if (canva.target.length > 1) {
+      //   setObject(canva.target);
+      //   return;
+      // }
+      //@ts-ignore
+      setObject(canva.target);
+    })
+
+    // canvas.on("selection:cleared", () => {
+    //   setObject(null);
+    // });
+
+    return () => {
+      canvas.off("selection:created");
+      canvas.off("selection:cleared");
+    };
+  }, [canvas]);
+
+  console.log('type', object, object?.type)
+
+  if (!object?.type) return;
+
+  return (
+    <div>
+      {object?.type === "textbox" && (
+        <div className="flex gap-3">
+          <Select onValueChange={handleChangeSize}>
+            <SelectTrigger className="w-16">
+              <SelectValue placeholder={object.fontSize} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {/* <SelectLabel>{object.fontSize.toString()}</SelectLabel> */}
+                {fontSizes.map(size => {
+                  return (
+                    <SelectItem key={size} value={size.toString()} checked={size === object?.fontSize} className={clsx(
+                      size === object?.fontSize ? 'bg-gray-500/35 text-gray-900 font-semibold focus:bg-gray-500/35' : 'focus:bg-gray-300/50'
+                    )}>{size}</SelectItem>
+                  )
+                })}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+    </div>
+  );
+};
