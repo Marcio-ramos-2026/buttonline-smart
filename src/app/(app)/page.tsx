@@ -13,6 +13,7 @@ import {
   LogOut,
   Sparkles,
   X,
+  SquareDashed,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -60,6 +61,7 @@ import FabricContextProvider, {
   useEditorContext,
 } from "@/context/editor";
 import * as fabric from "fabric";
+import { TabIcons } from "@/components/editor/icons";
 
 // This is sample data
 const data = {
@@ -90,9 +92,9 @@ const data = {
     },
     {
       id: "4",
-      icon: Baseline,
-      title: "Texto4",
-      content: Teste,
+      icon: SquareDashed,
+      title: "Icones",
+      content: TabIcons,
     },
     {
       id: "5",
@@ -141,7 +143,7 @@ export default function Page() {
             </Breadcrumb>
           </header>
           <main className="h-full">
-              <RenderCanvas />
+            <RenderCanvas />
           </main>
           {/* <div className="flex flex-1 flex-col gap-4 p-4">
             {Array.from({ length: 24 }).map((_, index) => (
@@ -242,18 +244,6 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {/* This is the second sidebar */}
           {/* We disable collapsible and let it fill remaining space */}
           <Sidebar collapsible="none" className="hidden flex-1 md:flex">
-            <SidebarHeader className="gap-3.5 border-b p-4">
-              <div className="flex w-full items-center justify-between">
-                <div className="text-base font-medium text-foreground">
-                  {activeItem.title}
-                </div>
-                <Label className="flex items-center gap-2 text-sm">
-                  <span>Unreads</span>
-                  <Switch className="shadow-none" />
-                </Label>
-              </div>
-              <SidebarInput placeholder="Type to search..." />
-            </SidebarHeader>
             <SidebarContent className="pl-2">
               {data.navMain.map((nav) => {
                 return (
@@ -434,10 +424,10 @@ function AddText() {
     splitByGrapheme: true,
   });
 
-  textBox.controls.mt.visible = false
-  textBox.controls.mb.visible = false
+  textBox.controls.mt.visible = false;
+  textBox.controls.mb.visible = false;
 
-  canvas?.centerObject(textBox)
+  canvas?.centerObject(textBox);
   return (
     <div className="flex gap-3 flex-col">
       <button
