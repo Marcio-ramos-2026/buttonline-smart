@@ -55,3 +55,10 @@ export async function fetchIcons(params?: string) {
 
   return res.rows;
 }
+
+export function fetchIconsTeste(params?: string) {
+  let teste;
+  conn.query("SELECT * FROM icons").then(res => teste = res.rows);
+
+  return teste;
+}

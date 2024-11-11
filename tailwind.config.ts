@@ -29,6 +29,8 @@ const config = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          light: 'hsl(var(--primary-light))',
+          dark: 'hsl(var(--primary-dark))'
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -113,8 +115,8 @@ const config = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-in-up": "fade-in-up 3.2s ease-out",
-        "fade-out-down": "fade-out-down 3.2s ease-out",
+        "fade-in-up": "fade-in-up 0.2s ease-out",
+        "fade-out-down": "fade-out-down 0.2s ease-out",
       },
     },
   },

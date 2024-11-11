@@ -2,33 +2,16 @@
 
 import * as React from "react";
 import {
-  BadgeCheck,
   Baseline,
   Bell,
-  ChevronsUpDown,
-  Command,
-  CreditCard,
   Folder,
   ImageIcon,
-  LogOut,
   Redo2,
-  Sparkles,
   Undo2,
   X,
   SquareDashed,
+  Search,
 } from "lucide-react";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
@@ -36,8 +19,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarHeader,
-  SidebarInput,
   SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
@@ -46,7 +27,6 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -56,10 +36,18 @@ import FabricContextProvider, {
 } from "@/context/editor";
 import * as fabric from "fabric";
 import { TabIcons } from "@/components/editor/icons";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import clsx from "clsx";
+import { Input } from "@/components/ui/input";
+import { NavUser } from "@/components/navbar/userSection";
 
-// This is sample data
 const data = {
   user: {
     name: "shadcn",
@@ -144,8 +132,6 @@ export default function Page() {
 }
 
 function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  // Note: I'm using state to show active item.
-  // IRL you should use the url/router.
   const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
   const { setOpen } = useSidebar();
 
@@ -161,39 +147,15 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {...props}
       >
         <Tabs defaultValue={data.navMain[0].id} className="tabs flex-1">
-          {/* This is the first sidebar */}
-          {/* We disable collapsible and adjust width to icon. */}
-          {/* This will make the sidebar appear as icons. */}
           <Sidebar
             collapsible="none"
-            className="!w-[calc(var(--sidebar-width-icon)_+_1px)] border-r"
+            className="!w-[calc(var(--sidebar-width-icon)_+_1px)] border-r border-r-gray-500"
           >
-            <SidebarHeader>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    size="lg"
-                    asChild
-                    className="md:h-8 md:p-0"
-                  >
-                    <a href="#">
-                      <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                        <Command className="size-4" />
-                      </div>
-                      <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-semibold">Acme Inc</span>
-                        <span className="truncate text-xs">Enterprise</span>
-                      </div>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarHeader>
             <SidebarContent>
               <SidebarGroup>
                 <SidebarGroupContent className="px-1.5 md:px-0">
                   <SidebarMenu>
-                    <TabsList className="flex-col h-auto">
+                    <TabsList className="flex-col h-auto bg-transparent">
                       {data.navMain.map((item) => (
                         <SidebarMenuItem key={item.title}>
                           <SidebarMenuButton
@@ -227,14 +189,19 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
           {/* This is the second sidebar */}
           {/* We disable collapsible and let it fill remaining space */}
-          <Sidebar collapsible="none" className="hidden flex-1 md:flex">
-            <SidebarContent className="pl-2">
+          <Sidebar
+            collapsible="none"
+            className="hidden flex-1 md:flex bg-primary-dark"
+          >
+            <SidebarContent className="px-4">
               {data.navMain.map((nav) => {
                 return (
                   <TabsContent key={nav.id} value={nav.id}>
                     <SidebarGroup className="px-0">
                       <SidebarGroupContent>
-                        <nav.content content={nav.title} />
+                        <SelectableContent>
+                          <nav.content content={nav.title} />
+                        </SelectableContent>
                       </SidebarGroupContent>
                     </SidebarGroup>
                   </TabsContent>
@@ -248,88 +215,7 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   );
 }
 
-function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
-  const { isMobile } = useSidebar();
 
-  return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground md:h-8 md:p-0"
-            >
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
-              </div>
-              <ChevronsUpDown className="ml-auto size-4" />
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
-            align="end"
-            sideOffset={4}
-          >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
-                </div>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
-              Log out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuItem>
-    </SidebarMenu>
-  );
-}
 
 function Teste({ content }: { content: string }) {
   return <p>{content}</p>;
@@ -405,7 +291,7 @@ function AddText() {
     fill: "red",
     lockSkewingX: true,
     lockScalingFlip: true,
-    splitByGrapheme: true
+    splitByGrapheme: true,
   });
 
   textBox.controls.mt.visible = false;
@@ -432,21 +318,21 @@ const EditableBar = () => {
   //TODO arrumar para o tipo do objeto
   const [object, setObject] = useState<fabric.Textbox>();
 
-  const fontSizes = [12, 14, 16, 24, 28, 32, 36, 40, 44, 48, 60, 70]
+  const fontSizes = [12, 14, 16, 24, 28, 32, 36, 40, 44, 48, 60, 70];
 
   const handleChangeSize = (e: string) => {
-    if (!object || !canvas) return
-    object.set({ fontSize: Number(e) })
+    if (!object || !canvas) return;
+    object.set({ fontSize: Number(e) });
     //TODO evento customizado: deve ser mudado
     //@ts-ignore
-    canvas.fire('modified', { target: object })
+    canvas.fire("modified", { target: object });
     // setObject((prev: any) => {
     //   return { ...prev, fontSize: Number(e)}
     // })
     // object.setCoords()
     // object.dirty = true
-    canvas.renderAll()
-  }
+    canvas.renderAll();
+  };
 
   useEffect(() => {
     if (!canvas) return;
@@ -460,8 +346,8 @@ const EditableBar = () => {
       setObject(canva.selected[0]);
     });
 
-    canvas.on('selection:updated', (canva) => {
-      console.log('new canvas', canva)
+    canvas.on("selection:updated", (canva) => {
+      console.log("new canvas", canva);
       if (canva.selected.length > 1) {
         //@ts-ignore
         setObject(canva.selected);
@@ -469,18 +355,18 @@ const EditableBar = () => {
       }
       //@ts-ignore
       setObject(canva.selected[0]);
-    })
+    });
 
     //@ts-ignore
-    canvas.on('modified', (canva) => {
-      console.log('text RESING', canva)
+    canvas.on("modified", (canva) => {
+      console.log("text RESING", canva);
       // if (canva.target.length > 1) {
       //   setObject(canva.target);
       //   return;
       // }
       //@ts-ignore
       setObject(canva.target);
-    })
+    });
 
     // canvas.on("selection:cleared", () => {
     //   setObject(null);
@@ -492,7 +378,7 @@ const EditableBar = () => {
     };
   }, [canvas]);
 
-  console.log('type', object, object?.type)
+  console.log("type", object, object?.type);
 
   if (!object?.type) return;
 
@@ -507,18 +393,41 @@ const EditableBar = () => {
             <SelectContent>
               <SelectGroup>
                 {/* <SelectLabel>{object.fontSize.toString()}</SelectLabel> */}
-                {fontSizes.map(size => {
+                {fontSizes.map((size) => {
                   return (
-                    <SelectItem key={size} value={size.toString()} checked={size === object?.fontSize} className={clsx(
-                      size === object?.fontSize ? 'bg-gray-500/35 text-gray-900 font-semibold focus:bg-gray-500/35' : 'focus:bg-gray-300/50'
-                    )}>{size}</SelectItem>
-                  )
+                    <SelectItem
+                      key={size}
+                      value={size.toString()}
+                      checked={size === object?.fontSize}
+                      className={clsx(
+                        size === object?.fontSize
+                          ? "bg-gray-500/35 text-gray-900 font-semibold focus:bg-gray-500/35"
+                          : "focus:bg-gray-300/50"
+                      )}
+                    >
+                      {size}
+                    </SelectItem>
+                  );
                 })}
               </SelectGroup>
             </SelectContent>
           </Select>
         </div>
       )}
+    </div>
+  );
+};
+
+const SelectableContent = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="flex flex-col px-4 divide-y-2 divide-gray-600">
+      <div className="pb-4">
+        <Input
+          className="h-8 text-gray-900 focus-visible:ring-0 focus-visible:ring-offset-0"
+          icon={<Search />}
+        />
+      </div>
+      <div className="pt-4">{children}</div>
     </div>
   );
 };

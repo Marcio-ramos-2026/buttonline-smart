@@ -1,23 +1,23 @@
-'use server'
+'use client'
 
-import { SidebarHeader, SidebarInput } from "@/components/ui/sidebar";
-import { fetchIcons } from "@/lib/db";
+import { fetchIconsTeste } from "@/lib/db";
+import { useEffect, useState } from "react";
+import { FetchIcons } from "./fetchIcons";
 
-export const TabIcons = async () => {
-  const icons = await fetchIcons();
+export const TabIcons = ({ content }: { content: string }) => {
+  const [teste, setTeste] = useState<any>()
 
-  console.log("iiii", icons);
+  // const batata = fetchIconsTeste()
+  // useEffect(() => {
+  //   fetchIconsTeste()?.then(res => setTeste(res));
+  // }, [])
+
+  // console.log('teste', batata)
 
   return (
     <>
-      {/* <SidebarHeader className="gap-3.5 border-b p-4">
-        <div className="flex w-full items-center justify-between">
-          <div className="text-base font-medium text-foreground">Icones</div>
-        </div>
-        <SidebarInput placeholder="Type to search..." />
-      </SidebarHeader> */}
-
-      <h1 className="mt-4">ICONS</h1>
+      {/* <FetchIcons /> */}
+      <h1>{content}</h1>
     </>
   );
 };
