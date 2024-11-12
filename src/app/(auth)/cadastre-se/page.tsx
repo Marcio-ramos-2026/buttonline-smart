@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { RegisterForm } from './form';
 
@@ -11,9 +10,9 @@ export default function Register() {
               <div>
                 <Image
                   alt="Buttonline"
-                  src="/logo-inverse.png"
+                  src="/logo.svg"
                   height={46}
-                  width={200}
+                  width={400}
                   className='mx-auto'
                 />
                 <h2 className="mt-8 text-2xl/9 font-bold tracking-tight text-primary">Crie sua conta</h2>

@@ -1,29 +1,31 @@
-import { FormLogin } from "./formLogin";
 
-export default function LoginPage() {
+import { Input } from '@/components/ui/input';
+import { InputPassword } from '@/components/ui/input/inputPassword';
+import Image from 'next/image';
+import { FormLogin } from './formLogin';
 
+export default () => {
   return (
-    <>
-      <div className="flex min-h-full flex-1 flex-col items-center justify-center px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Sign in to your account
-          </h2>
-        </div>
-
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <FormLogin />
-          <p className="mt-10 text-center text-sm text-gray-500">
-            Not a member?{" "}
-            <a
-              href="#"
-              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-            >
-              Start a 14 day free trial
-            </a>
-          </p>
-        </div>
-      </div>
-    </>
-  );
+      <main className="w-full h-screen flex flex-col items-center justify-center bg-gray-50 sm:px-4">
+          <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
+              <div className="text-center">
+              <Image
+                  alt="Buttonline"
+                  src="/logo.svg"
+                  height={46}
+                  width={400}
+                  className='mx-auto'
+                />
+                  <div className="mt-5 space-y-2">
+                      <h3 className="text-gray-800 text-2xl font-bold sm:text-3xl">Acessar o buttonline</h3>
+                      <p className="">Não tem uma conta? <a href="javascript:void(0)" className="font-medium text-primary hover:text-primary-dark underline">Criar uma</a></p>
+                  </div>
+              </div>
+              <div className="bg-white shadow p-4 py-6 sm:p-6 sm:rounded-lg">
+                  <FormLogin />
+              </div>
+              <p className='text-right'>Esqueci a senha</p>
+          </div>
+      </main>
+  )
 }
