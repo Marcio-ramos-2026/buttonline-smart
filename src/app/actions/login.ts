@@ -1,7 +1,7 @@
 "use server";
 
 import { signIn } from "@/auth";
-import { redirect } from "next/navigation";
+import bcrypt from 'bcrypt'
 import { z } from "zod";
 import { isRedirectError } from "next/dist/client/components/redirect";
 
@@ -35,7 +35,7 @@ export async function loginAction(prevState: any, formData: FormData) {
       email: formData.get("email"),
       password: formData.get("password"),
     });
-    redirect("/");
+    // redirect("/");
   } catch (e) {
     if (isRedirectError(e)) {
       throw e;

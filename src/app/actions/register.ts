@@ -5,7 +5,7 @@ import { z } from "zod";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import { error } from "console";
+import bcrypt from 'bcrypt'
 
 const schema = z.object({
   name: z.string({required_error: 'Name required'}),  
@@ -32,17 +32,19 @@ export async function registerAction(prevState: any, formData: FormData) {
   }
 
   try {
+    const pass = await bcrypt.hash(rawFormData.password,10)
     await prisma.user.create({
       data: {
         name: rawFormData.name,
         email:  rawFormData.email,
-        password: rawFormData.password
+        password: pass
       }
     })
     return {
       message: "Usurário criado com sucesso"
     }  
   }catch(e){
+    console.log('Error register action',e)
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
         switch(e.code){
           case 'P2002':
