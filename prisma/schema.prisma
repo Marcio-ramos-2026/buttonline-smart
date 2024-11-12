@@ -66,3 +66,26 @@ model VerificationToken {
   @@unique([identifier, token])
   @@map("verification_tokens")
 }
+
+model EditorCanvas {
+  id Int     @id() @default(autoincrement())
+  name String
+  shape String //square/circle/round/custom
+  object_1 String @db.LongText //references to the real area of the pin botton. must be a fabric object
+  object_2 String @db.LongText //references to the real area of the pin botton. must be a fabric object
+  object_3 String @db.LongText
+  gabarito Json
+
+}
+
+model EditorIcons {
+  id Int     @id() @default(autoincrement())
+  svg String @db.Text
+  category String
+  ptBR_name String?
+  enUS_name String?
+  esEN_name String?
+  enabled Boolean? @default(true)
+
+  @@index([category, ptBR_name,enUS_name,esEN_name])
+}
