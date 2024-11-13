@@ -44,7 +44,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import clsx from "clsx";
 import { Input } from "@/components/ui/input";
 import { NavUser } from "@/components/navbar/userSection";
 
@@ -108,7 +107,7 @@ export default function Page() {
       >
         <AppSidebar />
         <SidebarInset className="min-h-[calc(100svh-40px)]">
-          <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-4">
+          <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-2 md:p-4 h-14 md:h-auto">
             <SidebarTrigger className="-ml-1 hidden md:flex" />
             <Separator
               orientation="vertical"
@@ -155,7 +154,7 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarGroup>
                 <SidebarGroupContent className="px-1.5 md:px-0">
                   <SidebarMenu>
-                    <TabsList className="flex-col h-auto bg-transparent">
+                    <TabsList className="flex-col gap-1 h-auto bg-transparent">
                       {data.navMain.map((item) => (
                         <SidebarMenuItem key={item.title}>
                           <SidebarMenuButton
@@ -215,8 +214,6 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   );
 }
 
-
-
 function Teste({ content }: { content: string }) {
   return <p>{content}</p>;
 }
@@ -232,7 +229,7 @@ const NavMobile = ({ items }: { items: typeof data.navMain }) => {
   }>();
   return (
     <Tabs className="w-full h-full">
-      <TabsList className="flex justify-start flex-nowrap h-full overflow-x-auto scrollBar relative z-50">
+      <TabsList className="flex justify-start flex-nowrap h-full overflow-x-auto scrollBar relative z-50 bg-primary text-text p-0 rounded-none">
         {items.map((item) => (
           <TabsTrigger
             key={item.title}
@@ -243,10 +240,7 @@ const NavMobile = ({ items }: { items: typeof data.navMain }) => {
               setActiveItem(item);
             }}
             className={cn(
-              "p-0.5 flex flex-col flex-1 h-full min-w-28",
-              activeItem?.title === item.title
-                ? "text-gray-900 data-[state=active]:bg-gray-500/15"
-                : "text-gray-600"
+              "p-0.5 flex flex-col flex-1 h-full min-w-28 rounded-none data-[state=active]:bg-gray-50/80 data-[state=active]:font-medium"
             )}
           >
             <item.icon className="w-5 h-5" />
@@ -259,20 +253,25 @@ const NavMobile = ({ items }: { items: typeof data.navMain }) => {
           {items.map((item) => {
             return (
               <TabsContent
-                value={item.id}
                 key={item.id}
-                className="absolute bottom-14 z-10 w-full h-56 px-4 pt-6 border-t border-t-gray-300 rounded-t-lg bg-sidebar data-[state=active]:animate-fade-in-up data-[state=inactive]:animate-fade-out-down"
+                value={item.id}
+                className="absolute bottom-[52px] z-10 w-full h-96 px-4 pt-6 border-t border-t-gray-300 rounded-t-lg bg-primary-dark text-text data-[state=active]:animate-fade-in-up data-[state=inactive]:animate-fade-out-down"
               >
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  className="absolute top-3 right-3"
+                <SelectableContent
+                  key={item.id}
+                  className="px-0 pt-4"
                 >
-                  <X className="w-5 h-5" />
-                </button>
-                <div>
-                  <item.content content={item.title} />
-                </div>
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="absolute top-3 right-3"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                  <div>
+                    <item.content content={item.title} />
+                  </div>
+                </SelectableContent>
               </TabsContent>
             );
           })}
@@ -347,7 +346,7 @@ const EditableBar = () => {
     });
 
     canvas.on("selection:updated", (canva) => {
-      console.log("new canvas", canva);
+      // console.log("new canvas", canva);
       if (canva.selected.length > 1) {
         //@ts-ignore
         setObject(canva.selected);
@@ -359,7 +358,7 @@ const EditableBar = () => {
 
     //@ts-ignore
     canvas.on("modified", (canva) => {
-      console.log("text RESING", canva);
+      // console.log("text RESING", canva);
       // if (canva.target.length > 1) {
       //   setObject(canva.target);
       //   return;
@@ -378,7 +377,7 @@ const EditableBar = () => {
     };
   }, [canvas]);
 
-  console.log("type", object, object?.type);
+  // console.log("type", object, object?.type);
 
   if (!object?.type) return;
 
@@ -399,7 +398,7 @@ const EditableBar = () => {
                       key={size}
                       value={size.toString()}
                       checked={size === object?.fontSize}
-                      className={clsx(
+                      className={cn(
                         size === object?.fontSize
                           ? "bg-gray-500/35 text-gray-900 font-semibold focus:bg-gray-500/35"
                           : "focus:bg-gray-300/50"
@@ -418,9 +417,20 @@ const EditableBar = () => {
   );
 };
 
-const SelectableContent = ({ children }: { children: React.ReactNode }) => {
+const SelectableContent = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
   return (
-    <div className="flex flex-col px-4 divide-y-2 divide-gray-600">
+    <div
+      className={cn(
+        "flex flex-col px-4 divide-y-2 divide-gray-600",
+        className
+      )}
+    >
       <div className="pb-4">
         <Input
           className="h-8 text-gray-900 focus-visible:ring-0 focus-visible:ring-offset-0"
