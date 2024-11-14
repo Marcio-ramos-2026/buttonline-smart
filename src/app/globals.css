@@ -76,6 +76,6 @@
 	}
 
 	.scrollBar::-webkit-scrollbar-thumb {
-		@apply bg-primary rounded-lg
+		@apply bg-primary-light rounded-lg
 	}
 }

@@ -268,8 +268,6 @@ const SidebarTrigger = React.forwardRef<
 >(({ className, onClick, ...props }, ref) => {
   const { toggleSidebar, open } = useSidebar()
 
-  console.log('1open', open)
-
   return (
     <button
       ref={ref}
