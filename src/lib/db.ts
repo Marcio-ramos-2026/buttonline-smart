@@ -1,30 +1,41 @@
-import pg from "pg";
+// import pg from "pg";
 
-const { Pool } = pg;
+import mysql, { RowDataPacket } from "mysql2/promise";
 
-export const conn = new Pool({
-  user: "default",
-  password: "N3wXpgJS2tHl",
-  host: "ep-rough-morning-a4giuifp.us-east-1.aws.neon.tech",
-  port: 5432,
-  database: "verceldb",
-  ssl: true,
+// const { Pool } = pg;
+
+// export const conn = new Pool({
+//   user: "default",
+//   password: "N3wXpgJS2tHl",
+//   host: "ep-rough-morning-a4giuifp.us-east-1.aws.neon.tech",
+//   port: 5432,
+//   database: "verceldb",
+//   ssl: true,
+// });
+
+export const pool = mysql.createPool({
+  uri: process.env.DB_URL,
 });
 
 export async function queryUsers() {
-  const res = await conn.query("SELECT * FROM users");
+  const [results, fields] = await pool.execute<RowDataPacket[]>(
+    "SELECT * FROM users"
+  );
 
-  if (res.rows.length < 1) throw Error("Usuários não encontrados.");
+  if (results.length < 1) throw Error("Usuários não encontrados.");
 
-  return res.rows;
+  return results;
 }
 
 export async function findUserByEmail(email: string) {
-  const res = await conn.query("SELECT * FROM users WHERE email = $1", [email]);
+  const [results, fields] = await pool.execute<RowDataPacket[]>(
+    "SELECT * FROM users WHERE email = $1",
+    [email]
+  );
 
-  if (res.rows.length < 1) return null;
+  if (results.length < 1) return null;
 
-  return res.rows[0];
+  return results[0];
 }
 
 export async function insertUser(
@@ -44,21 +55,17 @@ export async function insertUser(
     return {
       message: "Senha obrigatória",
     };
-  const res = await conn.query(
-    "INSERT INTO users(name, email, password) VALUES($1, $2, $3)",
+
+  await pool.execute(
+    "INSERT INTO users(name, email, password) VALUES(?, ?, ?)",
     [name, email, password]
   );
 }
 
 export async function fetchIcons(params?: string) {
-  const res = await conn.query("SELECT * FROM icons");
-
-  return res.rows;
-}
-
-export function fetchIconsTeste(params?: string) {
-  let teste;
-  conn.query("SELECT * FROM icons").then(res => teste = res.rows);
-
-  return teste;
+  const [results, fields] = await pool.execute<RowDataPacket[]>(
+    "SELECT * FROM EditorIcons"
+  );
+  console.log("r", results);
+  return results;
 }

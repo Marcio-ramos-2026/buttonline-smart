@@ -1,23 +1,15 @@
-'use client'
+"use client";
 
-import { fetchIconsTeste } from "@/lib/db";
-import { useEffect, useState } from "react";
-import { FetchIcons } from "./fetchIcons";
+import { useInifiteScroll } from "@/hooks/useInifiteScroll";
 
 export const TabIcons = ({ content }: { content: string }) => {
-  const [teste, setTeste] = useState<any>()
+  const { items, ref } = useInifiteScroll("/api/icons", 10);
 
-  // const batata = fetchIconsTeste()
-  // useEffect(() => {
-  //   fetchIconsTeste()?.then(res => setTeste(res));
-  // }, [])
 
-  // console.log('teste', batata)
 
   return (
     <>
-      {/* <FetchIcons /> */}
-      <h1>{content}</h1>
+      <div ref={ref}>more</div>
     </>
   );
 };
