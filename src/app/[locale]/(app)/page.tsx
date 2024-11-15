@@ -46,6 +46,8 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { NavUser } from "@/components/navbar/userSection";
+import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 const data = {
   user: {
@@ -95,6 +97,8 @@ const data = {
 };
 
 export default function Page() {
+  const t = useTranslations("test");
+
   return (
     <FabricContextProvider>
       <SidebarProvider
@@ -120,6 +124,13 @@ export default function Page() {
               </div>
               <EditableBar />
             </div>
+            <div className="space-x-2 text-black ml-auto">
+              <Link href="/pt-BR">Português</Link>
+              <span>|</span>
+              <Link href="/en">Inglês</Link>
+              <span>|</span>
+              <p>{t("title")}</p>
+              </div>
           </header>
           <main className="h-full">
             <RenderCanvas />
