@@ -32,6 +32,8 @@
     "fabric": "^6.4.3",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.454.0",
+    "mysql2": "^3.11.4",
+    "negotiator": "^1.0.0",
     "next": "14.2.5",
     "next-auth": "^5.0.0-beta.18",
     "next-intl": "^3.25.0",
