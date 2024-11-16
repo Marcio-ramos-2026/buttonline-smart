@@ -48,6 +48,7 @@ import { Input } from "@/components/ui/input";
 import { NavUser } from "@/components/navbar/userSection";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import LanguageSelector from "@/components/language-selector";
 
 const data = {
   user: {
@@ -125,11 +126,7 @@ export default function Page() {
               <EditableBar />
             </div>
             <div className="space-x-2 text-black ml-auto">
-              <Link href="/pt-BR">Português</Link>
-              <span>|</span>
-              <Link href="/en">Inglês</Link>
-              <span>|</span>
-              <p>{t("title")}</p>
+                  <LanguageSelector />
               </div>
           </header>
           <main className="h-full">

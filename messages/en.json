@@ -1,4 +1,9 @@
 {
+  "language":{
+    "pt-BR":"Portuguese",
+    "en":"English",
+    "es":"Spanish"
+  },
     "test": {
       "title": "Hello world!"
     }
