@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { fetchIcons } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
 
 console.log('c', 'caiu')
 
   try {
-    const icons = await fetchIcons();
+    const icons = await prisma.editorIcons.findMany();
     return NextResponse.json({ success: true, data: icons });
   } catch (error) {
 
