@@ -1,16 +1,24 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(request) {
+  const url = new URL(request.url);
+  const page = parseInt(url.searchParams.get("page") || "1");
+  const limit = parseInt(url.searchParams.get("limit") || "10");
 
-console.log('c', 'caiu')
+  const skip = (page - 1) * limit;
 
   try {
-    const icons = await prisma.editorIcons.findMany();
+    const icons = await prisma.editor_icons.findMany({
+      skip: skip,
+      take: limit,
+      orderBy: {
+        id: "asc",
+      },
+    });
     return NextResponse.json({ success: true, data: icons });
   } catch (error) {
-
-    console.log('c', error)
+    console.log("c", error);
 
     return NextResponse.json(
       { success: false, message: "Erro ao buscar ícones" },

@@ -3,7 +3,17 @@
 import { useEffect, useState } from "react";
 import { useIntersectionObserver } from "./useIntersectionObserver";
 
-export function useInifiteScroll(endpoint: string, limit: number) {
+type InfiniteScrollParams = {
+  endpoint: string;
+  limit: number;
+  get?: string;
+};
+
+export function useInifiteScroll({
+  endpoint,
+  limit,
+  get = "",
+}: InfiniteScrollParams) {
   const [items, setItems] = useState<string[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -11,11 +21,12 @@ export function useInifiteScroll(endpoint: string, limit: number) {
   const [hasMore, setHasMore] = useState(true);
 
   const fetchData = async () => {
-    if (!hasMore) return;    
-
+    if (!hasMore || loading) return;
     setLoading(true);
 
-    const newItems = await fetch(endpoint);   
+    const newItems = await fetch(
+      `${endpoint}?${get}&page=${page}&limit=${limit}`
+    );
     const { data } = await newItems.json();
     if (data.length < limit) setHasMore(false);
 
@@ -30,5 +41,5 @@ export function useInifiteScroll(endpoint: string, limit: number) {
     }
   }, [isIntersecting, loading]);
 
-  return { ref, items };
+  return { ref, items, loading };
 }

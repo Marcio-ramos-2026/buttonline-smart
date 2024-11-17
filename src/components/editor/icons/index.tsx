@@ -1,15 +1,29 @@
 "use client";
 
 import { useInifiteScroll } from "@/hooks/useInifiteScroll";
+import { ReactSVG } from "react-svg";
 
 export const TabIcons = ({ content }: { content: string }) => {
-  const { items, ref } = useInifiteScroll("/api/icons", 10);
-
-
+  const { items, ref, loading } = useInifiteScroll({
+    endpoint: "/api/icons",
+    limit: 10,
+  });
 
   return (
     <>
-      <div ref={ref}>more</div>
+      <div className="flex flex-wrap">
+        {items.map((icon) => {
+          const base64Svg = `data:image/svg+xml;base64,${btoa(icon.svg)}`;
+
+          return (
+            <div className="h-[75px] w-[75px] ">
+              <ReactSVG src={base64Svg} />
+            </div>
+          );
+        })}
+      </div>
+      
+      <div ref={ref}>{loading && "LOADING"}</div>
     </>
   );
 };
