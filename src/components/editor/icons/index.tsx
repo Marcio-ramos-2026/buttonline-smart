@@ -2,6 +2,7 @@
 
 import { useInifiteScroll } from "@/hooks/useInifiteScroll";
 import { ReactSVG } from "react-svg";
+import { LoadingIcon } from "@/components/loading";
 
 export const TabIcons = ({ content }: { content: string }) => {
   const { items, ref, loading } = useInifiteScroll({
@@ -22,8 +23,8 @@ export const TabIcons = ({ content }: { content: string }) => {
           );
         })}
       </div>
-      
-      <div ref={ref}>{loading && "LOADING"}</div>
+
+      <div className="flex justify-center items-center mt-8" ref={ref}>{loading && <LoadingIcon />}</div>
     </>
   );
 };
