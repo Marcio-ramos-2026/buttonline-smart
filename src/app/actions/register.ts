@@ -37,7 +37,12 @@ export async function registerAction(prevState: any, formData: FormData) {
       data: {
         name: rawFormData.name,
         email:  rawFormData.email,
-        password: pass
+        password: pass,
+        role: {
+          connect: {
+            id: 2, //always register with a user role
+          }
+        }
       }
     })
     return {

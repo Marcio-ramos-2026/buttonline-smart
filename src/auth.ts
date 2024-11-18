@@ -23,8 +23,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       authorize: async (credentials) => {
         let user;
 
-        console.log('ALOU',credentials)
-
         try {
           user = await prisma.user.findFirst({
             where: {
