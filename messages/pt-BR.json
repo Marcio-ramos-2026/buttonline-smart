@@ -1,0 +1,10 @@
+{
+  "language":{
+    "pt-BR":"Portugês",
+    "en":"Inglês",
+    "es":"Espanhol"
+  },
+    "test": {
+      "title": "Olá mundo!"
+    }
+  }

@@ -11,7 +11,7 @@ export default async function LayoutApp({ children }: { children: ReactNode }) {
   // }
   return (
     <div>
-      <Navbar />
+      {/* <Navbar /> */}
       <div className="mt-10 md:mt-0">{children}</div>
     </div>
   );

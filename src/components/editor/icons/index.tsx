@@ -1,23 +1,30 @@
-'use client'
+"use client";
 
-import { fetchIconsTeste } from "@/lib/db";
-import { useEffect, useState } from "react";
-import { FetchIcons } from "./fetchIcons";
+import { useInifiteScroll } from "@/hooks/useInifiteScroll";
+import { ReactSVG } from "react-svg";
+import { LoadingIcon } from "@/components/loading";
 
 export const TabIcons = ({ content }: { content: string }) => {
-  const [teste, setTeste] = useState<any>()
-
-  // const batata = fetchIconsTeste()
-  // useEffect(() => {
-  //   fetchIconsTeste()?.then(res => setTeste(res));
-  // }, [])
-
-  // console.log('teste', batata)
+  const { items, ref, loading } = useInifiteScroll({
+    endpoint: "/api/icons",
+    limit: 10,
+  });
 
   return (
     <>
-      {/* <FetchIcons /> */}
-      <h1 className="text-textForefround">{content}</h1>
+      <div className="flex flex-wrap">
+        {items.map((icon) => {
+          const base64Svg = `data:image/svg+xml;base64,${btoa(icon.svg)}`;
+
+          return (
+            <div className="h-[75px] w-[75px] " key={icon.id}>
+              <ReactSVG src={base64Svg} />
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="flex justify-center items-center mt-8" ref={ref}>{loading && <LoadingIcon />}</div>
     </>
   );
 };

@@ -22,6 +22,8 @@ import { TabIcons } from "@/components/editor/icons";
 import { EditableBar } from "@/components/appSideBar/editableBar/editableBar";
 import { AppSidebar } from "@/components/appSideBar";
 import { AddText } from "@/components/appSideBar/addText";
+import { useTranslations } from "next-intl";
+import LanguageSelector from "@/components/language-selector";
 
 const data = {
   user: {
@@ -71,6 +73,8 @@ const data = {
 };
 
 export default function Page() {
+  const t = useTranslations("test");
+
   return (
     <FabricContextProvider>
       <SidebarProvider
@@ -96,6 +100,9 @@ export default function Page() {
               </div>
               <EditableBar />
             </div>
+            <div className="space-x-2 text-black ml-auto">
+                  <LanguageSelector />
+              </div>
           </header>
           <main className="h-full">
             <RenderCanvas />

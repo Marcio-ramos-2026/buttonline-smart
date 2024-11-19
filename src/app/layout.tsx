@@ -1,33 +1,25 @@
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-
-interface LangParams {
-  lang: string;
-}
-
-export async function generateStaticParams() {
-  return [{lang: "pt-BR"},{ lang: "en" }];
-}
-
+import { getLocale, getMessages } from "next-intl/server";
+import {NextIntlClientProvider} from 'next-intl';
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Buttonline - Ferramenta inteligente para geração de buttons",
-  description: "Editor online de buttons",
-};
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-  params
 }: Readonly<{
   children: React.ReactNode;
-  params: LangParams;
 }>) {
+  const locale = await getLocale();
+
+  const messages = await getMessages();
+
   return (
-    <html lang={params.lang}>
-      <body className={inter.className}>{children}</body>
+    <html lang={locale}>
+      <body className={inter.className}>
+          <NextIntlClientProvider messages={messages} locale={locale}>{children}</NextIntlClientProvider>
+        </body>
     </html>
   );
 }
