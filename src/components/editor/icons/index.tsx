@@ -17,7 +17,7 @@ export const TabIcons = ({ content }: { content: string }) => {
   return (
     <>
       {/* <FetchIcons /> */}
-      <h1>{content}</h1>
+      <h1 className="text-textForefround">{content}</h1>
     </>
   );
 };

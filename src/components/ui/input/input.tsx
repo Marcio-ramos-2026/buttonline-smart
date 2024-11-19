@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import { cva, type VariantProps } from "class-variance-authority";
 
 const inputVariants = cva(
-  "h-10 rounded-lg w-full py-2 pl-3 pr-5 bg-transparent text-sm border autofill:!bg-background file:border-0 file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-within:placeholder:text-white focus-visible:ring-1",
+  "h-10 rounded-lg w-full py-2 pl-3 pr-5 bg-transparent text-sm border autofill:!bg-background file:border-0 file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-within:placeholder:text-white",
   {
     variants: {
       color: {
