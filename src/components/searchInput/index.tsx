@@ -1,5 +1,4 @@
 import { Input } from "@/components/ui/input/input";
-import { useState } from "react";
 import { useDebounceCallback } from "@/hooks/useDebounceCallback";
 import { Search } from "lucide-react";
 
@@ -12,11 +11,8 @@ export const SearchInput = ({
   onValueChange,
   debounceTime = 500,
 }: SearchInputProps) => {
-//   const [value, setValue] = useState("");
-
   const debounced = useDebounceCallback((val: string) => {
-    // setValue(val);
-    onValueChange(val); // Atualiza o valor externamente
+    onValueChange(val);
   }, debounceTime);
 
   return (

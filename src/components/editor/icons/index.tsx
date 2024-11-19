@@ -3,10 +3,7 @@
 import { useInifiteScroll } from "@/hooks/useInifiteScroll";
 import { ReactSVG } from "react-svg";
 import { LoadingIcon } from "@/components/loading";
-
-import { useDebounceCallback } from "@/hooks/useDebounceCallback";
 import { useState } from "react";
-
 import { SearchInput } from "@/components/searchInput";
 
 export const TabIcons = ({ content }: { content: string }) => {
