@@ -15,9 +15,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import FabricContextProvider, {
-  RenderCanvas,
-} from "@/context/editor";
+import FabricContextProvider, { RenderCanvas } from "@/context/editor";
 import { TabIcons } from "@/components/editor/icons";
 import { EditableBar } from "@/components/appSideBar/editableBar/editableBar";
 import { AppSidebar } from "@/components/appSideBar";
@@ -101,8 +99,8 @@ export default function Page() {
               <EditableBar />
             </div>
             <div className="space-x-2 text-black ml-auto">
-                  <LanguageSelector />
-              </div>
+              <LanguageSelector />
+            </div>
           </header>
           <main className="h-full">
             <RenderCanvas />

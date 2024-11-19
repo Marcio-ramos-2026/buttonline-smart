@@ -22,14 +22,14 @@ export type NavBarItemsType = {
   title: string;
   content: ({ content }: { content: string }) => JSX.Element;
   active?: boolean;
-}
+};
 
 interface AppSideBarProps extends React.ComponentProps<typeof Sidebar> {
   items: NavBarItemsType[];
   user: {
-    name: string,
-    email: string
-  }
+    name: string;
+    email: string;
+  };
 }
 
 export function AppSidebar({ items, user, ...props }: AppSideBarProps) {
@@ -72,7 +72,10 @@ export function AppSidebar({ items, user, ...props }: AppSideBarProps) {
                             className="px-2.5 md:px-2"
                             asChild
                           >
-                            <TabsTrigger value={item.id} className="text-textForefround">
+                            <TabsTrigger
+                              value={item.id}
+                              className="text-textForefround"
+                            >
                               <item.icon />
                             </TabsTrigger>
                           </SidebarMenuButton>
