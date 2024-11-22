@@ -11,7 +11,7 @@ import {
 } from "../../ui/select";
 import { cn } from "@/lib/utils";
 import { ColorPicker } from "@/components/colorPicker";
-import { Input } from "@/components/ui/input/input";
+import { Input } from "@/components/ui/input";
 import {
   AlignJustify,
   AlignLeft,

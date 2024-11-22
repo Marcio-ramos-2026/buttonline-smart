@@ -1,4 +1,4 @@
-import { Input } from "@/components/ui/input/input";
+import { Input } from "@/components/ui/input";
 import { useDebounceCallback } from "@/hooks/useDebounceCallback";
 import { Search } from "lucide-react";
 

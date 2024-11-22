@@ -6,13 +6,16 @@ import {
   SidebarTrigger,
   TesteTrigger,
 } from "@/components/ui/sidebar-admin";
+import { auth } from "@/auth";
 
 const userNavigation = [
   { name: "Your profile", href: "#" },
   { name: "Sign out", href: "#" },
 ];
 
-export default function LayoutAdmin({ children }: { children: ReactNode }) {
+export default async function LayoutAdmin({ children }: { children: ReactNode }) {
+  const session = await auth();
+  console.log('session',session)
   return (
     <SidebarProvider>
       <AppSidebar />

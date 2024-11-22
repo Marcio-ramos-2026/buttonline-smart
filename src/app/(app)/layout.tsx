@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { Navbar } from "@/components/navbar/navbarDefault";
 
 export default async function LayoutApp({ children }: { children: ReactNode }) {
-  // const session = await auth();
+  const session = await auth();
+  console.log('session app',session)
 
   // if (!session) {
   //   redirect(`/login`);
