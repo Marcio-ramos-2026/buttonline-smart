@@ -71,6 +71,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   jwt: {
     encode: async function (params) {
+      console.log('aaa',params)
       if (params.token?.credentials) {
       
         if (!params.token.sub) {
@@ -85,8 +86,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }catch(e){
           //para suprimir o erro ao att uma sessão inexistente
         }
-
-        // return encode({})
+        
       }
       return encode(params)
     },
