@@ -10,7 +10,6 @@ import {
 } from "../../ui/select";
 import { cn } from "@/lib/utils";
 import { ColorPicker } from "@/components/colorPicker";
-import { Input } from "@/components/ui/input/input";
 import {
   Bold,
   Italic,
@@ -22,6 +21,7 @@ import {
 import { useState, ChangeEvent, useEffect } from "react";
 import * as fabric from "fabric";
 import { Tooltip } from "@/components/tooltip/tooltip";
+import { Input } from "@/components/ui/input";
 
 const MIN_FONT_SIZE = 1;
 const MAX_FONT_SIZE = 200;
