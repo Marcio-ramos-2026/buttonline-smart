@@ -20,26 +20,43 @@ export function useInifiteScroll({
   const { isIntersecting, ref } = useIntersectionObserver({ threshold: 1 });
   const [hasMore, setHasMore] = useState(true);
 
-  const fetchData = async () => {
-    if (!hasMore || loading) return;
+  const newItems = async () => {
+    setLoading(true);  
+
+    const response = await fetch(`${endpoint}?${get}&page=1&limit=${limit}`);
+    const { data } = await response.json();
+
+    setItems(data);
+    setPage(2);
+    setHasMore(data.length >= limit);
+    setLoading(false);
+  };
+
+  const loadMoreItems = async () => {
     setLoading(true);
 
-    const newItems = await fetch(
+    const response = await fetch(
       `${endpoint}?${get}&page=${page}&limit=${limit}`
     );
-    const { data } = await newItems.json();
-    if (data.length < limit) setHasMore(false);
+    const { data } = await response.json();
 
     setItems((prevItems) => [...prevItems, ...data]);
     setPage((prevPage) => prevPage + 1);
+    setHasMore(data.length >= limit);
     setLoading(false);
   };
 
   useEffect(() => {
     if (isIntersecting && !loading && hasMore) {
-      fetchData();
+      loadMoreItems();
     }
   }, [isIntersecting, loading]);
+
+  useEffect(() => {
+    if (isIntersecting && !loading) {
+      newItems();
+    }
+  }, [get]);
 
   return { ref, items, loading };
 }

@@ -12,15 +12,14 @@ export const TabIcons = ({ content }: { content: string }) => {
   const { items, ref, loading } = useInifiteScroll({
     endpoint: "/api/icons",
     limit: 10,
-    // get: value,
+    get: `name=${value}`,
   });
 
   return (
     <>
       <div className="flex flex-col px-4 divide-y-2 divide-red-600">
         <SearchInput
-          onValueChange={(val) => {
-            console.log("Valor atualizado:", val);
+          onValueChange={(val) => {            
             setValue(val);
           }}
           debounceTime={300}
