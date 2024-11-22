@@ -22,6 +22,7 @@ import { AppSidebar } from "@/components/appSideBar";
 import { AddText } from "@/components/appSideBar/addText";
 import { useTranslations } from "next-intl";
 import LanguageSelector from "@/components/language-selector";
+import { AddImage } from "@/components/appSideBar/addImage";
 
 const data = {
   user: {
@@ -41,7 +42,7 @@ const data = {
       id: "2",
       icon: ImageIcon,
       title: "Imagens",
-      content: Teste,
+      content: AddImage,
     },
     {
       id: "3",
@@ -85,7 +86,7 @@ export default function Page() {
       >
         <AppSidebar items={data.navMain} user={data.user} />
         <SidebarInset className="min-h-[calc(100svh-40px)]">
-          <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-2 md:p-4 h-14 md:h-auto">
+          <header className="flex shrink-0 items-center gap-2 border-b bg-background p-2 md:p-4 h-14 md:h-auto">
             <SidebarTrigger className="-ml-1 hidden md:flex" />
             <Separator
               orientation="vertical"
