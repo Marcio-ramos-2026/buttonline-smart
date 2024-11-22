@@ -1,5 +1,7 @@
-import NextAuth, { DefaultSession } from "next-auth"
+import NextAuth, { DefaultSession, } from "next-auth"
 import { Roles } from "@/lib/types"
+import { JWT } from "next-auth/jwt"
+
 
 declare module "next-auth" {
   /**
@@ -16,8 +18,19 @@ declare module "next-auth" {
     }
   }
 
+  
+
   interface User {
     roleId: number
     password?: string
+  }
+}
+
+
+declare module "next-auth/jwt" {
+  /** Returned by the `jwt` callback and `auth`, when using JWT sessions */
+  interface JWT {
+    /** OpenID ID Token */
+    sub?: string
   }
 }

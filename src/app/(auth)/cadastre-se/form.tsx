@@ -3,7 +3,7 @@
 import { registerAction } from "@/app/actions/register"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { InputPassword } from "@/components/ui/input/inputPassword"
+import { InputPassword } from "@/components/ui/inputPassword"
 import { useFormState, useFormStatus } from "react-dom"
 
 const initialState = {

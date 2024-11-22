@@ -3,9 +3,9 @@
 import { useFormState } from "react-dom";
 import { useFormStatus } from "react-dom";
 import { loginAction } from "@/app/actions/login";
-import { Input } from "@/components/ui/input/input";
+import { Input } from "@/components/ui/input";
 import { Mail } from "lucide-react";
-import { InputPassword } from "@/components/ui/input/inputPassword";
+import { InputPassword } from "@/components/ui/inputPassword";
 import { Button } from "@/components/ui/button";
 
 const initialState = {

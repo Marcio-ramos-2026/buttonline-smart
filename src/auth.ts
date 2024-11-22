@@ -5,7 +5,7 @@ import {prisma} from '@/lib/prisma'
 import type { Adapter } from 'next-auth/adapters';
 import bcrypt from 'bcrypt'
 import { randomUUID } from "crypto";
-import { encode as defaultEncode } from "next-auth/jwt";
+import { encode } from "next-auth/jwt";
 
 const adapter = PrismaAdapter(prisma) as Adapter
 
@@ -27,6 +27,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           user = await prisma.user.findFirst({
             where: {
               email: credentials.email as string
+            },
+            include: {
+              accounts: true
             }
           });
         } catch (e) {
@@ -47,65 +50,45 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     async jwt({ token, user, account }) {
+      if(user) token.id = user.id
+
       if (account?.provider === "credentials") {
         token.credentials = true
+
+        const sessionToken = randomUUID();
+        const createdSession = await adapter?.createSession?.({
+          sessionToken: sessionToken,
+          userId: token.id as string,
+          expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+        })
+
+        token.sub = createdSession?.sessionToken
+        token.sessionToken = createdSession?.sessionToken;
       }
+      
       return token
     },
   },
   jwt: {
     encode: async function (params) {
+      console.log('aaa',params)
       if (params.token?.credentials) {
-        const sessionToken = randomUUID();
-
+      
         if (!params.token.sub) {
           throw new Error("No user ID found in token")
         }
 
-        const createdSession = await adapter?.createSession?.({
-          sessionToken: sessionToken,
-          userId: params.token.sub,
-          expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-        })
-
-        if (!createdSession) {
-          throw new Error("Failed to create session")
+        try {
+          await adapter?.updateSession?.({
+            expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            sessionToken: params.token.sub
+          })
+        }catch(e){
+          //para suprimir o erro ao att uma sessão inexistente
         }
-
-        return sessionToken
+        
       }
-      return defaultEncode(params)
+      return encode(params)
     },
   },
 })
-
-// export const { handlers, signIn, signOut, auth } = NextAuth({
-//   providers: [
-//     Credentials({
-//       credentials: {
-//         email: {},
-//         password: {},
-//       },
-//       //@ts-ignore
-//       authorize: async (credentials) => {
-//         let user: UserType;
-
-//         try {
-//           user = await findUserByEmail(credentials.email as string);
-//         } catch (e) {
-//           console.log("error", e);
-//           throw new Error("Erro interno");
-//         }
-
-//         if (!user) throw new Error("Usuário ou senha inválidos.");
-
-//         if (credentials.password !== user.password) throw new Error("Usuário ou senha inválidos.");
-
-//         return user;
-//       },
-//     }),
-//   ],
-//   pages: {
-//     signIn: "/login",
-//   },
-// });
