@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import * as fabric from "fabric";
 import { EditText } from "./editText";
 import { EditImage } from "./editImage";
+import { EditICon } from "./editableIcon";
 
 export const EditableBar = () => {
   const { canvas } = useEditorContext();
@@ -56,6 +57,12 @@ export const EditableBar = () => {
       {object?.type === "image" && (
         //@ts-ignore
         <EditImage object={object} canvas={canvas} />
+      )}
+      
+      {object?.type === "path" && (
+        //svg
+        //@ts-ignore
+        <EditICon object={object} canvas={canvas} />
       )}
     </div>
   );
