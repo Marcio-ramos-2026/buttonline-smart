@@ -25,6 +25,9 @@ export const TabIcons = ({ content }: { content: string }) => {
       svgObject = objects;
     }
 
+    svgObject.scaleToWidth(100);
+    svgObject.scaleToHeight(100);
+
     canvas.add(svgObject);
     canvas.centerObject(svgObject);
     canvas.renderAll();
