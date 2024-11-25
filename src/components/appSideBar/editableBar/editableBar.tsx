@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import * as fabric from "fabric";
 import { EditText } from "./editText";
 import { EditImage } from "./editImage";
-import { Trash2Icon } from "lucide-react";
 import { RemoveActiveObject } from "./removeActiveObject";
+import { EditICon } from "./editableIcon";
 
 export const EditableBar = () => {
   const { canvas } = useEditorContext();
@@ -65,6 +65,12 @@ export const EditableBar = () => {
           <EditImage object={object} canvas={canvas} />
           <RemoveActiveObject canvas={canvas} setObject={setObject} />
         </>
+      )}
+      
+      {object?.type === "path" && (
+        //svg
+        //@ts-ignore
+        <EditICon object={object} canvas={canvas} />
       )}
     </div>
   );
