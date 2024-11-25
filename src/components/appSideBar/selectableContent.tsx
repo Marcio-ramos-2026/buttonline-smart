@@ -1,6 +1,3 @@
-import { Search } from "lucide-react";
-import { Input } from "../ui/input/input";
-import { cn } from "@/lib/utils";
 
 export const SelectableContent = ({
   children,

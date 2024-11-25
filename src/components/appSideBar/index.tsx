@@ -100,7 +100,7 @@ export function AppSidebar({ items, user, ...props }: AppSideBarProps) {
             <SidebarContent className="px-4">
               {items.map((nav) => {
                 return (
-                  <TabsContent key={nav.id} value={nav.id}>
+                  <TabsContent key={nav.id} value={nav.id} forceMount className="data-[state=active]:block data-[state=inactive]:hidden">
                     <SidebarGroup className="px-0">
                       <SidebarGroupContent>
                         <SelectableContent>

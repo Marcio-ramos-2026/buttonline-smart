@@ -1,15 +1,17 @@
-'use client'
+"use client";
 
 import { useEditorContext } from "@/context/editor";
 import { useEffect, useState } from "react";
 import * as fabric from "fabric";
 import { EditText } from "./editText";
 import { EditImage } from "./editImage";
+import { Trash2Icon } from "lucide-react";
+import { RemoveActiveObject } from "./removeActiveObject";
 
 export const EditableBar = () => {
   const { canvas } = useEditorContext();
   //TODO arrumar para o tipo do objeto
-  const [object, setObject] = useState<fabric.Textbox>(); 
+  const [object, setObject] = useState<fabric.Object | null>(null);
 
   useEffect(() => {
     if (!canvas) return;
@@ -49,13 +51,20 @@ export const EditableBar = () => {
   if (!object?.type) return;
 
   return (
-    <div className="flex gap-2 flex-1 [&_label]:w-fit">
+    <div className="flex items-center justify-between w-full">
       {object?.type === "textbox" && (
-        <EditText object={object} canvas={canvas} />
+        <>
+          {/*@ts-ignore */}
+          <EditText object={object} canvas={canvas} />
+          <RemoveActiveObject canvas={canvas} setObject={setObject} />
+        </>
       )}
       {object?.type === "image" && (
-        //@ts-ignore
-        <EditImage object={object} canvas={canvas} />
+        <>
+          {/*@ts-ignore */}
+          <EditImage object={object} canvas={canvas} />
+          <RemoveActiveObject canvas={canvas} setObject={setObject} />
+        </>
       )}
     </div>
   );
