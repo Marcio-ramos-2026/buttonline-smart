@@ -28,6 +28,18 @@ export const TabIcons = ({ content }: { content: string }) => {
     svgObject.scaleToWidth(100);
     svgObject.scaleToHeight(100);
 
+    svgObject.setControlsVisibility({
+      mt: false,
+      mb: false,
+      ml: false,
+      mr: false,
+      mtr: true,
+      tl: true,
+      tr: true,
+      bl: true,
+      br: true,
+    });
+
     canvas.add(svgObject);
     canvas.centerObject(svgObject);
     canvas.renderAll();
