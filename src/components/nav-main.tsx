@@ -21,7 +21,8 @@ import Link from "next/link";
 
 export function NavMain({
   items,
-  title
+  title,
+  prefix = ''
 }: {
   items: {
     title: string;
@@ -34,6 +35,7 @@ export function NavMain({
     }[];
   }[];
   title?: string
+  prefix?: string
 }) {
   return (
     <SidebarGroup>
@@ -49,7 +51,7 @@ export function NavMain({
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip={item.title} asChild>
-                  <Link href={item?.url || ""}>
+                  <Link href={prefix + item?.url || ""}>
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
                     {item.items && (
@@ -64,7 +66,7 @@ export function NavMain({
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
-                          <Link href={subItem.url}>
+                          <Link href={prefix+subItem.url}>
                             <span>{subItem.title}</span>
                           </Link>
                         </SidebarMenuSubButton>

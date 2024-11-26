@@ -32,5 +32,6 @@ declare module "next-auth/jwt" {
   interface JWT {
     /** OpenID ID Token */
     sub?: string
+    permissions: [string]
   }
 }

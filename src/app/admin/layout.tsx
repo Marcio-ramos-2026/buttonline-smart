@@ -3,19 +3,11 @@ import { AppSidebar } from "@/components/app-sidebar";
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
   TesteTrigger,
 } from "@/components/ui/sidebar-admin";
-import { auth } from "@/auth";
-
-const userNavigation = [
-  { name: "Your profile", href: "#" },
-  { name: "Sign out", href: "#" },
-];
 
 export default async function LayoutAdmin({ children }: { children: ReactNode }) {
-  const session = await auth();
-  console.log('session',session)
+  
   return (
     <SidebarProvider>
       <AppSidebar />

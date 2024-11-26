@@ -26,19 +26,19 @@ const data = {
   navMain: [
     {
       title: "Usuários",
-      url: "#",
+      url: "/users",
       icon: UserRound
     },
     {
       title: "Clientes",
-      url: "#",
+      url: "/clients",
       icon: UsersRound
     },
-    {
-      title: "Pedidos",
-      url: "#",
-      icon: FileText
-    }
+    // {
+    //   title: "Pedidos",
+    //   url: "#",
+    //   icon: FileText
+    // }
   ]
 }
 
@@ -49,7 +49,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/*imagem logo*/}
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} title='Teste' />
+        <NavMain items={data.navMain} title='Teste' prefix="/admin" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

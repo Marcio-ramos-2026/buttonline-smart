@@ -56,7 +56,7 @@ const columns: ColumnDef<user>[] = [
   ]
   
 
-export default function Teste(){
+const AdminPage = () => {
     const actions = useTableAction();
 
     return (
@@ -66,3 +66,7 @@ export default function Teste(){
         </div>
     )
 }
+
+AdminPage.PERMISSIONS = ['IS_ADMIN']
+
+export default AdminPage

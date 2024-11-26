@@ -29,7 +29,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               email: credentials.email as string
             },
             include: {
-              accounts: true
+              role: {
+                include: {
+                  permissions: true
+                }
+              }
             }
           });
         } catch (e) {
@@ -50,7 +54,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     async jwt({ token, user, account }) {
-      if(user) token.id = user.id
+      if(user){
+        token.id = user.id
+        //@ts-ignore
+        token.role = user.role.name as string
+        //@ts-ignore
+        token.permissions = user.role.permissions.map((permission) => permission.name)
+      }
 
       if (account?.provider === "credentials") {
         token.credentials = true
@@ -63,7 +73,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         })
 
         token.sub = createdSession?.sessionToken
-        token.sessionToken = createdSession?.sessionToken;
       }
       
       return token
@@ -71,9 +80,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   jwt: {
     encode: async function (params) {
-      console.log('aaa',params)
       if (params.token?.credentials) {
-      
+        console.log('its credentials')
         if (!params.token.sub) {
           throw new Error("No user ID found in token")
         }
