@@ -1,7 +1,7 @@
 "use client";
 
 import { ForwardRefExoticComponent, RefAttributes, SVGProps } from "react";
-import { NavUser } from "./userSection";
+import { NavUserSection } from "./userSection";
 
 type NavigationType = {
   navigation?: {
@@ -18,16 +18,15 @@ type NavigationType = {
 };
 
 const user = {
-  name: "shadcn",
-  email: "m@example.com",
-  avatar: "/avatars/shadcn.jpg",
-};
+  name: "Usuário Teste",
+  email: "usuário@teste.com",
+}
 
 export const Navbar = ({ navigation }: NavigationType) => {
   return (
     <nav className="bg-primary fixed top-0 w-full z-50 border-b border-b-gray-800/10 block md:hidden">
       <div className="flex justify-end items-center h-10 px-3">
-        <NavUser user={user} />
+        <NavUserSection user={user} />
       </div>
     </nav>
   );

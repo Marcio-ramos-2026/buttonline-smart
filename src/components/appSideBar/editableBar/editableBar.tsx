@@ -10,13 +10,11 @@ import { EditICon } from "./editableIcon";
 
 export const EditableBar = () => {
   const { canvas } = useEditorContext();
-  //TODO arrumar para o tipo do objeto
   const [object, setObject] = useState<fabric.Object | null>(null);
 
   useEffect(() => {
     if (!canvas) return;
     canvas.on("selection:created", (canva) => {
-      // console.log("new canvas", canva.selected);
       if (canva.selected.length > 1) {
         //@ts-ignore
         setObject(canva.selected);
@@ -54,23 +52,23 @@ export const EditableBar = () => {
     <div className="flex items-center justify-between w-full">
       {object?.type === "textbox" && (
         <>
-          {/*@ts-ignore */}
-          <EditText object={object} canvas={canvas} />
+          <EditText object={object as fabric.Textbox} canvas={canvas} />
           <RemoveActiveObject canvas={canvas} setObject={setObject} />
         </>
       )}
       {object?.type === "image" && (
         <>
-          {/*@ts-ignore */}
-          <EditImage object={object} canvas={canvas} />
+          <EditImage object={object as fabric.FabricImage} canvas={canvas} />
           <RemoveActiveObject canvas={canvas} setObject={setObject} />
         </>
       )}
-      
+
       {object?.type === "path" && (
         //svg
-        //@ts-ignore
-        <EditICon object={object} canvas={canvas} />
+        <>
+          <EditICon object={object as fabric.FabricImage} canvas={canvas} />
+          <RemoveActiveObject canvas={canvas} setObject={setObject} />
+        </>
       )}
     </div>
   );

@@ -17,9 +17,10 @@ export const SearchInput = ({
 
   return (
     <Input
-      className="h-8 text-gray-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+      className="h-8 focus-visible:ring-0 focus-visible:ring-offset-0"
       icon={<Search />}
       onChange={(e) => debounced(e.target.value)}
+      color='primaryForeground'
     />
   );
 };

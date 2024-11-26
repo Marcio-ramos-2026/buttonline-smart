@@ -26,9 +26,8 @@ import { AddImage } from "@/components/appSideBar/addImage";
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "Usuário Teste",
+    email: "usuário@teste.com",
   },
   navMain: [
     {
