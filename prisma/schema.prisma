@@ -60,10 +60,10 @@ model Role {
   id          Int           @id @default(autoincrement())
   name        String        @unique
   description String?
-  permissions Permission[]
+  permissions RolePermissions[]
   users       User[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
 
   @@map("roles")
 }
@@ -72,11 +72,22 @@ model Permission {
   id          Int       @id @default(autoincrement())
   name        String    @unique
   description String?
-  roles       Role[] 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  roles       RolePermissions[] 
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
   @@map("permissions")
+}
+
+model RolePermissions {
+  id     Int   @id @default(autoincrement())
+  role   Role? @relation(fields: [roleId], references: [id])
+  permission    Permission?  @relation(fields: [permissionId], references: [id])
+  roleId Int? @map("role_id")
+  permissionId  Int? @map("permission_id")
+
+  @@index([roleId, permissionId])
+  @@map("role_permissions")
 }
  
 model VerificationToken {
@@ -104,9 +115,9 @@ model editor_icons {
   id        Int      @id @default(autoincrement())
   svg       String   @db.Text
   category  String
-  ptBR_name String?
-  enUS_name String?
-  esEN_name String?
+  ptBR_name String? @map("ptbr_name")
+  enUS_name String? @map("enus_name")
+  esEN_name String? @map("esen_name")
   enabled   Boolean? @default(true)
 
   @@index([category, ptBR_name,enUS_name,esEN_name])

@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { Permissions } from '@/lib/types';
+import bcrypt from 'bcrypt'
 
 function getDefaultRoles() {
     return [
@@ -21,7 +22,7 @@ async function main() {
                 description: permission,
             },
         });
-        console.log('result', permission, result);
+        
         permissionsData.push({ id: result.id }); // Collect in { id: <id> } format for connect
     }
 
@@ -32,16 +33,41 @@ async function main() {
             update: {
                 name: role.name,
                 description: role.description,
+                permissions: {
+                    set: permissionsData, // Update permissions association
+                },
             },
             create: {
                 id: role.id,
                 name: role.name,
+                description: role.description,
                 permissions: {
-                    connect: permissionsData, // Connect permissions by ID
+                    create: permissionsData.map((perm) => ({
+                        permission: { connect: { id: perm.id } },
+                    })),
                 },
             },
         });
     }
+
+    const admin_pass = await bcrypt.hash(process.env.ADMIN_PASSWORD as string,10)
+
+    await prisma.user.upsert({
+        where: {
+            id: 'cm3z1i66f000008ldeyof858q'
+        },
+        update: {
+            password: admin_pass
+        },
+        create: {
+            id: 'cm3z1i66f000008ldeyof858q',
+            email: "cardenas@cardenas.com.br",
+            roleId: 1, //admin,
+            emailVerified: new Date(),
+            name: "Administrador Cardenas",
+            password: admin_pass,
+        },
+    })
 }
 
 main()
