@@ -23,6 +23,7 @@ import { AddText } from "@/components/appSideBar/addText";
 import { useTranslations } from "next-intl";
 import LanguageSelector from "@/components/language-selector";
 import { AddImage } from "@/components/appSideBar/addImage";
+import { TabShapes } from "@/components/editor/shapes";
 
 const data = {
   user: {
@@ -58,8 +59,8 @@ const data = {
     {
       id: "5",
       icon: Baseline,
-      title: "Texto5",
-      content: Teste,
+      title: "Formas",
+      content: TabShapes,
     },
     {
       id: "6",

@@ -49,7 +49,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/*imagem logo*/}
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} title='Teste' prefix="/admin" />
+        <NavMain items={data.navMain} title='Pessoas' prefix="/admin" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

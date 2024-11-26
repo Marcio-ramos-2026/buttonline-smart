@@ -30,11 +30,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             },
             include: {
               role: {
-                include: {
-                  permissions: true
-                }
-              }
-            }
+                  include: {
+                      permissions: {
+                          include: {
+                              permission: {
+                                  select: {
+                                      name: true, // Permission name
+                                  },
+                              },
+                          },
+                      },
+                  },
+              },
+          },
           });
         } catch (e) {
           console.log("error", e);
@@ -59,7 +67,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         //@ts-ignore
         token.role = user.role.name as string
         //@ts-ignore
-        token.permissions = user.role.permissions.map((permission) => permission.name)
+        token.permissions = user.role.permissions.map((permission) => {
+          return permission.permission.name
+        })
+
       }
 
       if (account?.provider === "credentials") {

@@ -7,6 +7,9 @@ import { EditText } from "./editText";
 import { EditImage } from "./editImage";
 import { RemoveActiveObject } from "./removeActiveObject";
 import { EditICon } from "./editableIcon";
+import { EditShapes } from "./editableShapes";
+
+const shapesType = ["triangle", "circle", "rect", "polygon"];
 
 export const EditableBar = () => {
   const { canvas } = useEditorContext();
@@ -69,6 +72,12 @@ export const EditableBar = () => {
           <EditICon object={object as fabric.FabricImage} canvas={canvas} />
           <RemoveActiveObject canvas={canvas} setObject={setObject} />
         </>
+      )}
+
+      {shapesType.includes(object?.type) && (
+        //shapes
+        //@ts-ignore
+        <EditShapes object={object} canvas={canvas} />
       )}
     </div>
   );
