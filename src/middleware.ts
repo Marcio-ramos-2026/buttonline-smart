@@ -18,12 +18,12 @@ export async function middleware(request: NextRequest) {
           }
 
         const hasOtherPermissions = permissions.every((requiredPermission) =>
-        token.permissions.includes(requiredPermission)
+          token.permissions.includes(requiredPermission)
         );
       
-          if (!hasOtherPermissions) {
-            return NextResponse.redirect(new URL("/admin", request.url));
-          }
+        if (!hasOtherPermissions) {
+          return NextResponse.redirect(new URL("/admin", request.url));
+        }
     }
     
     return null

@@ -34,7 +34,10 @@ async function main() {
                 name: role.name,
                 description: role.description,
                 permissions: {
-                    set: permissionsData, // Update permissions association
+                    deleteMany: {}, // Clear existing permissions to avoid duplication
+                    create: permissionsData.map((perm) => ({
+                        permission: { connect: { id: perm.id } },
+                    })),
                 },
             },
             create: {
