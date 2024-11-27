@@ -1,6 +1,3 @@
-
-import { Input } from '@/components/ui/input';
-import { InputPassword } from '@/components/ui/input/inputPassword';
 import Image from 'next/image';
 import { FormLogin } from './formLogin';
 

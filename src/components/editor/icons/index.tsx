@@ -49,13 +49,13 @@ export const TabIcons = ({ content }: { content: string }) => {
 
   const { items, ref, loading } = useInifiteScroll({
     endpoint: "/api/icons",
-    limit: 10,
+    limit: 20,
     get: `name=${value}`,
   });
 
   return (
     <>
-      <div className="flex flex-col px-4">
+      <div className="flex flex-col px-4 h-full space-y-4">
         <SearchInput
           onValueChange={(val) => {
             setValue(val);
@@ -63,8 +63,8 @@ export const TabIcons = ({ content }: { content: string }) => {
           debounceTime={300}
         />
 
-        <div className="pt-4">
-          <div className="flex flex-wrap">
+        <div className="flex-1 overflow-y-auto scrollBar">
+          <div className="flex flex-wrap h-fit max-h-full">
             {items.map((icon) => {
               const base64Svg = `data:image/svg+xml;base64,${btoa(icon.svg)}`;
 

@@ -53,7 +53,7 @@ export function useInifiteScroll({
   }, [isIntersecting, loading]);
 
   useEffect(() => {
-    if (isIntersecting && !loading) {
+    if (!loading) {
       newItems();
     }
   }, [get]);

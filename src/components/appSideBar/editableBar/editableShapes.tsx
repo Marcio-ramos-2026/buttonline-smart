@@ -8,16 +8,14 @@ import { Slider } from "@/components/ui/slider";
 import * as fabric from "fabric";
 import { Blend, PenLine, PaintBucket } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ButtonIcon } from "./buttonIcon";
 import { ColorPicker } from "@/components/colorPicker";
 
-export const EditShapes = ({
-  object,
-  canvas,
-}: {
+type EditShapedProps = {
   object: fabric.FabricImage;
   canvas: fabric.Canvas | null;
-}) => {
+};
+
+export const EditShapes = ({ object, canvas }: EditShapedProps) => {
   return (
     <>
       <HandleStrokeColor object={object} canvas={canvas} />
@@ -27,7 +25,7 @@ export const EditShapes = ({
   );
 };
 
-const HandleFillColor = ({ object, canvas }) => {
+const HandleFillColor = ({ object, canvas }: EditShapedProps) => {
   const [color, setColor] = useState<string | fabric.TFiller | null>("#000");
 
   const handleChangeColor = (e: string) => {
@@ -69,7 +67,7 @@ const HandleFillColor = ({ object, canvas }) => {
   );
 };
 
-const HandleStrokeColor = ({ object, canvas }) => {
+const HandleStrokeColor = ({ object, canvas }: EditShapedProps) => {
   const [colorStroke, setColorStroke] = useState<
     string | fabric.TFiller | null
   >(null);
@@ -113,7 +111,7 @@ const HandleStrokeColor = ({ object, canvas }) => {
   );
 };
 
-const HandleOpacity = ({ object, canvas }) => {
+const HandleOpacity = ({ object, canvas }: EditShapedProps) => {
   const [opacity, setOpacity] = useState<number[]>([object?.opacity * 100]);
 
   const handleOpacity = (e: number[]) => {

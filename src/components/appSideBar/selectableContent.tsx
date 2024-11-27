@@ -7,8 +7,8 @@ export const SelectableContent = ({
   className?: string;
 }) => {
   return (
-    <div>
-      <div className="pt-4">{children}</div>
+    <div className="h-full">
+      <div className="pt-4 h-full">{children}</div>
     </div>
   );
 };

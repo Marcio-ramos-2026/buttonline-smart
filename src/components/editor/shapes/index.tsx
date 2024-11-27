@@ -103,7 +103,9 @@ export const TabShapes = ({ content }: { content: string }) => {
   const { canvas } = useEditorContext();
 
   const handleAddShape = async (shapeLabel: string) => {
-    const shape = items[shapeLabel].func();
+    if(!canvas) return;
+    const shape = items[shapeLabel as keyof typeof items].func();
+    if (!shape) return;
 
     canvas.add(shape);
     canvas.centerObject(shape);
