@@ -245,72 +245,82 @@ const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
         </TableBody>
       </TableElement>
       {/* Pagination Controls */}
-      <Pagination>
-        <PaginationContent>
-          {/* Previous Button */}
-          <PaginationItem>
-            <PaginationPrevious
-              href="#"
-              onClick={(e) => {
-                e.preventDefault()
-                if (opt.pagination.pageIndex > 0) {
-                  opt.onPaginate({
-                    pageIndex: opt.pagination.pageIndex - 1,
-                    pageSize: 0
-                  })
-                }
-              }}
-            />
-          </PaginationItem>
-
-          {/* Page Numbers */}
-          {pageRange.map((page) => {
-            page = page +1
-            return (
-              <PaginationItem key={page}>
-              <PaginationLink
-                href={`?page=${[page]}`}
+       <div className="flex items-center">
+        <div className="w-full">
+          <p>Mostrando {opt.pagination.pageIndex} de {opt.pagination.pageSize} no total de {opt.pagination.totalPages}</p>
+        </div>
+        <Pagination>
+          <PaginationContent>
+            {/* Previous Button */}
+            
+              <PaginationItem>
+              <PaginationPrevious
+                href={`?page=${opt.pagination.pageIndex-1}`}
+                disabled={!opt.pagination.hasPreviousPage}
                 // onClick={(e) => {
                 //   e.preventDefault()
-                //   opt.onPaginate({
-                //     pageIndex: page,
-                //     pageSize: 0
-                //   })
+                //   if (opt.pagination.pageIndex > 0) {
+                //     opt.onPaginate({
+                //       pageIndex: opt.pagination.pageIndex - 1,
+                //       pageSize: 0
+                //     })
+                //   }
                 // }}
-                className={cn(
-                  opt.pagination.pageIndex == page ? "bg-primary text-white" : "text-primary"
-                )}
-              >
-                {page}
-              </PaginationLink>
+              />
             </PaginationItem>
-            )
-          })}
 
-          {/* Ellipsis for skipped pages */}
-          {pageEnd < totalPages - 1 && (
+            {/* Page Numbers */}
+            {pageRange.map((page) => {
+              page = page +1
+              return (
+                <PaginationItem key={page}>
+                <PaginationLink
+                  href={`?page=${[page]}`}
+                  // onClick={(e) => {
+                  //   e.preventDefault()
+                  //   opt.onPaginate({
+                  //     pageIndex: page,
+                  //     pageSize: 0
+                  //   })
+                  // }}
+                  className={cn(
+                    opt.pagination.pageIndex == page ? "bg-primary text-white" : "text-primary"
+                  )}
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+              )
+            })}
+
+            {/* Ellipsis for skipped pages */}
+            {pageEnd < totalPages - 1 && (
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+            )}
+
+            {/* Next Button */}
             <PaginationItem>
-              <PaginationEllipsis />
+              <PaginationNext
+                
+                href={`?page=${opt.pagination.pageIndex+1}`}
+                disabled={!opt.pagination.hasNextPage}
+                // onClick={(e) => {
+                //   e.preventDefault()
+                //   if (opt.pagination.pageIndex < totalPages - 1) {
+                //     opt.onPaginate({
+                //       pageIndex: opt.pagination.pageIndex + 1,
+                //       pageSize: 0
+                //     })
+                //   }
+                // }}
+              />
             </PaginationItem>
-          )}
-
-          {/* Next Button */}
-          <PaginationItem>
-            <PaginationNext
-              href="#"
-              onClick={(e) => {
-                e.preventDefault()
-                if (opt.pagination.pageIndex < totalPages - 1) {
-                  opt.onPaginate({
-                    pageIndex: opt.pagination.pageIndex + 1,
-                    pageSize: 0
-                  })
-                }
-              }}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+            
+          </PaginationContent>
+        </Pagination>
+       </div>
     </div>
   );
 };
