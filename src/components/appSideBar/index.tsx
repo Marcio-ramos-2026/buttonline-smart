@@ -97,11 +97,11 @@ export function AppSidebar({ items, user, ...props }: AppSideBarProps) {
             collapsible="none"
             className="hidden flex-1 md:flex bg-primary-dark"
           >
-            <SidebarContent className="px-4">
+            <SidebarContent className="px-4 max-h-screen overflow-hidden">
               {items.map((nav) => {
                 return (
-                  <TabsContent key={nav.id} value={nav.id} forceMount className="data-[state=active]:block data-[state=inactive]:hidden">
-                    <SidebarGroup className="px-0">
+                  <TabsContent key={nav.id} value={nav.id} forceMount className="data-[state=active]:block data-[state=inactive]:hidden mt-0">
+                    <SidebarGroup className="p-0">
                       <SidebarGroupContent>
                         <SelectableContent>
                           <nav.content content={nav.title} />

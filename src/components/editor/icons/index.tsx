@@ -14,12 +14,14 @@ export const TabIcons = ({ content }: { content: string }) => {
   const { canvas } = useEditorContext();
 
   const handleAddImage = async (svgString: string) => {
+    if (!canvas) return;
     const { objects, options } = await fabric.loadSVGFromString(svgString);
 
     let svgObject;
 
     /// se tem multiplos paths temq  passar aqui pra agrupar
     if (Array.isArray(objects)) {
+      //@ts-ignore
       svgObject = fabric.util.groupSVGElements(objects, options);
     } else {
       svgObject = objects;
@@ -53,7 +55,7 @@ export const TabIcons = ({ content }: { content: string }) => {
 
   return (
     <>
-      <div className="flex flex-col px-4 divide-y-2 divide-red-600">
+      <div className="flex flex-col px-4">
         <SearchInput
           onValueChange={(val) => {
             setValue(val);

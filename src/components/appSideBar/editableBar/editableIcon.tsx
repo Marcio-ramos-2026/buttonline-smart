@@ -11,13 +11,15 @@ import { useEffect, useState } from "react";
 import { ButtonIcon } from "./buttonIcon";
 import { ColorPicker } from "@/components/colorPicker";
 
+type EditIconProps = {
+  object: fabric.FabricImage;
+  canvas: fabric.Canvas | null;
+}
+
 export const EditICon = ({
   object,
   canvas,
-}: {
-  object: fabric.FabricImage;
-  canvas: fabric.Canvas | null;
-}) => {
+}: EditIconProps) => {
   return (
     <>
       <HandleStrokeColor object={object} canvas={canvas} />
@@ -27,7 +29,7 @@ export const EditICon = ({
   );
 };
 
-const HandleFillColor = ({ object, canvas }) => {
+const HandleFillColor = ({ object, canvas }: EditIconProps) => {
   const [color, setColor] = useState<string | fabric.TFiller | null>("#000");
 
   const handleChangeColor = (e: string) => {
@@ -69,7 +71,7 @@ const HandleFillColor = ({ object, canvas }) => {
   );
 };
 
-const HandleStrokeColor = ({ object, canvas }) => {
+const HandleStrokeColor = ({ object, canvas }: EditIconProps) => {
   const [colorStroke, setColorStroke] = useState<
     string | fabric.TFiller | null
   >(null);
@@ -113,7 +115,7 @@ const HandleStrokeColor = ({ object, canvas }) => {
   );
 };
 
-const HandleOpacity = ({ object, canvas }) => {
+const HandleOpacity = ({ object, canvas }: EditIconProps) => {
   const [opacity, setOpacity] = useState<number[]>([object?.opacity * 100]);
 
   const handleOpacity = (e: number[]) => {

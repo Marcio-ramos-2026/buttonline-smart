@@ -14,7 +14,7 @@ export function useInifiteScroll({
   limit,
   get = "",
 }: InfiniteScrollParams) {
-  const [items, setItems] = useState<string[]>([]);
+  const [items, setItems] = useState<{ svg: string, id: string }[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const { isIntersecting, ref } = useIntersectionObserver({ threshold: 1 });
