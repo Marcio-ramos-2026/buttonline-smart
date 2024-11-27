@@ -18,11 +18,12 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar-admin";
 import Link from "next/link";
+import { useSidebar } from "./ui/sidebar-admin";
 
 export function NavMain({
   items,
   title,
-  prefix = ''
+  prefix = "",
 }: {
   items: {
     title: string;
@@ -34,12 +35,17 @@ export function NavMain({
       url: string;
     }[];
   }[];
-  title?: string
-  prefix?: string
+  title?: string;
+  prefix?: string;
 }) {
+  const { open } = useSidebar()
   return (
     <SidebarGroup>
-      {title && <SidebarGroupLabel className="text-text">{title}</SidebarGroupLabel>}
+      {title && (
+        <SidebarGroupLabel className="text-textForefround">
+          {title}
+        </SidebarGroupLabel>
+      )}
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
@@ -50,10 +56,24 @@ export function NavMain({
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title} asChild>
-                  <Link href={prefix + item?.url || ""}>
-                    {item.icon && <item.icon />}
-                    <span>{item.title}</span>
+                <SidebarMenuButton
+                  tooltip={{
+                    children: item.title,
+                    hidden: false,
+                    side: open ? 'bottom' : 'right'
+                  }}
+                  asChild
+                >
+                  <Link
+                    href={prefix + item?.url || ""}
+                    className="text-textForefround"
+                  >
+                    {item.icon && (
+                      <item.icon className="" />
+                    )}
+                    <span className="">
+                      {item.title}
+                    </span>
                     {item.items && (
                       <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                     )}
@@ -66,7 +86,7 @@ export function NavMain({
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
-                          <Link href={prefix+subItem.url}>
+                          <Link href={prefix + subItem.url}>
                             <span>{subItem.title}</span>
                           </Link>
                         </SidebarMenuSubButton>

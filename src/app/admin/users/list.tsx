@@ -56,7 +56,7 @@ const columns: ColumnDef<User>[] = [
     },
   ];
 
-  const data = [
+  const dataTeste = [
     {id:'1',name:'Vinicius Rangel',email:'vinicius.rangel@ad4pixels.com.br',createdAt: new Date()},
     {id:'2',name:'Marcola Goda',email:'marcola.goda@ad4pixels.com.br',createdAt: new Date(), lastAccess: new Date()},
     {id:'3',name:'Gordo Bonin',email:'gordo.bonin@ad4pixels.com.br',createdAt: new Date()}
@@ -68,6 +68,6 @@ export const UsersList = ({data,page}: {data: User[],page: number}) => {
     console.log('actions',actions)
 
     return (
-        <Table data={data} columns={columns} {...actions} totalData={100} />
+        <Table data={dataTeste as User[]} columns={columns} {...actions} totalData={100} />
     )
 }

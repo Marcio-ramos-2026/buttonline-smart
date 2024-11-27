@@ -7,7 +7,6 @@ import {
   UsersRound,
 } from "lucide-react"
 import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user-admin"
 import {
   Sidebar,
   SidebarContent,
@@ -15,13 +14,13 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar-admin"
+import { NavUser } from "./nav-user"
 
 // This is sample data.
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "Usuário Teste",
+    email: "usuário@teste.com",
   },
   navMain: [
     {

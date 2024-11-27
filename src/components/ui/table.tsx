@@ -162,18 +162,18 @@ const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
   //TODO render options to table
 
   return (
-    <div className="">
+    <div className="h-full flex flex-col justify-between rounded-lg overflow-hidden">
       <TableElement>
         <TableHeader>
           {tableLength ? (
             table.getHeaderGroups().map((headerGroup) => {
               return (
-                <TableRow key={headerGroup.id} className="bg-gray-200">
+                <TableRow key={headerGroup.id} className="bg-primary/80 hover:bg-primary/80">
                   {headerGroup.headers.map((header) => {
                     return (
                       <TableHead
                         key={header.id}
-                        className={`text-center ${
+                        className={`text-center text-textForefround ${
                           header.column.columnDef.enableSorting
                             ? "cursor-pointer"
                             : "cursor-default"
@@ -216,7 +216,7 @@ const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
               {tableLength ? (
                 table.getRowModel().rows.map((row) => {
                   return (
-                    <TableRow key={row.id} className="[&>td]:even:bg-secondary">
+                    <TableRow key={row.id} className="[&>td]:even:bg-gray-200">
                       {row.getVisibleCells().map((cell) => {
                         return (
                           <TableCell

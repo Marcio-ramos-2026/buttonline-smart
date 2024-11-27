@@ -18,9 +18,10 @@ import {
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Tooltip } from "../tooltip/tooltip";
 
 export function NavUserSection({
-  user
+  user,
 }: {
   user: {
     name: string;
@@ -33,14 +34,16 @@ export function NavUserSection({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="focus-within:outline-none">
-        <div className="flex items-center justify-center bg-gray-50 h-8 w-8 rounded-full">
-          <User className="h-5 w-5" />
-        </div>
-      </DropdownMenuTrigger>
+      <Tooltip content="Usuário">
+        <DropdownMenuTrigger className="focus-within:outline-none">
+          <div className="flex items-center justify-center bg-gray-50 h-8 w-8 rounded-full">
+            <User className="h-5 w-5" />
+          </div>
+        </DropdownMenuTrigger>
+      </Tooltip>
       <DropdownMenuContent
         className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-        side={isMobile ? 'bottom' : 'right'}
+        side={isMobile ? "bottom" : "right"}
         align="end"
         sideOffset={4}
       >
@@ -53,27 +56,27 @@ export function NavUserSection({
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="hover:bg-gray-300 rounded-md focus:bg-gray-300">
             <BadgeCheck />
             Perfil
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="hover:bg-gray-300 rounded-md focus:bg-gray-300">
             <Bell />
             Notificações
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem className="hover:bg-gray-300 rounded-md p-0 focus:bg-gray-300">
             <button
               type="button"
               onClick={() => {
                 signOut({ redirect: false });
                 router.push("/login");
               }}
-              className="text-rose-600"
+              className="flex gap-1 w-full items-center px-2 py-1.5"
             >
-              <LogOut />
+              <LogOut className="text-rose-600" />
+              Log out
             </button>
-            Log out
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

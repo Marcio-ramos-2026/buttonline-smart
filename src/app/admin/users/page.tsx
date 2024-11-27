@@ -31,10 +31,9 @@ const AdminPage = async ({searchParams}:{  searchParams: Promise<{ page: number 
   })
 
   return (
-      <div>
-          <h1>olar</h1>
+      <>
           <UsersList data={users} page={page as number} />
-      </div>
+      </>
   )
 }
 

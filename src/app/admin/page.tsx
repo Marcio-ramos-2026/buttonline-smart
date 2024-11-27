@@ -3,7 +3,7 @@
 const AdminPage = () => {
     return (
         <div>
-            <h1>Algum tipo de dashboard</h1>
+            <h1>Admin dashboard</h1>
         </div>
     )
 }

@@ -289,7 +289,6 @@ export const TesteTrigger = ({ className }: { className?: string }) => {
   return (
     <button
       onClick={(event) => {
-        // onClick?.(event)
         toggleSidebar();
       }}
       className={cn(className)}
@@ -530,7 +529,7 @@ const sidebarMenuButtonVariants = cva(
   {
     variants: {
       variant: {
-        default: "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+        default: "hover:bg-gray-100/70 hover:text-gray-800",
         outline:
           "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
       },
