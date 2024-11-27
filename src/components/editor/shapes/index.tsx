@@ -1,12 +1,20 @@
 "use client";
 
-import { useInifiteScroll } from "@/hooks/useInifiteScroll";
 import { ReactSVG } from "react-svg";
-import { LoadingIcon } from "@/components/loading";
-import { useState } from "react";
-import { SearchInput } from "@/components/searchInput";
 import { useEditorContext } from "@/context/editor";
 import * as fabric from "fabric";
+import {
+  circuloSVG,
+  trianguloSVG,
+  quadradoSVG,
+  pentagonoSVG,
+  hexagonoSVG,
+  heptagonoSVG,
+  octognoSVG,
+  eneagonoSVG,
+  decagonoSVG,
+  retanguloSVG,
+} from "./svg";
 
 const createRectangle = () => {
   return new fabric.Rect({ width: 150, height: 100 });
@@ -55,16 +63,40 @@ const createPolygon = (sides: number) => {
 };
 
 const items = {
-  triangulo: { label: "triangulo", func: createTriangle },
-  circulo: { label: "circulo", func: createCircle },
-  quadrado: { label: "quadrado", func: createSquare },
-  retangulo: { label: "retangulo", func: createRectangle },
-  pentagono: { label: "pentagono", func: () => createPolygon(5) },
-  hexagono: { label: "hexagono", func: () => createPolygon(6) },
-  heptagono: { label: "heptagono", func: () => createPolygon(7) },
-  octogono: { label: "octogono", func: () => createPolygon(8) },
-  eneagono: { label: "eneagono", func: () => createPolygon(9) },
-  decagono: { label: "decagono", func: () => createPolygon(10) },
+  triangulo: { label: "triangulo", func: createTriangle, svg: trianguloSVG },
+  circulo: { label: "circulo", func: createCircle, svg: circuloSVG },
+  quadrado: { label: "quadrado", func: createSquare, svg: quadradoSVG },
+  retangulo: { label: "retangulo", func: createRectangle, svg: retanguloSVG },
+  pentagono: {
+    label: "pentagono",
+    func: () => createPolygon(5),
+    svg: pentagonoSVG,
+  },
+  hexagono: {
+    label: "hexagono",
+    func: () => createPolygon(6),
+    svg: hexagonoSVG,
+  },
+  heptagono: {
+    label: "heptagono",
+    func: () => createPolygon(7),
+    svg: heptagonoSVG,
+  },
+  octogono: {
+    label: "octogono",
+    func: () => createPolygon(8),
+    svg: octognoSVG,
+  },
+  eneagono: {
+    label: "eneagono",
+    func: () => createPolygon(9),
+    svg: eneagonoSVG,
+  },
+  decagono: {
+    label: "decagono",
+    func: () => createPolygon(10),
+    svg: decagonoSVG,
+  },
 };
 
 export const TabShapes = ({ content }: { content: string }) => {
@@ -82,15 +114,17 @@ export const TabShapes = ({ content }: { content: string }) => {
     <>
       <div className="flex flex-col px-4 divide-y-2 divide-red-600">
         <div className="pt-4">
-          <div className="flex flex-wrap">
+          <div className="flex flex-wrap gap-8 items-center">
             {Object.values(items).map((item) => {
+              const base64Svg = `data:image/svg+xml;base64,${btoa(item.svg)}`;
+
               return (
                 <div
                   onClick={() => handleAddShape(item.label)}
-                  className="h-[75px] w-[75px] text-white"
+                  className="h-[50px] w-[50px] text-white"
                   key={item.label}
                 >
-                  {item.label}
+                  <ReactSVG src={base64Svg} />
                 </div>
               );
             })}
