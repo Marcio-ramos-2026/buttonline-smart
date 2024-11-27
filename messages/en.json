@@ -4,6 +4,10 @@
     "en":"English",
     "es":"Spanish"
   },
+  "pagination":{
+    "next": "Next",
+    "previous": "Previous"
+  },
     "test": {
       "title": "Hello world!"
     }

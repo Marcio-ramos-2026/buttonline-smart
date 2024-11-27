@@ -8,6 +8,7 @@ import {
   Redo2,
   Undo2,
   SquareDashed,
+  Pentagon,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -58,15 +59,9 @@ const data = {
     },
     {
       id: "5",
-      icon: Baseline,
+      icon: Pentagon,
       title: "Formas",
       content: TabShapes,
-    },
-    {
-      id: "6",
-      icon: Baseline,
-      title: "Texto6",
-      content: Teste,
     },
   ],
 };
