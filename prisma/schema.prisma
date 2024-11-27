@@ -45,6 +45,11 @@ model User {
   email         String?   @unique
   emailVerified DateTime? @map("email_verified")
   image         String?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  lastAccess   DateTime?      @map("last_access")
+
   roleId    Int
   role      Role      @relation(fields: [roleId], references: [id])
 

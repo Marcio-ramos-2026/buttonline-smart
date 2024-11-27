@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils"
 import { TableActionsType } from "@/hooks/useTableActions"
 import { ColumnDef, flexRender, functionalUpdate, getCoreRowModel, PaginationState, SortingState, Updater, useReactTable } from "@tanstack/react-table"
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react"
+import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationEllipsis, PaginationNext } from "./pagination"
 
 const TableElement = React.forwardRef<
   HTMLTableElement,
@@ -134,6 +135,12 @@ const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
     opt.onPaginate(sorted);
   }, []);
 
+  const totalPages = Math.ceil(opt.totalData / opt.pagination.pageSize)
+
+  const pageStart = Math.max(opt.pagination.pageIndex - 2, 0)
+  const pageEnd = Math.min(pageStart + 4, totalPages - 1)
+  const pageRange = Array.from({ length: pageEnd - pageStart + 1 }, (_, i) => pageStart + i)
+
   const table = useReactTable({
     columns: columnsDef,
     data: dataDef,
@@ -155,87 +162,156 @@ const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
   //TODO render options to table
 
   return (
-    <TableElement>
-      <TableHeader>
-        {tableLength ? (
-          table.getHeaderGroups().map((headerGroup) => {
-            return (
-              <TableRow key={headerGroup.id} className="bg-gray-200">
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className={`text-center ${
-                        header.column.columnDef.enableSorting
-                          ? "cursor-pointer"
-                          : "cursor-default"
-                      }`}
-                      onClick={header.column.getToggleSortingHandler()}
-                    >
-                      <div className="flex gap-1 items-center justify-center">
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                        {header.column.getCanSort() && (
-                          <>
-                            {{
-                              asc: <ArrowUp className="w-4 h-4" />,
-                              desc: <ArrowDown className="w-4 h-4" />,
-                            }[header.column.getIsSorted() as string] ?? (
-                              <ArrowUpDown className="w-4 h-4" />
-                            )}
-                          </>
-                        )}
-                      </div>
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            );
-          })
-        ) : (
-          <></>
-        )}
-      </TableHeader>
-      <TableBody>
-        {opt.isLoading ? (
-          <tr><td>loading...</td></tr>
-        ) : (
-          <>
-            {tableLength ? (
-              table.getRowModel().rows.map((row) => {
-                return (
-                  <TableRow key={row.id} className="[&>td]:even:bg-secondary">
-                    {row.getVisibleCells().map((cell) => {
-                      return (
-                        <TableCell
-                          key={cell.id}
-                          className="text-center text-nowrap"
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
+    <div className="">
+      <TableElement>
+        <TableHeader>
+          {tableLength ? (
+            table.getHeaderGroups().map((headerGroup) => {
+              return (
+                <TableRow key={headerGroup.id} className="bg-gray-200">
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead
+                        key={header.id}
+                        className={`text-center ${
+                          header.column.columnDef.enableSorting
+                            ? "cursor-pointer"
+                            : "cursor-default"
+                        }`}
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        <div className="flex gap-1 items-center justify-center">
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                          {header.column.getCanSort() && (
+                            <>
+                              {{
+                                asc: <ArrowUp className="w-4 h-4" />,
+                                desc: <ArrowDown className="w-4 h-4" />,
+                              }[header.column.getIsSorted() as string] ?? (
+                                <ArrowUpDown className="w-4 h-4" />
+                              )}
+                            </>
                           )}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })
-            ) : (
-              <TableRow>
-                <TableCell className="h-24 w-full text-center bg-primary/15 rounded-xl text-primary">
-                  Não há informações para exibir.
-                </TableCell>
-              </TableRow>
-            )}
-          </>
-        )}
-      </TableBody>
-    </TableElement>
+                        </div>
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              );
+            })
+          ) : (
+            <></>
+          )}
+        </TableHeader>
+        <TableBody>
+          {opt.isLoading ? (
+            <tr><td>loading...</td></tr>
+          ) : (
+            <>
+              {tableLength ? (
+                table.getRowModel().rows.map((row) => {
+                  return (
+                    <TableRow key={row.id} className="[&>td]:even:bg-secondary">
+                      {row.getVisibleCells().map((cell) => {
+                        return (
+                          <TableCell
+                            key={cell.id}
+                            className="text-center text-nowrap"
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })
+              ) : (
+                <TableRow>
+                  <TableCell className="h-24 w-full text-center bg-primary/15 rounded-xl text-primary">
+                    Não há informações para exibir.
+                  </TableCell>
+                </TableRow>
+              )}
+            </>
+          )}
+        </TableBody>
+      </TableElement>
+      {/* Pagination Controls */}
+      <Pagination>
+        <PaginationContent>
+          {/* Previous Button */}
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={(e) => {
+                e.preventDefault()
+                if (opt.pagination.pageIndex > 0) {
+                  opt.onPaginate({
+                    pageIndex: opt.pagination.pageIndex - 1,
+                    pageSize: 0
+                  })
+                }
+              }}
+            />
+          </PaginationItem>
+
+          {/* Page Numbers */}
+          {pageRange.map((page) => {
+            page = page +1
+            return (
+              <PaginationItem key={page}>
+              <PaginationLink
+                href={`?page=${[page]}`}
+                // onClick={(e) => {
+                //   e.preventDefault()
+                //   opt.onPaginate({
+                //     pageIndex: page,
+                //     pageSize: 0
+                //   })
+                // }}
+                className={cn(
+                  opt.pagination.pageIndex == page ? "bg-primary text-white" : "text-primary"
+                )}
+              >
+                {page}
+              </PaginationLink>
+            </PaginationItem>
+            )
+          })}
+
+          {/* Ellipsis for skipped pages */}
+          {pageEnd < totalPages - 1 && (
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+          )}
+
+          {/* Next Button */}
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              onClick={(e) => {
+                e.preventDefault()
+                if (opt.pagination.pageIndex < totalPages - 1) {
+                  opt.onPaginate({
+                    pageIndex: opt.pagination.pageIndex + 1,
+                    pageSize: 0
+                  })
+                }
+              }}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    </div>
   );
 };
 
