@@ -13,8 +13,10 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar-admin"
 import { NavUser } from "./nav-user"
+import { TriggerSidebar } from "./adminSideBar/triggerSideBar"
 
 // This is sample data.
 const data = {
@@ -42,8 +44,10 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { open } = useSidebar()
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" {...props} className="">
+      <TriggerSidebar isOpenSidebar={open} />
       <SidebarHeader>
         {/*imagem logo*/}
       </SidebarHeader>
