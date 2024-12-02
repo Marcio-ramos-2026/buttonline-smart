@@ -8,6 +8,7 @@ export type TablePaginationType = {
     totalPages: number;
     hasNextPage: boolean;
     hasPreviousPage: boolean;
+    totalItems: number;
   };
   onPaginate: (prop: PaginationState) => void;
 };
@@ -39,7 +40,7 @@ export const useTableAction = ({
     pageSize,
     totalPages: calculateTotalPages(),
     hasNextPage: pageIndex < calculateTotalPages(),
-    hasPreviousPage: pageIndex > 1,
+    hasPreviousPage: pageIndex > 1
   }));
 
   useEffect(() => {
@@ -57,7 +58,7 @@ export const useTableAction = ({
         hasPreviousPage: newPageIndex > 1,
       };
     });
-  }, [pageIndex, pageSize, totalItems, isMounted]);
+  }, [pageIndex, pageSize, totalItems,isMounted]);
 
   const onPaginate = (x: PaginationState) => {
     const totalPages = calculateTotalPages();
@@ -72,7 +73,7 @@ export const useTableAction = ({
 
   return {
     ...sort,
-    pagination: { ...page },
+    pagination: { ...page,totalItems },
     onPaginate,
   };
 };

@@ -6,60 +6,66 @@ import { useTableAction } from "@/hooks/useTableActions";
 import type { User } from '@prisma/client'
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit } from 'lucide-react'
+import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 
 
-const columns: ColumnDef<User>[] = [
-    {
-      accessorKey: "id",
-      header: "ID",
-      enableSorting: false,
-    },
-    {
-      accessorKey: "name",
-      header: "Nome",
-      enableSorting: true,
-    },
-    {
-        accessorKey: "email",
-        header: "Email",
-        enableSorting: true,
-    },
-    {
-        accessorKey: "lastAccess",
-        header: "Último acesso",
-        enableSorting: false,
-        cell: ({row}) => {
-            return <DateRelativeFormatter date={row.original.lastAccess as Date}/>
-        }
-      },
-    {
-      accessorKey: "createdAt",
-      header: "Criado em",
-      enableSorting: false,
-      cell: ({row}) => {
-        return <DateFormatter date={row.original.createdAt as Date} options={{
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          }} />
-    }
-    },
-    {
-      accessorKey: "edit",
-      header: "",
-      enableSorting: false,
-      cell: () => {
-        return <Edit />
-      }
-    },
-  ];
+export const UsersList = ({data,page,totalUsers,limit}: {data: User[],page: number,totalUsers: number,limit:number}) => {
+    const t = useTranslations('pages.admin.users')
 
-export const UsersList = ({data,page}: {data: User[],page: number}) => {
-    const actions = useTableAction({totalItems:1,pageIndex:page})
+    const columns = useMemo<ColumnDef<User>[]>(()=>{
+      return [
+        {
+          accessorKey: "id",
+          header: "ID",
+          enableSorting: false,
+        },
+        {
+          accessorKey: "name",
+          header: t("columns.name"),
+          enableSorting: true,
+        },
+        {
+            accessorKey: "email",
+            header: t("columns.email"),
+            enableSorting: true,
+        },
+        {
+            accessorKey: "lastAccess",
+            header: t("columns.lastAccess"),
+            enableSorting: false,
+            cell: ({row}) => {
+                return <DateRelativeFormatter date={row.original.lastAccess as Date}/>
+            }
+          },
+        {
+          accessorKey: "createdAt",
+          header: t("columns.createdAt"),
+          enableSorting: false,
+          cell: ({row}) => {
+              return <DateFormatter date={row.original.createdAt as Date} options={{
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              }} />
+          }
+        },
+        {
+          accessorKey: "edit",
+          header: "",
+          enableSorting: false,
+          cell: () => {
+            return <Edit />
+          }
+        },
+      ];
+    },[t])
+
+    const actions = useTableAction({totalItems:totalUsers,pageIndex:page,pageSize:limit})
 
     return (
-        <Table data={data} columns={columns} {...actions} totalData={data.length} />
+        <Table data={data} columns={columns} {...actions} />
     )
 }

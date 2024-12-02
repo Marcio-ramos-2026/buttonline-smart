@@ -5,6 +5,7 @@ import { TableActionsType } from "@/hooks/useTableActions"
 import { ColumnDef, flexRender, functionalUpdate, getCoreRowModel, PaginationState, SortingState, Updater, useReactTable } from "@tanstack/react-table"
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react"
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationEllipsis, PaginationNext } from "./pagination"
+import { useTranslations } from "next-intl"
 
 const TableElement = React.forwardRef<
   HTMLTableElement,
@@ -112,7 +113,6 @@ TableCaption.displayName = "TableCaption"
 export interface TableOptions<T> extends TableActionsType {
   columns: ColumnDef<T>[];
   data: T[];
-  totalData: number;
   isLoading?: boolean;
 }
 
@@ -135,7 +135,7 @@ const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
     opt.onPaginate(sorted);
   }, []);
 
-  const totalPages = Math.ceil(opt.totalData / opt.pagination.pageSize)
+  const totalPages = Math.ceil(opt.pagination.totalPages / opt.pagination.pageSize)
 
   const pageStart = Math.max(opt.pagination.pageIndex - 2, 0)
   const pageEnd = Math.min(pageStart + 4, totalPages - 1)
@@ -155,6 +155,8 @@ const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
     onSortingChange: handleSorting,
     onPaginationChange: handlePagination,
   });
+
+  const t = useTranslations("table")
 
   const tableLength = table.getRowModel().rows?.length;
 
@@ -247,7 +249,7 @@ const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
       {/* Pagination Controls */}
        <div className="flex items-center">
         <div className="w-full">
-          <p>Mostrando {opt.pagination.pageIndex} de {opt.pagination.pageSize} no total de {opt.pagination.totalPages}</p>
+          <p>{t("showing")} {dataDef.length} de {opt.pagination.totalItems} {t("results")}</p>
         </div>
         <Pagination>
           <PaginationContent>

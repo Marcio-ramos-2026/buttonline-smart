@@ -8,7 +8,25 @@
     "next": "Próximo",
     "previous": "Anterior"
   },
-    "test": {
-      "title": "Olá mundo!"
+  "table": {
+    "showing":"Mostrando",
+    "results":"resultados"
+  },
+  "test": {
+    "title": "Olá mundo!"
+  },
+  "pages": {
+    "admin": {
+      "users":{
+        "title":"Usuários administradores",
+        "description":"Um pequeno texto sobre a tela de administradores",
+        "columns": {
+          "name":"Nome",
+          "email":"Email",
+          "lastAccess":"Último Acesso",
+          "createdAt":"Criado em"
+        }
+      }
     }
   }
+}
