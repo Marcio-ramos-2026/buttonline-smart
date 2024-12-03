@@ -18,12 +18,12 @@ import {
 } from "@/components/ui/sidebar";
 import FabricContextProvider, { RenderCanvas } from "@/context/editor";
 import { TabIcons } from "@/components/editor/icons";
-import { EditableBar } from "@/components/appSideBar/editableBar/editableBar";
+import { EditableBar } from "@/components/editor/editableBar";
 import { AppSidebar } from "@/components/appSideBar";
-import { AddText } from "@/components/appSideBar/addText";
+import { AddText } from "@/components/editor/text/addText";
 import { useTranslations } from "next-intl";
 import LanguageSelector from "@/components/language-selector";
-import { AddImage } from "@/components/appSideBar/addImage";
+import { AddImage } from "@/components/editor/images/addImage";
 import { TabShapes } from "@/components/editor/shapes";
 
 const data = {

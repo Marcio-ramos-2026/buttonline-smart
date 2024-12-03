@@ -35,7 +35,7 @@ export const EditImage = ({
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="flex justify-center items-center w-10 h-10 rounded-full hover:bg-gray-300/70"
+              className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
             >
               <Blend className="w-6 h-6" />
             </button>

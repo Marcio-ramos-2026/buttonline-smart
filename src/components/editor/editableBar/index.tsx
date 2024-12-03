@@ -76,8 +76,10 @@ export const EditableBar = () => {
 
       {shapesType.includes(object?.type) && (
         //shapes
-        //@ts-ignore
-        <EditShapes object={object} canvas={canvas} />
+        <>
+          <EditShapes object={object as fabric.FabricImage} canvas={canvas} />
+          <RemoveActiveObject canvas={canvas} setObject={setObject} />
+        </>
       )}
     </div>
   );

@@ -13,7 +13,7 @@ export const TabIcons = ({ content }: { content: string }) => {
 
   const { canvas } = useEditorContext();
 
-  const handleAddImage = async (svgString: string) => {
+  const handleAddIcon = async (svgString: string) => {
     if (!canvas) return;
     const { objects, options } = await fabric.loadSVGFromString(svgString);
 
@@ -53,6 +53,8 @@ export const TabIcons = ({ content }: { content: string }) => {
     get: `name=${value}`,
   });
 
+  // console.log('ITEMS', items)
+
   return (
     <>
       <div className="flex flex-col px-4 h-full space-y-4">
@@ -70,7 +72,7 @@ export const TabIcons = ({ content }: { content: string }) => {
 
               return (
                 <div
-                  onClick={() => handleAddImage(icon.svg)}
+                  onClick={() => handleAddIcon(icon.svg)}
                   className="h-[75px] w-[75px] text-white"
                   key={icon.id}
                 >
