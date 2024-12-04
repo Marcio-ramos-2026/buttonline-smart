@@ -53,7 +53,7 @@ export const EditableBar = () => {
 
   return (
     <div className="flex items-center justify-between w-full">
-      {object?.type === "textbox" && (
+      {object?.type === "textbox" || object?.type === "group" && (
         <>
           <EditText object={object as fabric.Textbox} canvas={canvas} />
           <RemoveActiveObject canvas={canvas} setObject={setObject} />
