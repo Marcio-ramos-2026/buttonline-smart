@@ -38,8 +38,8 @@ export function AddText() {
         super([], options); // Initialize as a Fabric group
         this.text = text;
         this.radius = options?.radius; // Radius of the arc
-        this.startAngle = options?.startAngle || 180; // Starting angle in degrees
-        this.endAngle = options?.endAngle || 1; // Ending angle in degrees
+        this.startAngle = options?.startAngle || this.startAngle; // Starting angle in degrees
+        this.endAngle = options?.endAngle || this.endAngle; // Ending angle in degrees
         this.updateCurvedText(); // Create the curved text
       }
 
@@ -63,11 +63,8 @@ export function AddText() {
             top: y,
             originX: "center",
             originY: "center",
-            angle: angle - 90, // Rotate character to follow the arc
+            angle: totalAngle > 0 ? angle + 90 : angle - 90,
           });
-
-          // charObj.rotate(angle <= 90 || angle >= 270 ? angle - 90 : angle + 90);
-          // charObj.rotate(angle - 90);
 
           this.add(charObj);
         });
@@ -100,9 +97,8 @@ export function AddText() {
       left: 200,
       top: 200,
       radius: 150,
-      startAngle: 180,
+      startAngle: -180,
       endAngle: 1,
-      fill: "blue",
     });
     canvas.add(curvedText);
     canvas.centerObject(curvedText);
