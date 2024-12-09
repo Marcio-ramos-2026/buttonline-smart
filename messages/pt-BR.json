@@ -1,30 +1,63 @@
 {
-  "language":{
-    "pt-BR":"Portugês",
-    "en":"Inglês",
-    "es":"Espanhol"
+  "language": {
+    "pt-BR": "Portugês",
+    "en": "Inglês",
+    "es": "Espanhol"
   },
-  "pagination":{
+  "pagination": {
     "next": "Próximo",
     "previous": "Anterior"
   },
   "table": {
-    "showing":"Mostrando",
-    "results":"resultados"
+    "showing": "Mostrando",
+    "results": "resultados"
   },
   "test": {
     "title": "Olá mundo!"
   },
   "pages": {
+    "navUserSection": {
+      "label": "Usuário",
+      "perfil": "Perfil",
+      "notifications": "Notificações",
+      "logOut": "Sair"
+    },
     "admin": {
-      "users":{
-        "title":"Usuários administradores",
-        "description":"Um pequeno texto sobre a tela de administradores",
+      "users": {
+        "title": "Usuários administradores",
+        "description": "Um pequeno texto sobre a tela de administradores",
         "columns": {
-          "name":"Nome",
-          "email":"Email",
-          "lastAccess":"Último Acesso",
-          "createdAt":"Criado em"
+          "name": "Nome",
+          "email": "Email",
+          "lastAccess": "Último Acesso",
+          "createdAt": "Criado em"
+        }
+      }
+    },
+    "editor": {
+      "sideBar": {
+        "tabs": {
+          "file": { "label": "Meus Arquivos" },
+          "image": {
+            "label": "Imagens",
+            "load": "Clique para carregar imagem",
+            "drag": "ou arraste e solte"
+          },
+          "text": { "label": "Texto" },
+          "icon": { "label": "Icones" },
+          "shape": { "label": "Formas" }
+        }
+      },
+      "editableBar": {
+        "strokeColor": "Cor da borda",
+        "bgColor": "Cor de fundo",
+        "opacity": "Opacidade",
+        "layer": {
+          "layer": "Posição",
+          "up": "Cima",
+          "down": "Baixo",
+          "back": "Para Trás",
+          "forward": "Para Frente"
         }
       }
     }

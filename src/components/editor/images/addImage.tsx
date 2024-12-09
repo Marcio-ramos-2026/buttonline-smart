@@ -2,6 +2,7 @@
 
 import { useEditorContext } from "@/context/editor";
 import * as fabric from "fabric";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -24,6 +25,7 @@ const BATATAS_TESTE = [
 export function AddImage() {
   const { canvas } = useEditorContext();
   const [images, setImages] = useState<string[]>(BATATAS_TESTE);
+  const t = useTranslations("pages.editor.sideBar.tabs.image");
 
   const handleAddImage = async (src: string) => {
     if (!canvas) return;
@@ -103,11 +105,11 @@ export function AddImage() {
               />
             </svg>
             <p className="mb-1 text-xs text-gray-500 dark:text-gray-400 text-center">
-              <span className="font-semibold">Clique para carregar imagem</span>{" "}
-              ou arraste e solte.
+              <span className="font-semibold">{t("load")}</span>{" "}
+              {t("drag")}.
             </p>
             <p className="text-[10px] text-gray-500 dark:text-gray-400">
-              SVG, PNG, JPG or GIF (MAX. 800x400px)
+              SVG, PNG, JPG or GIF (Max. 800px x 400px)
             </p>
           </div>
           <input
