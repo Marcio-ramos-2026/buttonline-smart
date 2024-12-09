@@ -1,33 +1,15 @@
 import { cn } from "@/lib/utils";
 import { forwardRef, ReactNode } from "react";
 
-// export const ButtonIcon = forwardRef(function MyBtnIcon(
-//   {
-//     icon,
-//     handler,
-//     selected = false,
-//   }: { icon: ReactNode; handler?: () => void; selected?: boolean },
-//   ref
-// ) {
-//   return (
-//     <button
-//       type="button"
-//       onClick={handler}
-//       className={cn(
-//         "border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none",
-//         selected ? "bg-gray-900/20" : "bg-transparent hover:bg-gray-900/20"
-//       )}
-//     >
-//       {icon}
-//     </button>
-//   );
-// });
-
 export const ButtonIcon = ({
   icon,
   handler,
   selected = false,
-}: { icon: ReactNode; handler?: () => void; selected?: boolean }) => {
+}: {
+  icon: ReactNode;
+  handler?: () => void;
+  selected?: boolean;
+}) => {
   return (
     <button
       type="button"
@@ -40,4 +22,4 @@ export const ButtonIcon = ({
       {icon}
     </button>
   );
-}
+};
