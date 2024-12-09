@@ -19,11 +19,18 @@ import {
   AlignRight,
   AArrowDown,
   AArrowUp,
+  Radius,
 } from "lucide-react";
 import { useState, ChangeEvent, useEffect } from "react";
 import * as fabric from "fabric";
 import { Tooltip } from "@/components/tooltip/tooltip";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const MIN_FONT_SIZE = 1;
 const MAX_FONT_SIZE = 200;
@@ -51,6 +58,10 @@ export const EditText = ({
     icon: AArrowDown,
     direction: "down",
   });
+  //@ts-ignore
+  const [radius, setRadius] = useState(object?.radius / 10);
+
+  console.log("AAAAAAAAAA", radius);
 
   const handleChangeSize = (e: ChangeEvent<HTMLInputElement>) => {
     if (!object || !canvas) return;
@@ -177,9 +188,8 @@ export const EditText = ({
     if (!object || !canvas) return;
     setDirectionCurved((prev) => {
       if (prev.direction === "down") {
-        object.set({ startAngle: 180 });
         //@ts-ignore
-        object.updateCurvedText()
+        object.setStartAngle(180);
         //@ts-ignore
         canvas.fire("modified", { target: object });
         canvas.renderAll();
@@ -189,9 +199,8 @@ export const EditText = ({
           icon: AArrowUp,
         };
       }
-      object.set({ startAngle: -180 });
       //@ts-ignore
-      object.updateCurvedText()
+      object.setStartAngle(-180);
       //@ts-ignore
       canvas.fire("modified", { target: object });
       canvas.renderAll();
@@ -201,6 +210,17 @@ export const EditText = ({
         icon: AArrowDown,
       };
     });
+  };
+
+  const handleChangeRadius = (e: number[]) => {
+    if (!object || !canvas) return;
+    setRadius(e[0]);
+    //@ts-ignore
+    object.setRadius(e[0] * 10);
+    //@ts-ignore
+    canvas.fire("modified", { target: object });
+    canvas.renderAll();
+    canvas.centerObject(object);
   };
 
   useEffect(() => {
@@ -323,6 +343,33 @@ export const EditText = ({
               <directionCurved.icon />
             </button>
           </Tooltip>
+          <DropdownMenu>
+            <Tooltip content="Raio">
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
+                >
+                  <Radius className="w-6 h-6" />
+                </button>
+                {/* <ButtonIcon icon={<Blend />} /> */}
+              </DropdownMenuTrigger>
+            </Tooltip>
+            <DropdownMenuContent className="h-auto w-64 px-4 py-3 rounded-md flex flex-col gap-1 items-center justify-center">
+              <div className="flex justify-between w-full">
+                <span className="text-xs">Raio</span>
+                <p className="text-start text-xs">{radius}</p>
+              </div>
+              <Slider
+                value={[radius]}
+                max={100}
+                min={1}
+                step={1}
+                className="w-full"
+                onValueChange={handleChangeRadius}
+              />
+            </DropdownMenuContent>
+          </DropdownMenu>
         </>
       )}
     </div>
