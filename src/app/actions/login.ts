@@ -1,9 +1,9 @@
 "use server";
 
 import { signIn } from "@/auth";
-import bcrypt from 'bcrypt'
 import { z } from "zod";
 import { isRedirectError } from "next/dist/client/components/redirect";
+import { redirect } from "next/navigation";
 
 const schema = z.object({
   email: z
@@ -35,15 +35,14 @@ export async function loginAction(prevState: any, formData: FormData) {
       email: formData.get("email"),
       password: formData.get("password"),
     });
-    // redirect("/");
+    redirect("/");
   } catch (e) {
+    console.log("error on login", e);
     if (isRedirectError(e)) {
       throw e;
     }
-    console.log("error", e);
+    return{
+      error: 'Usuário ou senha inválidos.'
+    }
   }
-
-  return {
-    message: "",
-  };
 }

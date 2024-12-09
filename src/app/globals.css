@@ -20,6 +20,15 @@
     --secondary-light: 159 100% 75%;
     --secondary-dark: 159 100% 35%;
     --secondary-foreground: 220.9 39.3% 11%;
+    --danger: 0 72% 55%;
+    --danger-light: 0 72% 75%;
+    --danger-dark: 0 72% 35%;
+    --success: 142 76% 55%;
+    --success-light: 142 76% 75%;
+    --success-dark: 142 76% 35%;
+    --warning: 48 96% 55%;
+    --warning-light: 48 95% 75%;
+    --warning-dark: 48 96% 35%;
     --muted: 220 14.3% 95.9%;
     --muted-foreground: 220 8.9% 46.1%;
     --accent: 220 14.3% 95.9%;

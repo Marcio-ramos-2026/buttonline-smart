@@ -7,14 +7,18 @@ import { Input } from "@/components/ui/input";
 import { Mail } from "lucide-react";
 import { InputPassword } from "@/components/ui/inputPassword";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/alert";
 
 const initialState = {
   message: "",
 };
 
 export const FormLogin = () => {
+  //@ts-ignore
   const [state, formAction] = useFormState(loginAction, initialState);
   const { pending } = useFormStatus();
+
+  // console.log("state login", state);
 
   return (
     <form action={formAction} className="space-y-6">
@@ -45,13 +49,17 @@ export const FormLogin = () => {
         </div>
       </div>
 
-      <div>
+      <div className="space-y-3">
         <Button full type="submit">
           Entrar
         </Button>
 
-        {state?.message && (
-          <p className="text-red-400 font-semibold">{state.message}</p>
+        {state.error && (
+          <Alert
+            variant="danger"
+            content={state.error as string}
+            title="Falha ao entrar"
+          />
         )}
       </div>
     </form>

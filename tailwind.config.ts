@@ -36,6 +36,21 @@ const config = {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
+        danger: {
+          DEFAULT: "hsl(var(--danger))",
+          light: 'hsl(var(--danger-light))',
+          dark: 'hsl(var(--danger-dark))'
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          light: 'hsl(var(--success-light))',
+          dark: 'hsl(var(--success-dark))'
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          light: 'hsl(var(--warning-light))',
+          dark: 'hsl(var(--warning-dark))'
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
