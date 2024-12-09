@@ -16,6 +16,12 @@
     "title": "Olá mundo!"
   },
   "pages": {
+    "navUserSection": {
+      "label": "Usuário",
+      "perfil": "Perfil",
+      "notifications": "Notificações",
+      "logOut": "Sair"
+    },
     "admin": {
       "users": {
         "title": "Usuários administradores",
@@ -29,6 +35,19 @@
       }
     },
     "editor": {
+      "sideBar": {
+        "tabs": {
+          "file": { "label": "Meus Arquivos" },
+          "image": {
+            "label": "Imagens",
+            "load": "Clique para carregar imagem",
+            "drag": "ou arraste e solte"
+          },
+          "text": { "label": "Texto" },
+          "icon": { "label": "Icones" },
+          "shape": { "label": "Formas" }
+        }
+      },
       "editableBar": {
         "strokeColor": "Cor da borda",
         "bgColor": "Cor de fundo",

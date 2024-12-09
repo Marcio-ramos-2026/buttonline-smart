@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tooltip } from "../tooltip/tooltip";
+import { useTranslations } from "next-intl";
 
 export function NavUserSection({
   user,
@@ -31,10 +32,11 @@ export function NavUserSection({
 }) {
   const router = useRouter();
   const isMobile = useIsMobile();
+  const t = useTranslations("pages.navUserSection");
 
   return (
     <DropdownMenu>
-      <Tooltip content="Usuário">
+      <Tooltip content={t("label")}>
         <DropdownMenuTrigger className="focus-within:outline-none">
           <div className="flex items-center justify-center bg-gray-50 h-8 w-8 rounded-full">
             <User className="h-5 w-5" />
@@ -58,11 +60,11 @@ export function NavUserSection({
         <DropdownMenuGroup>
           <DropdownMenuItem className="hover:bg-gray-300 rounded-md focus:bg-gray-300">
             <BadgeCheck />
-            Perfil
+            {t("perfil")}
           </DropdownMenuItem>
           <DropdownMenuItem className="hover:bg-gray-300 rounded-md focus:bg-gray-300">
             <Bell />
-            Notificações
+            {t("notifications")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem className="hover:bg-gray-300 rounded-md p-0 focus:bg-gray-300">
@@ -75,7 +77,7 @@ export function NavUserSection({
               className="flex gap-1 w-full items-center px-2 py-1.5"
             >
               <LogOut className="text-rose-600" />
-              Log out
+              {t("logOut")}
             </button>
           </DropdownMenuItem>
         </DropdownMenuGroup>

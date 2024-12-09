@@ -26,48 +26,50 @@ import LanguageSelector from "@/components/language-selector";
 import { AddImage } from "@/components/editor/images/addImage";
 import { TabShapes } from "@/components/editor/shapes";
 
-const data = {
-  user: {
-    name: "Usuário Teste",
-    email: "usuário@teste.com",
-  },
-  navMain: [
-    {
-      id: "1",
-      icon: Folder,
-      title: "Meus arquivos",
-      content: Teste,
-      active: true,
-    },
-    {
-      id: "2",
-      icon: ImageIcon,
-      title: "Imagens",
-      content: AddImage,
-    },
-    {
-      id: "3",
-      icon: Baseline,
-      title: "Texto",
-      content: AddText,
-    },
-    {
-      id: "4",
-      icon: SquareDashed,
-      title: "Icones",
-      content: TabIcons,
-    },
-    {
-      id: "5",
-      icon: Pentagon,
-      title: "Formas",
-      content: TabShapes,
-    },
-  ],
-};
 
 export default function Page() {
-  const t = useTranslations("test");
+  const t = useTranslations("pages.editor.sideBar");
+
+  const data = {
+    user: {
+      name: "Usuário Teste",
+      email: "usuário@teste.com",
+    },
+    navMain: [
+      {
+        id: "1",
+        icon: Folder,
+        title: t('tabs.file.label'),
+        content: Teste,
+        active: true,
+      },
+      {
+        id: "2",
+        icon: ImageIcon,
+        title: t('tabs.image.label'),
+        content: AddImage,
+      },
+      {
+        id: "3",
+        icon: Baseline,
+        title:t('tabs.text.label'),
+        content: AddText,
+      },
+      {
+        id: "4",
+        icon: SquareDashed,
+        title: t('tabs.icon.label'),
+        content: TabIcons,
+      },
+      {
+        id: "5",
+        icon: Pentagon,
+        title: t('tabs.shape.label'),
+        content: TabShapes,
+      },
+    ],
+  };
+  
 
   return (
     <FabricContextProvider>
