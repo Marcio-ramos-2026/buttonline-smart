@@ -6,6 +6,8 @@ import { isRedirectError } from "next/dist/client/components/redirect";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import bcrypt from 'bcrypt'
+import { renderClientWelcome } from "@/emails/clients/welcome";
+import { mailTransport } from "@/lib/email";
 
 const schema = z.object({
   name: z.string({required_error: 'Name required'}),  
@@ -45,6 +47,18 @@ export async function registerAction(prevState: any, formData: FormData) {
         }
       }
     })
+
+    const htmlEmail = await renderClientWelcome({locale:"pt-BR"})
+    const transport = await mailTransport()
+    if(transport){
+      await transport.sendMail({
+        from: process.env.EMAIL_SENDER,
+        to: rawFormData.email,
+        subject: "preview test",
+        html: htmlEmail
+      })
+    }
+     
     return {
       message: "Usurário criado com sucesso"
     }  
