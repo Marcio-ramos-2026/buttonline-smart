@@ -24,7 +24,7 @@ export async function registerAction(data: UserType) {
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      zod_errors: validatedFields.error.flatten().fieldErrors,
     };
   }
 
@@ -64,7 +64,8 @@ export async function registerAction(data: UserType) {
         switch(e.code){
           case 'P2002':
             if (e.meta && e.meta?.target === 'users_email_key') {
-              return {error:'Este e-mail já está em uso.'};
+              return {error: 'Este e-mail já está em uso.'}
+              // return {zod_errors:{email: 'Este e-mail já está em uso.'}};
             }
           break; 
           default:
