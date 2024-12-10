@@ -2,64 +2,93 @@
 
 import { registerAction } from "@/app/actions/register"
 import { Button } from "@/components/ui/button"
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { InputPassword } from "@/components/ui/inputPassword"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useRef } from "react"
 import { useFormState, useFormStatus } from "react-dom"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
-const initialState = {
-    message: "",
-}
+const formSchema = z.object({
+  name: z.string().min(1, { message: "O nome de usuário é obrigatório" }),
+  email: z.string().min(1, { message: "O email é obrigatório" }),
+  password: z.string().min(1, { message: "A senha é obrigatória" }),
+});
+
+export type UserType = z.infer<typeof formSchema>;
+
 
 export const RegisterForm = () => {
-    const [state, formAction] = useFormState(registerAction, initialState);
+    const formRef = useRef<HTMLFormElement>(null)
+    // const [state, formAction] = useFormState(registerAction, initialState);
+    const form = useForm<z.infer<typeof formSchema>>({
+      resolver: zodResolver(formSchema),
+    });
 
-    console.log('state',state)
+    const onSubmit = async (data: UserType) => {
+      // const formData = new FormData()
+      // Object.keys(data).forEach(key => {
+      //   formData.append(key, data[key]);
+      // });
+
+      const result = await registerAction(data)
+      // console.log('result',result)
+    }
+
+  
 
     return (
-        <form action={formAction} className="space-y-2">
-        <div>
-            <label htmlFor="name" className="block text-sm/6 font-medium text-gray-900">
-              Nome
-            </label>
-            <div className="mt-1">
-              <Input
-                name="name"
-                type="text"
-                required
-              />  
-            </div>
-          </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nome:</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+         <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email:</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <div>
-            <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
-              Email
-            </label>
-            <div className="mt-1">
-                <Input
-                    name="email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                />  
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-              Senha
-            </label>
-            <div className="mt-1">
-                <InputPassword
-                    name="password"
-                    required
-                />  
-            </div>
-          </div>
+        <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Senha:</FormLabel>
+                <FormControl>
+                  <InputPassword {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <div>
               <SubmitButton />
           </div>
+
         </form>
+        </Form>
     )
 }
 

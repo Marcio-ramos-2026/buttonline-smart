@@ -2,7 +2,6 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { isRedirectError } from "next/dist/client/components/redirect";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import bcrypt from 'bcrypt'
@@ -17,15 +16,11 @@ const schema = z.object({
   password: z.string().trim().min(1, { message: "Senha é obrigatória." }),
 });
 
-export async function registerAction(prevState: any, formData: FormData) {  
-  const rawFormData = {
-    name: formData.get('name') as string,
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-  };
+export type UserType = z.infer<typeof schema>;
 
+export async function registerAction(data: UserType) {  
 
-  const validatedFields = schema.safeParse(rawFormData);
+  const validatedFields = schema.safeParse(data);
 
   if (!validatedFields.success) {
     return {
@@ -34,11 +29,11 @@ export async function registerAction(prevState: any, formData: FormData) {
   }
 
   try {
-    const pass = await bcrypt.hash(rawFormData.password,10)
+    const pass = await bcrypt.hash(data.password,10)
     await prisma.user.create({
       data: {
-        name: rawFormData.name,
-        email:  rawFormData.email,
+        name: data.name,
+        email:  data.email,
         password: pass,
         role: {
           connect: {
@@ -53,14 +48,15 @@ export async function registerAction(prevState: any, formData: FormData) {
     if(transport){
       await transport.sendMail({
         from: process.env.EMAIL_SENDER,
-        to: rawFormData.email,
+        to: data.email,
         subject: "preview test",
         html: htmlEmail
       })
     }
      
     return {
-      message: "Usurário criado com sucesso"
+      message: "Usurário criado com sucesso",
+      success:true
     }  
   }catch(e){
     console.log('Error register action',e)
