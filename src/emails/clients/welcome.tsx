@@ -2,18 +2,17 @@ import { EmailMessageLang, ILocaleLang } from "@/lib/langs";
 import {
   Body,
   Button,
-  Column,
   Container,
   Head,
   Heading,
   Html,
   Img,
-  Link,
   Preview,
   Row,
   Section,
   Text,
   Tailwind,
+  render,
 } from "@react-email/components";
 import {  createTranslator } from "next-intl";
 import * as React from "react";
@@ -24,6 +23,7 @@ interface NetlifyWelcomeEmailProps {
     Description: React.ReactNode;
   }[];
   links?: string[],
+  locale?: ILocaleLang
 }
 
 const baseUrl = process.env.VERCEL_URL ?? 'http://localhost:3000'
@@ -59,10 +59,9 @@ const messages: EmailMessageLang = {
     }
 }
 
-export const NetlifyWelcomeEmail = ({
-  
+const ClientWecomeEmail = ({
+  locale = 'pt-BR'
 }: NetlifyWelcomeEmailProps) => {
-  const locale = 'pt-BR' as ILocaleLang
   
   const  t = createTranslator({messages: messages[locale],locale})
   return (
@@ -147,4 +146,8 @@ export const NetlifyWelcomeEmail = ({
   );
 };
 
-export default NetlifyWelcomeEmail;
+export const renderClientWelcome = async (props: NetlifyWelcomeEmailProps) => {
+  return await render(<ClientWecomeEmail {...props} />)
+}
+
+export default ClientWecomeEmail;
