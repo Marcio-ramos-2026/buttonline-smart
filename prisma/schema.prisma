@@ -45,56 +45,56 @@ model User {
   email         String?   @unique
   emailVerified DateTime? @map("email_verified")
   image         String?
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
 
-  lastAccess   DateTime?      @map("last_access")
+  lastAccess DateTime? @map("last_access")
 
-  roleId    Int
-  role      Role      @relation(fields: [roleId], references: [id])
+  roleId Int
+  role   Role @relation(fields: [roleId], references: [id])
 
-  password      String? 
-  accounts      Account[]
-  sessions      Session[]
+  password String?
+  accounts Account[]
+  sessions Session[]
 
   @@index([roleId], map: "users_roleId_fkey")
   @@map("users")
 }
 
 model Role {
-  id          Int           @id @default(autoincrement())
-  name        String        @unique
+  id          Int               @id @default(autoincrement())
+  name        String            @unique
   description String?
   permissions RolePermissions[]
   users       User[]
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
 
   @@map("roles")
 }
 
 model Permission {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique
+  id          Int               @id @default(autoincrement())
+  name        String            @unique
   description String?
-  roles       RolePermissions[] 
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  roles       RolePermissions[]
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
 
   @@map("permissions")
 }
 
 model RolePermissions {
-  id     Int   @id @default(autoincrement())
-  role   Role? @relation(fields: [roleId], references: [id])
-  permission    Permission?  @relation(fields: [permissionId], references: [id])
-  roleId Int? @map("role_id")
-  permissionId  Int? @map("permission_id")
+  id           Int         @id @default(autoincrement())
+  role         Role?       @relation(fields: [roleId], references: [id])
+  permission   Permission? @relation(fields: [permissionId], references: [id])
+  roleId       Int?        @map("role_id")
+  permissionId Int?        @map("permission_id")
 
   @@index([roleId, permissionId])
   @@map("role_permissions")
 }
- 
+
 model VerificationToken {
   identifier String
   token      String
@@ -120,11 +120,11 @@ model editor_icons {
   id        Int      @id @default(autoincrement())
   svg       String   @db.Text
   category  String
-  ptBR_name String? @map("ptbr_name")
-  enUS_name String? @map("enus_name")
-  esEN_name String? @map("esen_name")
+  ptBR_name String?  @map("ptbr_name")
+  enUS_name String?  @map("enus_name")
+  esEN_name String?  @map("esen_name")
   enabled   Boolean? @default(true)
 
-  @@index([category, ptBR_name,enUS_name,esEN_name])
+  @@index([category, ptBR_name, enUS_name, esEN_name])
   @@map("editor_icons")
 }

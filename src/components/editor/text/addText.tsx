@@ -68,9 +68,17 @@ export function AddText() {
 
           this.add(charObj);
         });
-
-        // this._updateObjectsCoords(); // Recalculate group bounds
         this.setCoords(); // Update group coordinates
+      }
+
+      setStartAngle(newStartAngle: number) {
+        this.startAngle = newStartAngle;
+        this.updateCurvedText();
+      }
+
+      setRadius(newRadius: number) {
+        this.radius = newRadius;
+        this.updateCurvedText();
       }
 
       toObject<
@@ -96,7 +104,7 @@ export function AddText() {
     const curvedText = new CurvedText("Texto curvado", {
       left: 200,
       top: 200,
-      radius: 150,
+      radius: 100,
       startAngle: -180,
       endAngle: 1,
     });
