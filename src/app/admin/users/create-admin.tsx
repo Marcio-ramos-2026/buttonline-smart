@@ -14,33 +14,34 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useFormState, useFormStatus } from "react-dom";
+import { createAdminAction } from "@/app/actions/admin/create-admin";
 
 const formSchema = z.object({
-  username: z.string().min(1, { message: "O nome de usuário é obrigatório" }),
-  password: z.string().min(1, { message: "A senha é obrigatória" }),
+  name: z.string().min(1, { message: "O nome de usuário é obrigatório" }),
+  email: z.string().min(1, { message: "A senha é obrigatória" }),
 });
+
+const initialState = {
+  message: "",
+};
 
 export function ProfileForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-    },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+  const [state, formAction] = useFormState(createAdminAction, initialState);
+
+
+  console.log('ss', state)
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+      <form action={formAction} className="space-y-5">
         <FormField
           control={form.control}
-          name="username"
+          name="name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Nome do usuario:</FormLabel>
@@ -53,7 +54,7 @@ export function ProfileForm() {
         />
         <FormField
           control={form.control}
-          name="password"
+          name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email do usuário:</FormLabel>
@@ -65,11 +66,23 @@ export function ProfileForm() {
           )}
         />
         <div className="w-full">
-          <Button type="submit" className="ml-auto block">
-            Criar
-          </Button>
+          <SubmitButton />
         </div>
       </form>
     </Form>
   );
 }
+
+const SubmitButton = () => {
+  const { pending } = useFormStatus();
+  return (
+    <Button
+      className="ml-auto block"
+      loading={pending}
+      disabled={pending}
+      type="submit"
+    >
+      Criar
+    </Button>
+  );
+};
