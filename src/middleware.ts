@@ -18,7 +18,7 @@ export async function middleware(request: NextRequest) {
           return NextResponse.redirect(new URL("/", request.url));
         }
 
-        const hasOtherPermissions = permissions.some((requiredPermission) =>{
+        const hasOtherPermissions = permissions.find((requiredPermission) =>{
           return token.permissions.includes(requiredPermission)
         });
       

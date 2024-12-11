@@ -143,9 +143,9 @@ const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
 
   const table = useReactTable({
     initialState: {
-      columnVisibility: {
-        createdAt: false,
-      }
+      // columnVisibility: {
+      //   createdAt: false,
+      // }
     },
     columns: columnsDef,
     data: dataDef,

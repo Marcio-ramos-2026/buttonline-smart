@@ -2,7 +2,7 @@
   "language": {
     "pt-BR": "Portugês",
     "en": "Inglês",
-    "es": "Espanhol"
+    "es-ES": "Espanhol"
   },
   "pagination": {
     "next": "Próximo",
@@ -12,9 +12,6 @@
     "showing": "Mostrando",
     "results": "resultados"
   },
-  "test": {
-    "title": "Olá mundo!"
-  },
   "pages": {
     "navUserSection": {
       "label": "Usuário",
@@ -23,6 +20,12 @@
       "logOut": "Sair"
     },
     "admin": {
+      "sideBar": {
+        "tabs": {
+          "users": "Usuários",
+          "clients": "Clientes"
+        }
+      },
       "users": {
         "title": "Usuários administradores",
         "description": "Um pequeno texto sobre a tela de administradores",
@@ -31,6 +34,14 @@
           "email": "Email",
           "lastAccess": "Último Acesso",
           "createdAt": "Criado em"
+        },
+        "modalCreateAdmin": {
+          "button": "Novo Administrador",
+          "title": "Criar um Administrador",
+          "subTitle": "Este usuário possuira todos os direitos de um administrador.",
+          "labelName": "Nome do usuario:",
+          "labelEmail": "Email do usuário:",
+          "submit": "Criar"
         }
       }
     },

@@ -1,0 +1,76 @@
+{
+  "language": {
+    "pt-BR": "Portugués",
+    "en": "Inglés",
+    "es-ES": "Español"
+  },
+  "pagination": {
+    "next": "Siguiente",
+    "previous": "Anterior"
+  },
+  "table": {
+    "showing": "Mostrando",
+    "results": "resultados"
+  },
+  "pages": {
+    "navUserSection": {
+      "label": "Usuario",
+      "perfil": "Perfil",
+      "notifications": "Notificaciones",
+      "logOut": "Cerrar Sesión"
+    },
+    "admin": {
+      "sideBar": {
+        "tabs": {
+          "users": "Usuarios",
+          "clients": "Clientes"
+        }
+      },
+      "users": {
+        "title": "Usuarios Administradores",
+        "description": "Un breve texto sobre la pantalla de administradores",
+        "columns": {
+          "name": "Nombre",
+          "email": "Correo Electrónico",
+          "lastAccess": "Último Acceso",
+          "createdAt": "Creado el"
+        },
+        "modalCreateAdmin": {
+          "button": "Nuevo Administrador",
+          "title": "Crear un Administrador",
+          "subTitle": "Este usuario tendrá todos los derechos de un administrador.",
+          "labelName": "Nombre del Usuario:",
+          "labelEmail": "Correo Electrónico del Usuario:",
+          "submit": "Crear"
+        }
+      }
+    },
+    "editor": {
+      "sideBar": {
+        "tabs": {
+          "file": { "label": "Mis Archivos" },
+          "image": {
+            "label": "Imágenes",
+            "load": "Haga clic para cargar imagen",
+            "drag": "o arrastre y suelte"
+          },
+          "text": { "label": "Texto" },
+          "icon": { "label": "Íconos" },
+          "shape": { "label": "Formas" }
+        }
+      },
+      "editableBar": {
+        "strokeColor": "Color del Borde",
+        "bgColor": "Color de Fondo",
+        "opacity": "Opacidad",
+        "layer": {
+          "layer": "Capa",
+          "up": "Arriba",
+          "down": "Abajo",
+          "back": "Hacia Atrás",
+          "forward": "Hacia Adelante"
+        }
+      }
+    }
+  }
+}

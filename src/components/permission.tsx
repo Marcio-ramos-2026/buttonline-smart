@@ -1,3 +1,5 @@
+
+'use client'
 import { ALLOWED_PERMISSIONS } from '@/lib/permissions';
 import { ColumnDef } from '@tanstack/react-table';
 import { useSession } from 'next-auth/react';
@@ -28,7 +30,6 @@ export const Permission = ({children, has}: IPermission) => {
  * and returns an object where each column is set to `false` by default (hidden).
  */
 export const tablePermission = <T,>(
-    permission: ALLOWED_PERMISSIONS[],
     columns: ColumnDef<T, any>[]
   ): Record<string, boolean> => {
     return columns.reduce((acc, col) => {

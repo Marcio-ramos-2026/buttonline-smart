@@ -18,6 +18,7 @@ import {
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { ProfileForm } from "./create-admin";
+import { Permission } from "@/components/permission";
 
 const AdminPage = async ({
   searchParams,
@@ -72,9 +73,11 @@ const AdminPage = async ({
         <div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button icon={<UserPlus />} className="cursor-pointer">
-                Novo administrador
-              </Button>
+              <Permission has={[ALLOWED_PERMISSIONS.ADMIN_USER_EDIT]}>
+                <Button icon={<UserPlus />} className="cursor-pointer">
+                  Novo administrador
+                </Button>
+              </Permission>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
