@@ -48,7 +48,7 @@ const messages: EmailMessageLang = {
       "step_3": "Solicite o PDF para a impressão.",
       "copyright": "© 2024 Sua Empresa. Todos os direitos reservados."
     },
-    "en-ES": {
+    "es-ES": {
       "welcome": "Bienvenido a nuestra plataforma",
       "intro": "Olá {name}, agora você já pode usar a sua criatividade para criar buttons incríveis.",
       "get_started_title": "Veja quais são os primeiros passos",
