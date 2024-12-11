@@ -17,17 +17,14 @@ function generateTempPassword(length: number = 8): string {
   return randomBytes(length).toString("base64").slice(0, length); // Gera uma string base64 e corta no tamanho desejado
 }
 
-export async function createAdminAction(prevState: any, formData: FormData) {
-  const rawFormData = {
-    name: formData.get("name") as string,
-    email: formData.get("email") as string,
-  };
+export type AdminType = z.infer<typeof schema>;
 
-  const validatedFields = schema.safeParse(rawFormData);
+export async function createAdminAction(data: AdminType) {
+  const validatedFields = schema.safeParse(data);
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      zod_errors: validatedFields.error.flatten().fieldErrors,
     };
   }
 
@@ -37,8 +34,8 @@ export async function createAdminAction(prevState: any, formData: FormData) {
 
     await prisma.user.create({
       data: {
-        name: rawFormData.name,
-        email: rawFormData.email,
+        name: data.name,
+        email: data.email,
         password: pass,
         role: {
           connect: {
@@ -56,7 +53,7 @@ export async function createAdminAction(prevState: any, formData: FormData) {
       switch (e.code) {
         case "P2002":
           if (e.meta && e.meta?.target === "users_email_key") {
-            return { error: "Este e-mail já está em uso." };
+            return { error: "Este e-mail já está em uso." };            
           }
           break;
         default:

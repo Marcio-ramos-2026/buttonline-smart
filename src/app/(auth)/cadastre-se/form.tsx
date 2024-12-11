@@ -63,7 +63,7 @@ export const RegisterForm = () => {
               <FormItem>
                 <FormLabel>Nome:</FormLabel>
                 <FormControl>
-                  <Input {...field}  disabled={formState.isLoading} />
+                  <Input {...field}  disabled={formState.isSubmitting} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -76,7 +76,7 @@ export const RegisterForm = () => {
               <FormItem>
                 <FormLabel>Email:</FormLabel>
                 <FormControl>
-                  <Input {...field} disabled={formState.isLoading} />
+                  <Input {...field} disabled={formState.isSubmitting} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -90,7 +90,7 @@ export const RegisterForm = () => {
               <FormItem>
                 <FormLabel>Senha:</FormLabel>
                 <FormControl>
-                  <InputPassword {...field} disabled={formState.isLoading} />
+                  <InputPassword {...field} disabled={formState.isSubmitting} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -108,7 +108,7 @@ export const RegisterForm = () => {
                 </div>
               </div>
             }
-          <Button full className='mt-4' loading={formState.isLoading} disabled={formState.isLoading} type="submit">Cadastrar</Button>
+          <Button full className='mt-4' loading={formState.isSubmitting} disabled={formState.isSubmitting} type="submit">Cadastrar</Button>
 
         </form>
       </Form>
