@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { UsersList } from "./list";
-import { Permissions } from "@/lib/types";
+import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Copy, UserPlus } from "lucide-react";
@@ -38,7 +38,7 @@ const AdminPage = async ({
       permissions: {
         some: {
           permission: {
-            name: Permissions.IS_ADMIN,
+            name: ALLOWED_PERMISSIONS.IS_ADMIN,
           },
         },
       },

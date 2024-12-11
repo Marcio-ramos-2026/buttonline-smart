@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar-admin";
+import { SessionProvider } from "next-auth/react";
 
 export default async function LayoutAdmin({
   children,
@@ -8,7 +9,7 @@ export default async function LayoutAdmin({
   children: ReactNode;
 }) {
   return (
-    <>
+    <SessionProvider>
       {/*@ts-ignore */}
       <SidebarProvider style={{ "--sidebar-width-icon": "64px" }}>
         <AppSidebar />
@@ -18,6 +19,6 @@ export default async function LayoutAdmin({
           <div className="p-6 flex-1">{children}</div>
         </SidebarInset>
       </SidebarProvider>
-    </>
+    </SessionProvider>
   );
 }

@@ -1,8 +1,10 @@
 'use client'
 
+import { Permission, tablePermission } from "@/components/permission";
 import { DateFormatter, DateRelativeFormatter } from "@/components/table/date";
 import { Table } from "@/components/ui/table";
 import { useTableAction } from "@/hooks/useTableActions";
+import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 import type { User } from '@prisma/client'
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit } from 'lucide-react'
@@ -54,16 +56,17 @@ export const UsersList = ({data,page,totalUsers,limit}: {data: User[],page: numb
         },
         {
           accessorKey: "edit",
-          header: "",
+          header: "testa",
           enableSorting: false,
           cell: () => {
-            return <Edit />
+            return <Permission has={[ALLOWED_PERMISSIONS.ADMIN_USER_EDIT]}><Edit /></Permission>
           }
         },
       ];
     },[t])
 
     const actions = useTableAction({totalItems:totalUsers,pageIndex:page,pageSize:limit})
+    // const a = tablePermission()
 
     return (
         <Table data={data} columns={columns} {...actions} />

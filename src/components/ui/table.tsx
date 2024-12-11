@@ -142,6 +142,11 @@ const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
   const pageRange = Array.from({ length: pageEnd - pageStart + 1 }, (_, i) => pageStart + i)
 
   const table = useReactTable({
+    initialState: {
+      columnVisibility: {
+        createdAt: false,
+      }
+    },
     columns: columnsDef,
     data: dataDef,
     getCoreRowModel: getCoreRowModel(),
@@ -152,6 +157,7 @@ const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
         pageSize: opt.pagination.pageSize,
       },
     },
+    
     onSortingChange: handleSorting,
     onPaginationChange: handlePagination,
   });

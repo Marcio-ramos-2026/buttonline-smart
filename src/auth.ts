@@ -71,6 +71,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return permission.permission.name
         })
 
+        
+
       }
 
       if (account?.provider === "credentials") {
@@ -87,6 +89,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       
       return token
+    },
+    async session({ session, token }) {
+      // Pass the permissions and role into the session object
+      if (token) {
+        session.permissions = token.permissions;
+      }
+      return session;
     },
   },
   jwt: {
