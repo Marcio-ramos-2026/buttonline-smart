@@ -13,9 +13,13 @@ const schema = z.object({
   email: z.string().min(1, { message: "A senha é obrigatória" }),
 });
 
-export type AdminType = z.infer<typeof schema>;
+export type updateUserType = z.infer<typeof schema>;
 
-export async function updateUserAction(data: AdminType) {
+export async function updateUserAction(
+  data: updateUserType,
+  userId: string,
+  roleId: number
+) {
   const validatedFields = schema.safeParse(data);
 
   if (!validatedFields.success) {
@@ -25,13 +29,16 @@ export async function updateUserAction(data: AdminType) {
   }
 
   try {
-    await prisma.user.create({
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
       data: {
         name: data.name,
         email: data.email,
         role: {
           connect: {
-            id: 1, //always register with a admin role
+            id: roleId,
           },
         },
       },
