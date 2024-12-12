@@ -1,4 +1,3 @@
-
 /**
  * A list of all possible permissions
  */

@@ -101,7 +101,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   jwt: {
     encode: async function (params) {
       if (params.token?.credentials) {
-        console.log('its credentials')
         if (!params.token.sub) {
           throw new Error("No user ID found in token")
         }

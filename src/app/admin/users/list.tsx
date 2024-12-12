@@ -1,6 +1,6 @@
 "use client";
 
-import { Permission, tablePermission } from "@/components/permission";
+import { Permission } from "@/components/permission";
 import { DateFormatter, DateRelativeFormatter } from "@/components/table/date";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,7 +40,6 @@ export const UsersList = ({
         accessorKey: "id",
         header: "ID",
         enableSorting: false,
-        permission: ALLOWED_PERMISSIONS.EDITOR_VIEW
       },
       {
         accessorKey: "name",
@@ -83,18 +82,21 @@ export const UsersList = ({
       },
       {
         accessorKey: "edit",
-        header: "asdasda",
+        header: "",
         enableSorting: false,
+        meta: {
+          permissions: [ALLOWED_PERMISSIONS.ADMIN_USER_EDIT]
+        },
         cell: ({ row }) => {
           return (
             
             <Dialog>
               <DialogTrigger asChild>
-                <Button
-                  variant={"link"}
-                  icon={<Edit />}
-                  className="cursor-pointer"
-                />
+                  <Button
+                    variant={"link"}
+                    icon={<Edit />}
+                    className="cursor-pointer"
+                  />
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>

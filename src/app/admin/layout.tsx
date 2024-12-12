@@ -2,14 +2,21 @@ import { ReactNode } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar-admin";
 import { SessionProvider } from "next-auth/react";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 export default async function LayoutAdmin({
   children,
 }: {
   children: ReactNode;
 }) {
+  const session = await auth();
+  if (!session) {
+    redirect(`/login`);
+  }
+  
   return (
-    <SessionProvider>
+    <SessionProvider session={session}>
       {/*@ts-ignore */}
       <SidebarProvider style={{ "--sidebar-width-icon": "64px" }}>
         <AppSidebar />

@@ -3,6 +3,8 @@
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
+import { hasPermission } from "@/lib/permission-server";
 
 const schema = z.object({
   name: z.string().min(1, { message: "O nome de usuário é obrigatório" }),
@@ -16,6 +18,9 @@ export async function updateUserAction(
   userId: string,
   roleId: number
 ) {
+  if(!await hasPermission([ALLOWED_PERMISSIONS.ADMIN_USER_EDIT])) {
+    return {error: "Permissão invalida"}
+  }
   const validatedFields = schema.safeParse(data);
 
   if (!validatedFields.success) {
