@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { UsersList } from "./list";
-import { Permissions } from "@/lib/types";
+import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Copy, UserPlus } from "lucide-react";
@@ -18,6 +18,7 @@ import {
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { ProfileForm } from "./create-admin";
+import { Permission } from "@/components/permission";
 
 const AdminPage = async ({
   searchParams,
@@ -38,7 +39,7 @@ const AdminPage = async ({
       permissions: {
         some: {
           permission: {
-            name: Permissions.IS_ADMIN,
+            name: ALLOWED_PERMISSIONS.IS_ADMIN,
           },
         },
       },
@@ -72,9 +73,11 @@ const AdminPage = async ({
         <div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button icon={<UserPlus />} className="cursor-pointer">
-                Novo administrador
-              </Button>
+              <Permission has={[ALLOWED_PERMISSIONS.ADMIN_USER_EDIT]}>
+                <Button icon={<UserPlus />} className="cursor-pointer">
+                  Novo administrador
+                </Button>
+              </Permission>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>

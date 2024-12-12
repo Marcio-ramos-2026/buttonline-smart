@@ -1,5 +1,6 @@
 "use client";
 
+import { Permission, tablePermission } from "@/components/permission";
 import { DateFormatter, DateRelativeFormatter } from "@/components/table/date";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +13,8 @@ import {
 } from "@/components/ui/dialog";
 import { Table } from "@/components/ui/table";
 import { useTableAction } from "@/hooks/useTableActions";
-import type { User } from "@prisma/client";
+import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
+import type { User } from '@prisma/client'
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -38,6 +40,7 @@ export const UsersList = ({
         accessorKey: "id",
         header: "ID",
         enableSorting: false,
+        permission: ALLOWED_PERMISSIONS.EDITOR_VIEW
       },
       {
         accessorKey: "name",
@@ -80,10 +83,11 @@ export const UsersList = ({
       },
       {
         accessorKey: "edit",
-        header: "",
+        header: "asdasda",
         enableSorting: false,
         cell: ({ row }) => {
           return (
+            
             <Dialog>
               <DialogTrigger asChild>
                 <Button
@@ -107,6 +111,7 @@ export const UsersList = ({
                 />
               </DialogContent>
             </Dialog>
+            
           );
         },
       },
