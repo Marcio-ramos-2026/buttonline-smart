@@ -1,12 +1,8 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { z } from "zod";
-import { isRedirectError } from "next/dist/client/components/redirect";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import bcrypt from "bcrypt";
-import { randomBytes } from "crypto";
 
 const schema = z.object({
   name: z.string().min(1, { message: "O nome de usuário é obrigatório" }),
