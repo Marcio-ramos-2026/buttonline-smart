@@ -13,6 +13,24 @@
     "results": "resultados"
   },
   "pages": {
+    "generalApiReturns": {
+      "user": {
+        "emailInUse": "Este correo electrónico ya está en uso.",
+        "createdSuccess": "Usuario creado con éxito.",
+        "createdError": "Error al crear usuario, por favor contacte al soporte.",
+        "updatedSuccess": "Usuario actualizado con éxito.",
+        "updatedError": "Error al actualizar el usuario, por favor contacte al soporte."
+      }
+    },
+    "generalZodErrors": {
+      "valid": {
+        "email": "Por favor, ingrese un correo electrónico válido."
+      },
+      "required": {
+        "email": "El correo electrónico es obligatorio.",
+        "name": "El nombre es obligatorio."
+      }
+    },
     "navUserSection": {
       "label": "Usuario",
       "perfil": "Perfil",
@@ -42,6 +60,13 @@
           "labelName": "Nombre del Usuario:",
           "labelEmail": "Correo Electrónico del Usuario:",
           "submit": "Crear"
+        },
+        "modalUpdateUser": {
+          "title": "Editar Usuario",
+          "subTitle": "Cambiará la información de este usuario.",
+          "labelName": "Nombre del Usuario:",
+          "labelEmail": "Correo Electrónico del Usuario:",
+          "submit": "Actualizar"
         }
       }
     },

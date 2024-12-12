@@ -13,15 +13,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { updateUserAction, updateUserType } from "@/app/actions/updateUser";
-
-const schema = z.object({
-  name: z.string().min(1, { message: "O nome de usuário é obrigatório" }),
-  email: z
-    .string()
-    .email({ message: "Por favor, insira um email válido." })
-    .min(1, { message: "A senha é obrigatória" }),
-});
+import { updateUserAction } from "@/app/actions/updateUser";
+import { useTranslations } from "next-intl";
+import { updateUserSchema, UpdateUserType } from "@/lib/zod-schemas";
 
 export function EditForm({
   name,
@@ -34,6 +28,11 @@ export function EditForm({
   userId: string;
   roleId: number;
 }) {
+  const t = useTranslations("pages.admin.users.modalUpdateUser");
+  const tForm = useTranslations("pages.generalZodErrors");
+
+  const schema = updateUserSchema(tForm);
+
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -44,11 +43,11 @@ export function EditForm({
 
   const { formState, setError } = form;
 
-  const onSubmit = async (data: updateUserType) => {
+  const onSubmit = async (data: UpdateUserType) => {
     const result = await updateUserAction(data, userId, roleId);
     if (result.zod_errors) {
       Object.entries(result.zod_errors).forEach(([field, value]) => {
-        setError(field as keyof updateUserType, {
+        setError(field as keyof UpdateUserType, {
           type: "manual",
           message: value[0] ?? value,
         });
@@ -70,7 +69,7 @@ export function EditForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nome do usuario:</FormLabel>
+              <FormLabel>{t("labelName")}</FormLabel>
               <FormControl>
                 <Input {...field} disabled={formState.isSubmitting} />
               </FormControl>
@@ -83,7 +82,7 @@ export function EditForm({
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email do usuário:</FormLabel>
+              <FormLabel>{t("labelEmail")}</FormLabel>
               <FormControl>
                 <Input {...field} disabled={formState.isSubmitting} />
               </FormControl>
@@ -98,7 +97,7 @@ export function EditForm({
             disabled={formState.isSubmitting}
             type="submit"
           >
-            Criar
+            {t("submit")}
           </Button>
         </div>
 
@@ -116,7 +115,6 @@ export function EditForm({
             >
               <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
             </svg>
-            <span className="sr-only">Info</span>
             <div>{formState.errors.root?.global.message}</div>
           </div>
         )}

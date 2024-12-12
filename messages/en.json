@@ -13,6 +13,24 @@
     "results": "results"
   },
   "pages": {
+    "generalApiReturns": {
+      "user": {
+        "emailInUse": "This email is already in use.",
+        "createdSuccess": "User created successfully.",
+        "createdError": "Error creating user, please contact support.",
+        "updatedSuccess": "User updated successfully.",
+        "updatedError": "Error updating user, please contact support."
+      }
+    },
+    "generalZodErrors": {
+      "valid": {
+        "email": "Please enter a valid email."
+      },
+      "required": {
+        "email": "Email is required.",
+        "name": "Name is required."
+      }
+    },
     "navUserSection": {
       "label": "User",
       "perfil": "Profile",
@@ -42,6 +60,13 @@
           "labelName": "User Name:",
           "labelEmail": "User Email:",
           "submit": "Create"
+        },
+        "modalUpdateUser": {
+          "title": "Edit User",
+          "subTitle": "You will change this user's information.",
+          "labelName": "User Name:",
+          "labelEmail": "User Email:",
+          "submit": "Update"
         }
       }
     },

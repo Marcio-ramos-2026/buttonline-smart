@@ -72,18 +72,20 @@ const AdminPage = async ({
         </div>
         <div>
           <Dialog>
-            <Permission has={[ALLOWED_PERMISSIONS.ADMIN_USER_EDIT]}>
+            <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN]}>
               <DialogTrigger asChild>
-                  <Button icon={<UserPlus />} className="cursor-pointer">
-                    Novo administrador
-                  </Button>
+                <Button icon={<UserPlus />} className="cursor-pointer">
+                  {t("modalCreateAdmin.button")}
+                </Button>
               </DialogTrigger>
             </Permission>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle>Criar um Administrador</DialogTitle>
+                <DialogTitle>{t("modalCreateAdmin.title")}</DialogTitle>
                 <DialogDescription>
-                  Este usuário possuira todos os direitos de um administrador.
+                  <DialogDescription>
+                    {t("modalCreateAdmin.subTitle")}
+                  </DialogDescription>
                 </DialogDescription>
               </DialogHeader>
               <div>

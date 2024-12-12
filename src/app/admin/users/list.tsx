@@ -14,7 +14,7 @@ import {
 import { Table } from "@/components/ui/table";
 import { useTableAction } from "@/hooks/useTableActions";
 import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
-import type { User } from '@prisma/client'
+import type { User } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -85,24 +85,23 @@ export const UsersList = ({
         header: "",
         enableSorting: false,
         meta: {
-          permissions: [ALLOWED_PERMISSIONS.ADMIN_USER_EDIT]
+          permissions: [ALLOWED_PERMISSIONS.IS_ADMIN]
         },
         cell: ({ row }) => {
           return (
-            
             <Dialog>
               <DialogTrigger asChild>
-                  <Button
-                    variant={"link"}
-                    icon={<Edit />}
-                    className="cursor-pointer"
-                  />
+                <Button
+                  variant={"link"}
+                  icon={<Edit />}
+                  className="cursor-pointer"
+                />
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Criar um Administrador</DialogTitle>
+                  <DialogTitle>{t("modalUpdateUser.title")}</DialogTitle>
                   <DialogDescription>
-                    Este usuário possuira todos os direitos de um administrador.
+                    {t("modalUpdateUser.subTitle")}
                   </DialogDescription>
                 </DialogHeader>
                 <EditForm
@@ -113,7 +112,6 @@ export const UsersList = ({
                 />
               </DialogContent>
             </Dialog>
-            
           );
         },
       },
