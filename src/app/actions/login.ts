@@ -1,26 +1,18 @@
 "use server";
 
 import { signIn } from "@/auth";
-import bcrypt from 'bcrypt'
-import { z } from "zod";
+import bcrypt from "bcrypt";
 import { isRedirectError } from "next/dist/client/components/redirect";
+import { SignInType, signInSchema } from "@/lib/zod-schemas";
+import { getTranslations } from "next-intl/server";
 
-const schema = z.object({
-  email: z
-    .string({ message: "Email obrigatório." })
-    .email({ message: "Email inválido." }),
-  password: z.string().trim().min(1, { message: "Senha é obrigatória." }),
-});
-
-export async function loginAction(prevState: any, formData: FormData) {  
-  const rawFormData = {
-    email: formData.get("email"),
-    password: formData.get("password"),
-  };
+export async function loginAction(data: SignInType) {
+  const tForm = await getTranslations("pages.generalZodErrors");
+  const schema = signInSchema(tForm);
 
   const validatedFields = schema.safeParse({
-    email: rawFormData.email,
-    password: rawFormData.password,
+    email: data.email,
+    password: data.password,
   });
 
   if (!validatedFields.success) {
@@ -32,8 +24,8 @@ export async function loginAction(prevState: any, formData: FormData) {
   try {
     await signIn("credentials", {
       redirect: false,
-      email: formData.get("email"),
-      password: formData.get("password"),
+      email: data.email,
+      password: data.password,
     });
     // redirect("/");
   } catch (e) {
