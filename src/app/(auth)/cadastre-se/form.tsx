@@ -23,6 +23,11 @@ export type UserType = z.infer<typeof formSchema>;
 export const RegisterForm = () => {
     
     const form = useForm<z.infer<typeof formSchema>>({
+      defaultValues: {
+        email: '',
+        name: '',
+        password: ''
+      },
       resolver: zodResolver(formSchema),
     });
 

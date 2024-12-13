@@ -28,7 +28,7 @@ export default function LanguageSelector() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="flex items-center gap-2">
-          <ArrowDown className="h-4 w-4" />
+          {/* <ArrowDown className="h-4 w-4" /> */}
           <Image
                 src={`/flags/${selectedLanguage?.flag}`}
                 alt={t(selectedLanguage?.locale)}

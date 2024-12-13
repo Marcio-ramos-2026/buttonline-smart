@@ -15,8 +15,8 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar-admin"
-import { NavUser } from "./nav-user"
-import { TriggerSidebar } from "./adminSideBar/triggerSideBar"
+import { NavUser } from "../nav-user"
+import { TriggerSidebar } from "./triggerSideBar"
 
 // This is sample data.
 const data = {
