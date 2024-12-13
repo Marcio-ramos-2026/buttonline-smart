@@ -13,6 +13,32 @@
     "results": "results"
   },
   "pages": {
+    "signIn": {
+      "title": "Access Buttonline",
+      "createAcc": {
+        "question": "Don't have an account?",
+        "link": "Sign up"
+      },
+      "forgetPassword": "Forgot password",
+      "form": {
+        "labelEmail": "Email:",
+        "labelPassword": "Password:",
+        "submit": "Sign In"
+      }
+    },
+    "signUp": {
+      "title": "Create your account",
+      "alreadyRegistered": {
+        "question": "Already have an account?",
+        "link": "Log In"
+      },
+      "form": {
+        "labelName": "Name:",
+        "labelEmail": "Email:",
+        "labelPassword": "Password:",
+        "submit": "Register"
+      }
+    },
     "generalApiReturns": {
       "user": {
         "emailInUse": "This email is already in use.",
@@ -28,7 +54,8 @@
       },
       "required": {
         "email": "Email is required.",
-        "name": "Name is required."
+        "name": "Name is required.",
+        "password": "Password is required."
       }
     },
     "navUserSection": {

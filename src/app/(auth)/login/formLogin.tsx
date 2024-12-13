@@ -1,67 +1,110 @@
 "use client";
 
-import { useFormState } from "react-dom";
-import { useFormStatus } from "react-dom";
 import { loginAction } from "@/app/actions/login";
 import { Input } from "@/components/ui/input";
-import { Mail } from "lucide-react";
 import { InputPassword } from "@/components/ui/inputPassword";
 import { Button } from "@/components/ui/button";
+import { signInSchema, SignInType } from "@/lib/zod-schemas";
+import { useTranslations } from "next-intl";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { z } from "zod";
 import { Alert } from "@/components/alert";
 
-const initialState = {
-  message: "",
-};
-
 export const FormLogin = () => {
-  //@ts-ignore
-  const [state, formAction] = useFormState(loginAction, initialState);
-  const { pending } = useFormStatus();
+  const t = useTranslations("pages.signIn");
+  const tForm = useTranslations("pages.generalZodErrors");
+  const formSchema = signInSchema(tForm);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  });
+
+  const { formState, setError } = form;
+
+  const onSubmit = async (data: SignInType) => {
+    const result = await loginAction(data);
+
+    // if (result.zod_errors) {
+    //   Object.entries(result.zod_errors).forEach(([field, value]) => {
+    //     setError(field as keyof SignInType, {
+    //       type: "manual",
+    //       message: value[0] ?? value,
+    //     });
+    //   });
+    // }
+
+    // if (result.error) {
+    //   setError("root.global", {
+    //     type: "manual",
+    //     message: result.error,
+    //   });
+    // }
+
+    // result.message - SUCESSO
+
+    console.log("result", result);
+  };
 
   // console.log("state login", state);
 
   return (
-    <form action={formAction} className="space-y-6">
-      <div>
-        <div className="mt-2">
-          <Input
-            name="email"
-            autoComplete="email"
-            label="Email"
-            icon={<Mail />}
-          />
-        </div>
-        {state?.errors?.email && (
-          <p className="text-red-400 font-semibold pl-3">
-            {state?.errors?.email?.[0]}
-          </p>
-        )}
-      </div>
-
-      <div>
-        <div className="mt-2">
-          <InputPassword label="Senha" name="password" />
-          {state?.errors?.password && (
-            <p className="text-red-400 font-semibold pl-3">
-              {state?.errors?.password?.[0]}
-            </p>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("form.labelEmail")}</FormLabel>
+              <FormControl>
+                <Input {...field} disabled={formState.isSubmitting} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
-        </div>
-      </div>
+        />
 
-      <div className="space-y-3">
-        <Button full type="submit">
-          Entrar
-        </Button>
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("form.labelPassword")}</FormLabel>
+              <FormControl>
+                <InputPassword {...field} disabled={formState.isSubmitting} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-        {state.error && (
+        {formState.errors.root?.global.message && (
           <Alert
             variant="danger"
-            content={state.error as string}
+            content={formState.errors.root?.global.message as string}
             title="Falha ao entrar"
           />
         )}
-      </div>
-    </form>
+
+        <Button
+          full
+          className="mt-4"
+          loading={formState.isSubmitting}
+          disabled={formState.isSubmitting}
+          type="submit"
+        >
+          {t("form.submit")}
+        </Button>
+      </form>
+    </Form>
   );
 };

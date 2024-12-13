@@ -1,8 +1,11 @@
 import Image from "next/image";
 import { FormLogin } from "./formLogin";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export default function LoginPage() {
+  const t = useTranslations("pages.signIn");
+
   return (
     <main className="w-full h-screen flex flex-col items-center justify-center bg-gray-50 sm:px-4">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
@@ -16,16 +19,16 @@ export default function LoginPage() {
           />
           <div className="mt-5 space-y-2">
             <h3 className="text-gray-800 text-2xl font-bold sm:text-3xl">
-              Acessar o buttonline
+              {t("title")}
             </h3>
             <p className="">
-              Não tem uma conta?{" "}
-              <a
-                href="javascript:void(0)"
+              {t("createAcc.question")}{" "}
+              <Link
+                href="/cadastre-se"
                 className="font-medium text-primary hover:text-primary-dark underline"
               >
-                Criar uma
-              </a>
+                {t("createAcc.link")}
+              </Link>
             </p>
           </div>
         </div>
@@ -34,7 +37,7 @@ export default function LoginPage() {
         </div>
         <div className="flex justify-end">
           <Link href={"/recuperarSenha"} className="text-primary">
-            Esqueci a senha
+            {t("forgetPassword")}
           </Link>
         </div>
       </div>

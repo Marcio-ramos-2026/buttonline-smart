@@ -13,6 +13,32 @@
     "results": "resultados"
   },
   "pages": {
+    "signIn": {
+      "title": "Acceder a Buttonline",
+      "createAcc": {
+        "question": "¿No tienes una cuenta?",
+        "link": "Regístrate"
+      },
+      "forgetPassword": "Olvidé mi contraseña",
+      "form": {
+        "labelEmail": "Correo Electrónico:",
+        "labelPassword": "Contraseña:",
+        "submit": "Iniciar Sesión"
+      }
+    },
+    "signUp": {
+      "title": "Crea tu cuenta",
+      "alreadyRegistered": {
+        "question": "¿Ya tienes una cuenta?",
+        "link": "Inicia sesión"
+      },
+      "form": {
+        "labelName": "Nombre:",
+        "labelEmail": "Correo Electrónico:",
+        "labelPassword": "Contraseña:",
+        "submit": "Registrarse"
+      }
+    },
     "generalApiReturns": {
       "user": {
         "emailInUse": "Este correo electrónico ya está en uso.",
@@ -28,7 +54,8 @@
       },
       "required": {
         "email": "El correo electrónico es obligatorio.",
-        "name": "El nombre es obligatorio."
+        "name": "El nombre es obligatorio.",
+        "password": "La contraseña es obligatoria."
       }
     },
     "navUserSection": {
