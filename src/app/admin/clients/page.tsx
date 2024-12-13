@@ -1,5 +1,5 @@
 export default function ClientsPage() {
   return (
-    <div>Clientes</div>
+    <div className="p-6">Clientes</div>
   );
 }

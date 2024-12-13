@@ -59,7 +59,7 @@ const AdminPage = async ({
   const t = await getTranslations("pages.admin.users");
 
   return (
-    <div>
+    <div className="p-6">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1

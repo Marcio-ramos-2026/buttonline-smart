@@ -78,9 +78,8 @@ export function ProfileForm() {
             </FormItem>
           )}
         />
-        <div className="w-full">
+        <div className="flex justify-end">
           <Button
-            className="ml-auto block"
             loading={formState.isSubmitting}
             disabled={formState.isSubmitting}
             type="submit"
