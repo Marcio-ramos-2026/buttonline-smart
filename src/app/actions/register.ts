@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
@@ -48,11 +47,11 @@ export async function registerAction(data: SignUpType) {
       });
     }
 
-    redirect("/")
-    // return {
-    //   message: "Usurário criado com sucesso",
-    //   success: true,
-    // };
+    return {
+      message: "Usurário criado com sucesso",
+      redirectUrl: '/',
+      success: true,
+    };
   } catch (e) {
     console.log("Error register action", e);
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -69,7 +68,6 @@ export async function registerAction(data: SignUpType) {
           };
       }
     }
-
     return {
       error: "Erro ao criar usuário, por favor contate o suporte",
     };

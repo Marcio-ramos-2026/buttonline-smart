@@ -13,16 +13,20 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { InputPassword } from "@/components/ui/inputPassword";
+import { useToast } from "@/hooks/use-toast";
 import { signUpSchema, SignUpType } from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 
 export const RegisterForm = () => {
   const t = useTranslations("pages.signUp");
   const tForm = useTranslations("pages.generalZodErrors");
   const formSchema = signUpSchema(tForm);
+  const { toast } = useToast()
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
@@ -53,9 +57,17 @@ export const RegisterForm = () => {
       });
     }
 
+    if (result.success) {
+      toast({
+        title: 'Sucesso',
+        description: result.message
+      })
+      router.push(result.redirectUrl)
+    }
+
     // result.message - SUCESSO
 
-    console.log("result", result);
+    // console.log("resultttttttttt", result);
   };
 
   return (
