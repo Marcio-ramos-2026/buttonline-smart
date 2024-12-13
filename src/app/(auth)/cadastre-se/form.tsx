@@ -1,82 +1,118 @@
 "use client";
 
-import { registerAction } from "@/app/actions/register";
+import { registerAction } from "@/app/actions/register"
 import { Alert } from "@/components/alert";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { InputPassword } from "@/components/ui/inputPassword";
-import { useFormState, useFormStatus } from "react-dom";
+import { Button } from "@/components/ui/button"
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { InputPassword } from "@/components/ui/inputPassword"
+import { zodResolver } from "@hookform/resolvers/zod"
+// import { useRef } from "react"
+// import { useFormState, useFormStatus } from "react-dom"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
-const initialState = {
-  message: "",
-};
+const formSchema = z.object({
+  name: z.string().min(1, { message: "O nome de usuário é obrigatório" }),
+  email: z.string().min(1, { message: "O email é obrigatório" }),
+  password: z.string().min(1, { message: "A senha é obrigatória" }),
+});
+
+export type UserType = z.infer<typeof formSchema>;
 
 export const RegisterForm = () => {
-  //@ts-ignore
-  const [state, formAction] = useFormState(registerAction, initialState);
+    
+    const form = useForm<z.infer<typeof formSchema>>({
+      resolver: zodResolver(formSchema),
+    });
 
-  // console.log("state", state);
+    const {formState, setError} = form
 
-  return (
-    <form action={formAction} className="space-y-2">
-      <div>
-        <label
-          htmlFor="name"
-          className="block text-sm/6 font-medium text-gray-900"
-        >
-          Nome
-        </label>
-        <div className="mt-1">
-          <Input name="name" type="text" required />
-        </div>
-      </div>
+    const onSubmit = async (data: UserType) => {
 
-      <div>
-        <label
-          htmlFor="email"
-          className="block text-sm/6 font-medium text-gray-900"
-        >
-          Email
-        </label>
-        <div className="mt-1">
-          <Input name="email" type="email" required autoComplete="email" />
-        </div>
-      </div>
+      const result = await registerAction(data)
+      if(result.zod_errors){
+        Object.entries(result.zod_errors).forEach(([field,value]) => {
+          setError(field as keyof UserType,{
+            type: 'manual',
+            message: value[0] ?? value
+          })
+        })
+      }
 
-      <div>
-        <label
-          htmlFor="password"
-          className="block text-sm/6 font-medium text-gray-900"
-        >
-          Senha
-        </label>
-        <div className="mt-1">
-          <InputPassword name="password" required />
-        </div>
-      </div>
+      if(result.error) {
+        setError("root.global",{
+          type: 'manual',
+          message: result.error
+        })
+      }
 
-      {state.error && (
-        <Alert variant="danger" content={state.error as string} title='Falha ao cadastrar-se' />
-      )}
+      // result.message - SUCESSO
 
-      <div>
-        <SubmitButton />
-      </div>
-    </form>
-  );
-};
+      console.log('result',result)
+    }
 
-const SubmitButton = () => {
-  const { pending } = useFormStatus();
-  return (
-    <Button
-      full
-      className="mt-4"
-      loading={pending}
-      disabled={pending}
-      type="submit"
-    >
-      Cadastrar
-    </Button>
-  );
-};
+  
+
+    return (
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nome:</FormLabel>
+                <FormControl>
+                  <Input {...field}  disabled={formState.isLoading} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+         <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email:</FormLabel>
+                <FormControl>
+                  <Input {...field} disabled={formState.isLoading} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+        <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Senha:</FormLabel>
+                <FormControl>
+                  <InputPassword {...field} disabled={formState.isLoading} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+            {formState.errors.root?.global.message &&
+              //   <div className="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
+              //   <svg className="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+              //     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+              //   </svg>
+              //   <span className="sr-only">Info</span>
+              //   <div>
+              //     <span className="font-medium">Danger alert!</span> {formState.errors.root?.global.message}
+              //   </div>
+              // </div>
+              <Alert variant="danger" content={formState.errors.root?.global.message as string} title='Falha ao cadastrar-se' />
+            }
+          <Button full className='mt-4' loading={formState.isLoading} disabled={formState.isLoading} type="submit">Cadastrar</Button>
+
+        </form>
+      </Form>
+    )
+}

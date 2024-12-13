@@ -5,6 +5,8 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import bcrypt from 'bcrypt'
+import { renderClientWelcome } from "@/emails/clients/welcome";
+import { mailTransport } from "@/lib/email";
 
 const schema = z.object({
   name: z.string({required_error: 'Name required'}),  
@@ -14,28 +16,24 @@ const schema = z.object({
   password: z.string().trim().min(1, { message: "Senha é obrigatória." }),
 });
 
-export async function registerAction(prevState: any, formData: FormData) {  
-  const rawFormData = {
-    name: formData.get('name') as string,
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-  };
+export type UserType = z.infer<typeof schema>;
 
+export async function registerAction(data: UserType) {  
 
-  const validatedFields = schema.safeParse(rawFormData);
+  const validatedFields = schema.safeParse(data);
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      zod_errors: validatedFields.error.flatten().fieldErrors,
     };
   }
 
   try {
-    const pass = await bcrypt.hash(rawFormData.password,10)
+    const pass = await bcrypt.hash(data.password,10)
     await prisma.user.create({
       data: {
-        name: rawFormData.name,
-        email:  rawFormData.email,
+        name: data.name,
+        email:  data.email,
         password: pass,
         role: {
           connect: {
@@ -44,17 +42,32 @@ export async function registerAction(prevState: any, formData: FormData) {
         }
       }
     })
+
+    const htmlEmail = await renderClientWelcome({locale:"pt-BR"})
+    const transport = await mailTransport()
+    if(transport){
+      await transport.sendMail({
+        from: process.env.EMAIL_SENDER,
+        to: data.email,
+        subject: "preview test",
+        html: htmlEmail
+      })
+    }
+     
     redirect("/")
     // return {
-    //   message: "Usurário criado com sucesso"
+    //   message: "Usurário criado com sucesso",
+    //   success:true
     // }
+    
   }catch(e){
     console.log('Error register action',e)
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
         switch(e.code){
           case 'P2002':
             if (e.meta && e.meta?.target === 'users_email_key') {
-              return {error:'Este e-mail já está em uso.'};
+              return {error: 'Este e-mail já está em uso.'}
+              // return {zod_errors:{email: 'Este e-mail já está em uso.'}};
             }
           break; 
           default:
