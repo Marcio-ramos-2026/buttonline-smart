@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { Permissions } from '@/lib/types';
+import { ALLOWED_PERMISSIONS } from '@/lib/permissions';
 import bcrypt from 'bcrypt'
 
 function getDefaultRoles() {
@@ -13,7 +13,7 @@ async function main() {
     const permissionsData = [];
 
     // SYSTEM PERMISSIONS
-    for (const permission of Object.keys(Permissions)) {
+    for (const permission of Object.keys(ALLOWED_PERMISSIONS)) {
         const result = await prisma.permission.upsert({
             where: { name: permission },
             update: {},

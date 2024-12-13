@@ -1,14 +1,101 @@
 {
-  "language":{
-    "pt-BR":"Portuguese",
-    "en":"English",
-    "es":"Spanish"
+  "language": {
+    "pt-BR": "Portuguese",
+    "en": "English",
+    "es-ES": "Spanish"
   },
-  "pagination":{
+  "pagination": {
     "next": "Next",
     "previous": "Previous"
   },
-    "test": {
-      "title": "Hello world!"
+  "table": {
+    "showing": "Showing",
+    "results": "results"
+  },
+  "pages": {
+    "generalApiReturns": {
+      "user": {
+        "emailInUse": "This email is already in use.",
+        "createdSuccess": "User created successfully.",
+        "createdError": "Error creating user, please contact support.",
+        "updatedSuccess": "User updated successfully.",
+        "updatedError": "Error updating user, please contact support."
+      }
+    },
+    "generalZodErrors": {
+      "valid": {
+        "email": "Please enter a valid email."
+      },
+      "required": {
+        "email": "Email is required.",
+        "name": "Name is required."
+      }
+    },
+    "navUserSection": {
+      "label": "User",
+      "perfil": "Profile",
+      "notifications": "Notifications",
+      "logOut": "Log Out"
+    },
+    "admin": {
+      "sideBar": {
+        "tabs": {
+          "users": "Users",
+          "clients": "Clients"
+        }
+      },
+      "users": {
+        "title": "Admin Users",
+        "description": "A short text about the admin screen",
+        "columns": {
+          "name": "Name",
+          "email": "Email",
+          "lastAccess": "Last Access",
+          "createdAt": "Created At"
+        },
+        "modalCreateAdmin": {
+          "button": "New Admin",
+          "title": "Create an Admin",
+          "subTitle": "This user will have all the rights of an administrator.",
+          "labelName": "User Name:",
+          "labelEmail": "User Email:",
+          "submit": "Create"
+        },
+        "modalUpdateUser": {
+          "title": "Edit User",
+          "subTitle": "You will change this user's information.",
+          "labelName": "User Name:",
+          "labelEmail": "User Email:",
+          "submit": "Update"
+        }
+      }
+    },
+    "editor": {
+      "sideBar": {
+        "tabs": {
+          "file": { "label": "My Files" },
+          "image": {
+            "label": "Images",
+            "load": "Click to load image",
+            "drag": "or drag and drop"
+          },
+          "text": { "label": "Text" },
+          "icon": { "label": "Icons" },
+          "shape": { "label": "Shapes" }
+        }
+      },
+      "editableBar": {
+        "strokeColor": "Border Color",
+        "bgColor": "Background Color",
+        "opacity": "Opacity",
+        "layer": {
+          "layer": "Layer",
+          "up": "Up",
+          "down": "Down",
+          "back": "Back",
+          "forward": "Forward"
+        }
+      }
     }
   }
+}

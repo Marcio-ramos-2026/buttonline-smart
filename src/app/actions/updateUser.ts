@@ -2,19 +2,23 @@
 
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import bcrypt from "bcrypt";
-import { randomBytes } from "crypto";
-import { createAdminSchema, CreateAdminType } from "@/lib/zod-schemas";
+import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
+import { hasPermission } from "@/lib/permission-server";
 import { getTranslations } from "next-intl/server";
+import { updateUserSchema, UpdateUserType } from "@/lib/zod-schemas";
 
-function generateTempPassword(length: number = 8): string {
-  return randomBytes(length).toString("base64").slice(0, length); // Gera uma string base64 e corta no tamanho desejado
-}
+export async function updateUserAction(
+  data: UpdateUserType,
+  userId: string,
+  roleId: number
+) {
+  if (!(await hasPermission([ALLOWED_PERMISSIONS.ADMIN_USER_EDIT]))) {
+    return { error: "Permissão invalida" };
+  }
 
-export async function createAdminAction(data: CreateAdminType) {
   const t = await getTranslations("pages.generalApiReturns");
   const tForm = await getTranslations("pages.generalZodErrors");
-  const schema = createAdminSchema(tForm);
+  const schema = updateUserSchema(tForm);
 
   const validatedFields = schema.safeParse(data);
 
@@ -25,23 +29,22 @@ export async function createAdminAction(data: CreateAdminType) {
   }
 
   try {
-    const tempPassword = generateTempPassword();
-    const pass = await bcrypt.hash(tempPassword, 10);
-
-    await prisma.user.create({
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
       data: {
         name: data.name,
         email: data.email,
-        password: pass,
         role: {
           connect: {
-            id: 1, //always register with a admin role
+            id: roleId,
           },
         },
       },
     });
     return {
-      message: t("user.createdSuccess"),
+      message: t("user.updatedSuccess"),
     };
   } catch (e) {
     console.log("Error register action", e);
@@ -60,7 +63,7 @@ export async function createAdminAction(data: CreateAdminType) {
     }
 
     return {
-      error: t("user.createdError"),
+      error: t("user.updatedError"),
     };
   }
 }

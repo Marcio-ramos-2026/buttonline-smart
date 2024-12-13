@@ -1,46 +1,58 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { createAdminAction } from "@/app/actions/admin/create-admin";
+import { updateUserAction } from "@/app/actions/updateUser";
 import { useTranslations } from "next-intl";
-import { CreateAdminType, createAdminSchema } from "@/lib/zod-schemas";
+import { updateUserSchema, UpdateUserType } from "@/lib/zod-schemas";
 
-export function ProfileForm() {
-  const t = useTranslations("pages.admin.users.modalCreateAdmin");
+export function EditForm({
+  name,
+  email,
+  userId,
+  roleId,
+}: {
+  name: string;
+  email: string;
+  userId: string;
+  roleId: number;
+}) {
+  const t = useTranslations("pages.admin.users.modalUpdateUser");
   const tForm = useTranslations("pages.generalZodErrors");
 
-  const schema = createAdminSchema(tForm);
+  const schema = updateUserSchema(tForm);
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      name: name,
+      email: email,
+    },
   });
 
   const { formState, setError } = form;
 
-  const onSubmit = async (data: CreateAdminType) => {
-    const result = await createAdminAction(data);
+  const onSubmit = async (data: UpdateUserType) => {
+    const result = await updateUserAction(data, userId, roleId);
     if (result.zod_errors) {
       Object.entries(result.zod_errors).forEach(([field, value]) => {
-        setError(field as keyof CreateAdminType, {
+        setError(field as keyof UpdateUserType, {
           type: "manual",
           message: value[0] ?? value,
         });
       });
     }
-
     if (result.error) {
       setError("root.global", {
         type: "manual",

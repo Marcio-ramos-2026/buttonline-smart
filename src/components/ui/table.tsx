@@ -6,6 +6,8 @@ import { ColumnDef, flexRender, functionalUpdate, getCoreRowModel, PaginationSta
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react"
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationEllipsis, PaginationNext } from "./pagination"
 import { useTranslations } from "next-intl"
+import { useSession } from "next-auth/react"
+import { ALLOWED_PERMISSIONS } from "@/lib/permissions"
 
 const TableElement = React.forwardRef<
   HTMLTableElement,
@@ -117,13 +119,36 @@ export interface TableOptions<T> extends TableActionsType {
 }
 
 const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
+  const { data: session } = useSession(); // Get session from NextAuth hook
+
+  
   const dataDef = React.useMemo(() => {
     return opt.data;
   }, [opt.data]);
 
   const columnsDef = React.useMemo(() => {
-    return opt.columns;
-  }, [opt.columns]);
+    let hiddenColumns: { [key: string]: boolean } = {};;
+    if(session?.user){
+      hiddenColumns = opt.columns.filter((column)=>{
+        if(column.meta?.permissions) {
+            const permissions = session?.permissions.find((p) => column.meta?.permissions?.includes(p as ALLOWED_PERMISSIONS))
+            if(permissions) {
+              return false
+            }else{
+              return true
+            }
+        }
+        return false
+      }).reduce((acc, column) => {
+        const accessorKey = (column as any).accessorKey as string
+        if (accessorKey) {
+          acc[accessorKey] = false;
+        }
+        return acc;
+      }, {} as { [key: string]: boolean });
+    }
+    return {columns:opt.columns,hiddenColumns};
+  }, [opt.columns,session]);
 
   const handleSorting = React.useCallback((updater: Updater<SortingState>) => {
     const sorted = functionalUpdate(updater, opt.sorting);
@@ -140,9 +165,11 @@ const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
   const pageStart = Math.max(opt.pagination.pageIndex - 2, 0)
   const pageEnd = Math.min(pageStart + 4, totalPages - 1)
   const pageRange = Array.from({ length: pageEnd - pageStart + 1 }, (_, i) => pageStart + i)
-
   const table = useReactTable({
-    columns: columnsDef,
+    initialState: {
+      columnVisibility: columnsDef.hiddenColumns
+    },
+    columns: columnsDef.columns,
     data: dataDef,
     getCoreRowModel: getCoreRowModel(),
     state: {
@@ -152,6 +179,7 @@ const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
         pageSize: opt.pagination.pageSize,
       },
     },
+    
     onSortingChange: handleSorting,
     onPaginationChange: handlePagination,
   });

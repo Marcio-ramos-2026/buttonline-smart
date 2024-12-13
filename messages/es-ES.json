@@ -1,0 +1,101 @@
+{
+  "language": {
+    "pt-BR": "Portugués",
+    "en": "Inglés",
+    "es-ES": "Español"
+  },
+  "pagination": {
+    "next": "Siguiente",
+    "previous": "Anterior"
+  },
+  "table": {
+    "showing": "Mostrando",
+    "results": "resultados"
+  },
+  "pages": {
+    "generalApiReturns": {
+      "user": {
+        "emailInUse": "Este correo electrónico ya está en uso.",
+        "createdSuccess": "Usuario creado con éxito.",
+        "createdError": "Error al crear usuario, por favor contacte al soporte.",
+        "updatedSuccess": "Usuario actualizado con éxito.",
+        "updatedError": "Error al actualizar el usuario, por favor contacte al soporte."
+      }
+    },
+    "generalZodErrors": {
+      "valid": {
+        "email": "Por favor, ingrese un correo electrónico válido."
+      },
+      "required": {
+        "email": "El correo electrónico es obligatorio.",
+        "name": "El nombre es obligatorio."
+      }
+    },
+    "navUserSection": {
+      "label": "Usuario",
+      "perfil": "Perfil",
+      "notifications": "Notificaciones",
+      "logOut": "Cerrar Sesión"
+    },
+    "admin": {
+      "sideBar": {
+        "tabs": {
+          "users": "Usuarios",
+          "clients": "Clientes"
+        }
+      },
+      "users": {
+        "title": "Usuarios Administradores",
+        "description": "Un breve texto sobre la pantalla de administradores",
+        "columns": {
+          "name": "Nombre",
+          "email": "Correo Electrónico",
+          "lastAccess": "Último Acceso",
+          "createdAt": "Creado el"
+        },
+        "modalCreateAdmin": {
+          "button": "Nuevo Administrador",
+          "title": "Crear un Administrador",
+          "subTitle": "Este usuario tendrá todos los derechos de un administrador.",
+          "labelName": "Nombre del Usuario:",
+          "labelEmail": "Correo Electrónico del Usuario:",
+          "submit": "Crear"
+        },
+        "modalUpdateUser": {
+          "title": "Editar Usuario",
+          "subTitle": "Cambiará la información de este usuario.",
+          "labelName": "Nombre del Usuario:",
+          "labelEmail": "Correo Electrónico del Usuario:",
+          "submit": "Actualizar"
+        }
+      }
+    },
+    "editor": {
+      "sideBar": {
+        "tabs": {
+          "file": { "label": "Mis Archivos" },
+          "image": {
+            "label": "Imágenes",
+            "load": "Haga clic para cargar imagen",
+            "drag": "o arrastre y suelte"
+          },
+          "text": { "label": "Texto" },
+          "icon": { "label": "Íconos" },
+          "shape": { "label": "Formas" }
+        }
+      },
+      "editableBar": {
+        "strokeColor": "Color del Borde",
+        "bgColor": "Color de Fondo",
+        "opacity": "Opacidad",
+        "layer": {
+          "layer": "Capa",
+          "up": "Arriba",
+          "down": "Abajo",
+          "back": "Hacia Atrás",
+          "forward": "Hacia Adelante"
+        }
+      }
+    }
+  }
+}

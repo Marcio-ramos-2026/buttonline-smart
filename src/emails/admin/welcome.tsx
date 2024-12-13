@@ -81,7 +81,7 @@ const messages: EmailMessageLang = {
     "en": {
       "welcome": "Welcome to our platform"
     },
-    "en-ES": {
+    "es-ES": {
       "welcome": "Bienvenido a nuestra plataforma"
     }
 }
