@@ -26,7 +26,6 @@ import LanguageSelector from "@/components/language-selector";
 import { AddImage } from "@/components/editor/images/addImage";
 import { TabShapes } from "@/components/editor/shapes";
 
-
 export default function Page() {
   const t = useTranslations("pages.editor.sideBar");
 
@@ -39,37 +38,36 @@ export default function Page() {
       {
         id: "1",
         icon: Folder,
-        title: t('tabs.file.label'),
+        title: t("tabs.file.label"),
         content: Teste,
         active: true,
       },
       {
         id: "2",
         icon: ImageIcon,
-        title: t('tabs.image.label'),
+        title: t("tabs.image.label"),
         content: AddImage,
       },
       {
         id: "3",
         icon: Baseline,
-        title:t('tabs.text.label'),
+        title: t("tabs.text.label"),
         content: AddText,
       },
       {
         id: "4",
         icon: SquareDashed,
-        title: t('tabs.icon.label'),
+        title: t("tabs.icon.label"),
         content: TabIcons,
       },
       {
         id: "5",
         icon: Pentagon,
-        title: t('tabs.shape.label'),
+        title: t("tabs.shape.label"),
         content: TabShapes,
       },
     ],
   };
-  
 
   return (
     <FabricContextProvider>

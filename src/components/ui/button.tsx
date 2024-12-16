@@ -9,11 +9,15 @@ const buttonVariants = cva(
     variants: {
       color: {
         primary:
-          "bg-primary text-primary-foreground hover:bg-primary/90 ring-primary border-primary",
+          "bg-primary text-textForefround hover:bg-primary/90 ring-primary border-primary",
         danger:
-          "bg-danger text-danger-foreground hover:bg-danger/90 border-danger",
+          "bg-danger text-textForefround hover:bg-danger/90 border-danger",
+        success:
+          "bg-success text-textForefround hover:bg-success/90 border-success",
+        warning:
+          "bg-warning text-textForefround hover:bg-warning/90 border-warning",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary-light border-secondary",
+          "bg-secondary text-textForefround hover:bg-secondary/90 border-secondary",
       },
       variant: {
         solid: "border-0",
@@ -31,28 +35,38 @@ const buttonVariants = cva(
         true: "cursor-not-allowed opacity-50",
       },
       full: {
-        true: 'w-full'
+        true: "w-full",
       },
       iconPlacement: {
-        start: 'flex-row-reverse',
-        end: 'flex-row'
-      }
+        start: "flex-row-reverse",
+        end: "flex-row",
+      },
     },
     compoundVariants: [
       {
         color: "primary",
         variant: ["outline", "dashed"],
-        className: "text-primary hover:text-primary-foreground",
+        className: "text-primary hover:text-textForefround",
       },
       {
         color: "secondary",
         variant: ["outline", "dashed"],
-        className: "text-secondary hover:text-secondary-foreground",
+        className: "text-secondary hover:text-textForefround",
       },
       {
         color: "danger",
         variant: ["outline", "dashed"],
-        className: "text-danger hover:text-danger-foreground",
+        className: "text-danger hover:text-textForefround",
+      },
+      {
+        color: "success",
+        variant: ["outline", "dashed"],
+        className: "text-success hover:text-textForefround",
+      },
+      {
+        color: "warning",
+        variant: ["outline", "dashed"],
+        className: "text-warning hover:text-textForefround",
       },
       {
         color: "primary",
@@ -60,10 +74,25 @@ const buttonVariants = cva(
         className: "text-primary border-0",
       },
       {
+        color: "secondary",
+        variant: "link",
+        className: "text-secondary border-0",
+      },
+      {
         color: "danger",
         variant: "link",
         className: "text-danger border-0",
-      }
+      },
+      {
+        color: "success",
+        variant: "link",
+        className: "text-success border-0",
+      },
+      {
+        color: "warning",
+        variant: "link",
+        className: "text-warning border-0",
+      },
     ],
     defaultVariants: {
       color: "primary",
@@ -71,27 +100,24 @@ const buttonVariants = cva(
       size: "default",
       disabled: false,
       full: false,
-      iconPlacement: 'start'
+      iconPlacement: "start",
     },
   }
 );
 
 //IF U CHANGE ICON SIZE MUST CHANGE SIZE ABOVE
-const iconVariant = cva(
-  "border-0",
-  {
-    variants: {
-      size: {
-        default: "h-4 w-4 lg:h-5 lg:w-5",
-        sm: "h-3 w-3 lg:h-4 lg:w-4",
-        lg: "h-5 w-5 lg:h-6 lg:w-6"
-      }
+const iconVariant = cva("border-0", {
+  variants: {
+    size: {
+      default: "h-4 w-4 lg:h-5 lg:w-5",
+      sm: "h-3 w-3 lg:h-4 lg:w-4",
+      lg: "h-5 w-5 lg:h-6 lg:w-6",
     },
-    defaultVariants: {
-      size: 'default'
-    }
-  }
-)
+  },
+  defaultVariants: {
+    size: "default",
+  },
+});
 
 type ButtonHTMLUiAttributes = Omit<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -104,7 +130,7 @@ export interface ButtonProps
   asChild?: boolean;
   icon?: React.ReactElement;
   loading?: boolean;
-  iconPlacement?: 'start' | 'end';
+  iconPlacement?: "start" | "end";
 }
 
 const LoadingIcon = () => (
@@ -130,12 +156,12 @@ const LoadingIcon = () => (
       ></path>
     </svg>
   </div>
-)
+);
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
-      className = '',
+      className = "",
       color,
       variant,
       size,
@@ -145,34 +171,53 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       icon,
       full,
       iconPlacement,
-      type = 'button',
+      type = "button",
       ...props
     },
     ref
   ) => {
     if (loading) {
-      disabled = true
-      icon = <LoadingIcon/>
+      disabled = true;
+      icon = <LoadingIcon />;
     }
     const Comp = asChild ? Slot : "button";
 
     if (icon) {
-      const clonedIcon = React.cloneElement(icon, { key: 'buttonIcon', className: iconVariant({ size }) })
+      const clonedIcon = React.cloneElement(icon, {
+        key: "buttonIcon",
+        className: iconVariant({ size }),
+      });
       const childrenArray = React.Children.toArray(props.children);
       const childrenWithIcon = [...childrenArray, clonedIcon];
-      props.children = childrenWithIcon
+      props.children = childrenWithIcon;
     }
 
-    if (asChild && icon && React.Children.toArray(props.children).length === 2) {
+    if (
+      asChild &&
+      icon &&
+      React.Children.toArray(props.children).length === 2
+    ) {
       const childrenArray = React.Children.toArray(props.children);
       //@ts-ignore
-      props.children = React.createElement(childrenArray[0]?.type, {}, [childrenArray[0].props.children, childrenArray[1]])
+      props.children = React.createElement(childrenArray[0]?.type, {}, [
+        //@ts-ignore
+        childrenArray[0].props.children,
+        childrenArray[1],
+      ]);
     }
-    
+
     return (
       <Comp
         className={cn(
-          buttonVariants({ color, variant, size, className, disabled, full, iconPlacement })
+          buttonVariants({
+            color,
+            variant,
+            size,
+            className,
+            disabled,
+            full,
+            iconPlacement,
+          })
         )}
         ref={ref}
         type={type}
