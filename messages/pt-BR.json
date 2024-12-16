@@ -40,6 +40,8 @@
       }
     },
     "generalApiReturns": {
+      "permissionDenied": "Permissão negada",
+      "missingId": "O ID é obrigatório",
       "user": {
         "emailInUse": "Este e-mail já está em uso.",
         "createdSuccess": "Usurário criado com sucesso",
@@ -94,6 +96,13 @@
           "labelName": "Nome do usuario:",
           "labelEmail": "Email do usuário:",
           "submit": "Atualizar"
+        },
+        "modalDeleteUser": {
+          "title":"Arquivar usuário {name}?",
+          "description":"O usuáro não será excluido, mas sim arquivado.",
+          "cancel":"Cancelar",
+          "confirm":"Sim, Desejo Arquivar",
+          "arquiving": "Arquivando..."
         }
       }
     },

@@ -9,14 +9,14 @@ import { updateUserSchema, UpdateUserType } from "@/lib/zod-schemas";
 
 export async function updateUserAction(
   data: UpdateUserType,
-  userId: string,
+  userId: number,
   roleId: number
 ) {
+  const t = await getTranslations("pages.generalApiReturns");
   if (!(await hasPermission([ALLOWED_PERMISSIONS.ADMIN_USER_EDIT]))) {
-    return { error: "Permissão invalida" };
+    return { error: t("permissionDenied") };
   }
 
-  const t = await getTranslations("pages.generalApiReturns");
   const tForm = await getTranslations("pages.generalZodErrors");
   const schema = updateUserSchema(tForm);
 

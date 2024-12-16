@@ -57,13 +57,13 @@ async function main() {
 
     await prisma.user.upsert({
         where: {
-            id: 'cm3z1i66f000008ldeyof858q'
+            id: 1
         },
         update: {
             password: admin_pass
         },
         create: {
-            id: 'cm3z1i66f000008ldeyof858q',
+            id: 1,
             email: "cardenas@cardenas.com.br",
             roleId: 1, //admin,
             emailVerified: new Date(),

@@ -1,6 +1,5 @@
 "use client";
 
-import { Permission } from "@/components/permission";
 import { DateFormatter, DateRelativeFormatter } from "@/components/table/date";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,10 +15,12 @@ import { useTableAction } from "@/hooks/useTableActions";
 import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 import type { User } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit } from "lucide-react";
+import { Edit,Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { EditForm } from "./updateUserForm";
+import { AlertDialog, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTrigger,AlertDialogAction, AlertDialogCancel, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { deleteAdminAction } from "@/app/actions/admin/delete-admin";
 
 export const UsersList = ({
   data,
@@ -85,9 +86,12 @@ export const UsersList = ({
         header: "",
         enableSorting: false,
         meta: {
-          permissions: [ALLOWED_PERMISSIONS.IS_ADMIN]
+          permissions: [ALLOWED_PERMISSIONS.ADMIN_USER_EDIT]
         },
+        size: 20,
         cell: ({ row }) => {
+          if(row.original.email === "cardenas@cardenas.com.br") return null;
+
           return (
             <Dialog>
               <DialogTrigger asChild>
@@ -107,11 +111,62 @@ export const UsersList = ({
                 <EditForm
                   name={row.original.name as string}
                   email={row.original.email as string}
-                  userId={row.original.id as string}
+                  userId={row.original.id}
                   roleId={row.original.roleId as number}
                 />
               </DialogContent>
             </Dialog>
+          );
+        },
+      },
+      {
+        accessorKey: "delete",
+        header: "",
+        enableSorting: false,
+        meta: {
+          permissions: [ALLOWED_PERMISSIONS.IS_ADMIN]
+        },
+        size: 20,
+        cell: ({ row }) => {
+          const [pending, setPending] = useState(false)
+          if(row.original.email === "cardenas@cardenas.com.br") return null;
+
+          return (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant={"link"}
+                  icon={<Trash2 />}
+                  className="cursor-pointer"
+                />
+              </AlertDialogTrigger>
+              <AlertDialogContent onEscapeKeyDown={(e)=>pending ? e.preventDefault() : null}>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{t("modalDeleteUser.title",{name: row.original.name})}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                  {t("modalDeleteUser.description")}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel asChild className={`${pending ? 'hidden' : ''}`}>
+                    <Button>{t("modalDeleteUser.cancel")}</Button>
+                  </AlertDialogCancel>
+                  <AlertDialogAction onClick={(e)=>{
+                    e.preventDefault()
+                    setPending(true)
+
+                    deleteAdminAction(row.original.id).then((s)=>{
+                      console.log('sUCESS',s)
+                    }).catch((e)=>{
+                      console.log('ERRO',e)
+                    }).finally(()=>setPending(false))
+                  }}
+                  asChild>
+                    <Button loading={pending}>{pending ? t('modalDeleteUser.arquiving') :t("modalDeleteUser.confirm")}</Button>
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           );
         },
       },

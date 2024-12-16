@@ -118,7 +118,7 @@ export interface TableOptions<T> extends TableActionsType {
   isLoading?: boolean;
 }
 
-const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
+const Table = <T extends { }>(opt: TableOptions<T>) => {
   const { data: session } = useSession(); // Get session from NextAuth hook
 
   
@@ -208,6 +208,7 @@ const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
                             ? "cursor-pointer"
                             : "cursor-default"
                         }`}
+                        style={{width:header.getSize()}}
                         onClick={header.column.getToggleSortingHandler()}
                       >
                         <div className="flex gap-1 items-center justify-center">
@@ -251,6 +252,7 @@ const Table = <T extends { id: string }>(opt: TableOptions<T>) => {
                         return (
                           <TableCell
                             key={cell.id}
+                            width={cell.column.getSize()}
                             className="text-center text-nowrap"
                           >
                             {flexRender(

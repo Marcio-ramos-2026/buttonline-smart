@@ -11,7 +11,7 @@ declare module "next-auth" {
     permissions: [string]
     user: {
       roleId: number
-      id?: string
+      id: number
       name?: string | null
       email?: string | null
       image?: string | nulltring
@@ -22,6 +22,7 @@ declare module "next-auth" {
   
 
   interface User {
+    id: number
     roleId: number
     password?: string
   }
