@@ -37,6 +37,10 @@ export async function recoverPassword(data: RecoverPasswordType) {
         html: htmlEmail,
       });
     }
+    return {
+      message: `Uma mensagem foi enviada para o email: ${user.email}, abra a mensagem e acesse o link para recuperar sua senha.`,
+      success: true
+    }
   } catch (e) {
     console.log('ERROR RECOVER PASSWORD ACTION', e)
     return {

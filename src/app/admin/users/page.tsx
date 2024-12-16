@@ -2,23 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { UsersList } from "./list";
 import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 import { getTranslations } from "next-intl/server";
-import { Button } from "@/components/ui/button";
-import { Copy, UserPlus } from "lucide-react";
-import {
-  DialogHeader,
-  DialogFooter,
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-  DialogClose,
-} from "@/components/ui/dialog";
-
-import { Label } from "@radix-ui/react-dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { ProfileForm } from "./create-admin";
-import { Permission } from "@/components/permission";
 
 const AdminPage = async ({
   searchParams,
@@ -71,28 +55,7 @@ const AdminPage = async ({
           <p className="mt-2 text-sm text-gray-500">{t("description")}</p>
         </div>
         <div>
-          <Dialog>
-            <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN]}>
-              <DialogTrigger asChild>
-                <Button icon={<UserPlus />} className="cursor-pointer">
-                  {t("modalCreateAdmin.button")}
-                </Button>
-              </DialogTrigger>
-            </Permission>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>{t("modalCreateAdmin.title")}</DialogTitle>
-                <DialogDescription>
-                  <DialogDescription>
-                    {t("modalCreateAdmin.subTitle")}
-                  </DialogDescription>
-                </DialogDescription>
-              </DialogHeader>
-              <div>
-                <ProfileForm />
-              </div>
-            </DialogContent>
-          </Dialog>
+          <ProfileForm />
         </div>
       </div>
       <UsersList

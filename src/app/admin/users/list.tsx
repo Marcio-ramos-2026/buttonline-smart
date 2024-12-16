@@ -14,13 +14,24 @@ import { Table } from "@/components/ui/table";
 import { useTableAction } from "@/hooks/useTableActions";
 import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 import type { User } from "@prisma/client";
-import { ColumnDef } from "@tanstack/react-table";
-import { Edit,Trash2 } from "lucide-react";
+import { ColumnDef, Row } from "@tanstack/react-table";
+import { Edit, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { EditForm } from "./updateUserForm";
-import { AlertDialog, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTrigger,AlertDialogAction, AlertDialogCancel, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTrigger,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { deleteAdminAction } from "@/app/actions/admin/delete-admin";
+import { toast } from "@/hooks/use-toast";
 
 export const UsersList = ({
   data,
@@ -86,11 +97,11 @@ export const UsersList = ({
         header: "",
         enableSorting: false,
         meta: {
-          permissions: [ALLOWED_PERMISSIONS.ADMIN_USER_EDIT]
+          permissions: [ALLOWED_PERMISSIONS.ADMIN_USER_EDIT],
         },
         size: 20,
         cell: ({ row }) => {
-          if(row.original.email === "cardenas@cardenas.com.br") return null;
+          if (row.original.email === "cardenas@cardenas.com.br") return null;
 
           return (
             <Dialog>
@@ -124,51 +135,10 @@ export const UsersList = ({
         header: "",
         enableSorting: false,
         meta: {
-          permissions: [ALLOWED_PERMISSIONS.IS_ADMIN]
+          permissions: [ALLOWED_PERMISSIONS.IS_ADMIN],
         },
         size: 20,
-        cell: ({ row }) => {
-          const [pending, setPending] = useState(false)
-          if(row.original.email === "cardenas@cardenas.com.br") return null;
-
-          return (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant={"link"}
-                  icon={<Trash2 />}
-                  className="cursor-pointer"
-                />
-              </AlertDialogTrigger>
-              <AlertDialogContent onEscapeKeyDown={(e)=>pending ? e.preventDefault() : null}>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{t("modalDeleteUser.title",{name: row.original.name})}</AlertDialogTitle>
-                  <AlertDialogDescription>
-                  {t("modalDeleteUser.description")}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel asChild className={`${pending ? 'hidden' : ''}`}>
-                    <Button>{t("modalDeleteUser.cancel")}</Button>
-                  </AlertDialogCancel>
-                  <AlertDialogAction onClick={(e)=>{
-                    e.preventDefault()
-                    setPending(true)
-
-                    deleteAdminAction(row.original.id).then((s)=>{
-                      console.log('sUCESS',s)
-                    }).catch((e)=>{
-                      console.log('ERRO',e)
-                    }).finally(()=>setPending(false))
-                  }}
-                  asChild>
-                    <Button loading={pending}>{pending ? t('modalDeleteUser.arquiving') :t("modalDeleteUser.confirm")}</Button>
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          );
-        },
+        cell: DeleteUser
       },
     ];
   }, [t]);
@@ -181,3 +151,89 @@ export const UsersList = ({
 
   return <Table data={data} columns={columns} {...actions} />;
 };
+
+type DeleteUserProsp = {
+  row: Row<{
+    email: string | null;
+    id: number;
+    image: string | null;
+    name: string | null;
+    emailVerified: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
+    lastAccess: Date | null;
+    deletedAt: Date | null;
+    roleId: number;
+    password: string | null;
+}>
+}
+
+
+const DeleteUser = ({ row }: DeleteUserProsp) => {
+  const [pending, setPending] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const t = useTranslations("pages.admin.users");
+  if (row.original.email === "cardenas@cardenas.com.br") return null;
+
+  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setPending(true);
+
+    deleteAdminAction(row.original.id)
+      .then((s) => {
+        console.log("sUCESS", s);
+        toast({
+          title: 'Sucesso',
+          description: s.message
+        })
+        setOpenDialog(false)
+      })
+      .catch((e) => {
+        console.log("ERRO", e);
+      })
+      .finally(() => setPending(false));
+  };
+
+  return (
+    <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant={"link"}
+          icon={<Trash2 />}
+          className="cursor-pointer"
+          onClick={() => setOpenDialog(true)}
+        />
+      </AlertDialogTrigger>
+      <AlertDialogContent
+        onEscapeKeyDown={(e) => (pending ? e.preventDefault() : null)}
+      >
+        <AlertDialogHeader>
+          <AlertDialogTitle>
+            {t("modalDeleteUser.title", { name: row.original.name })}
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            {t("modalDeleteUser.description")}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel
+            asChild
+            className={`${pending ? "hidden" : ""}`}
+          >
+            <Button>{t("modalDeleteUser.cancel")}</Button>
+          </AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleDelete}
+            asChild
+          >
+            <Button loading={pending}>
+              {pending
+                ? t("modalDeleteUser.arquiving")
+                : t("modalDeleteUser.confirm")}
+            </Button>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}

@@ -33,25 +33,21 @@ export const FormLogin = () => {
   const onSubmit = async (data: SignInType) => {
     const result = await loginAction(data);
 
-    // if (result.zod_errors) {
-    //   Object.entries(result.zod_errors).forEach(([field, value]) => {
-    //     setError(field as keyof SignInType, {
-    //       type: "manual",
-    //       message: value[0] ?? value,
-    //     });
-    //   });
-    // }
+    if (result?.zod_errors) {
+      Object.entries(result.zod_errors).forEach(([field, value]) => {
+        setError(field as keyof SignInType, {
+          type: "manual",
+          message: value[0] ?? value,
+        });
+      });
+    }
 
-    // if (result.error) {
-    //   setError("root.global", {
-    //     type: "manual",
-    //     message: result.error,
-    //   });
-    // }
-
-    // result.message - SUCESSO
-
-    console.log("result", result);
+    if (result?.error) {
+      setError("root.global", {
+        type: "manual",
+        message: result.error,
+      });
+    }
   };
 
   // console.log("state login", state);

@@ -16,6 +16,7 @@ import { InputPassword } from "@/components/ui/inputPassword";
 import { changePasswordSchema, ChangePasswordType } from "@/lib/zod-schemas";
 import { changePassword } from "@/app/actions/changePassword";
 import { useSearchParams } from 'next/navigation'
+import { toast } from "@/hooks/use-toast";
 
 export const ChangePasswordForm = () => {
     const formSchema = changePasswordSchema()
@@ -32,8 +33,9 @@ export const ChangePasswordForm = () => {
   const userId = searchParams.get('user_id')
   
   const onSubmit = async (data: ChangePasswordType) => {
-    const result = await changePassword(data, userId as string);
-    if (result.zod_errors) {
+    const result = await changePassword(data, Number(userId));
+    console.log('RESULTTTTTTTTTTTT', result)
+    if (result?.zod_errors) {
       Object.entries(result.zod_errors).forEach(([field, value]) => {
         setError(field as keyof ChangePasswordType, {
           type: "manual",
@@ -44,12 +46,19 @@ export const ChangePasswordForm = () => {
 
     //TODO arrumar tipo
     //@ts-ignore
-    if (result.error) {
+    if (result?.error) {
       setError("root.global", {
         type: "manual",
         //@ts-ignore
         message: result.error,
       });
+    }
+
+    if (result?.success) {
+      toast({
+        title: 'Sucesso',
+        description: result.message
+      })
     }
   };
   return (

@@ -19,7 +19,7 @@ export async function loginAction(data: SignInType) {
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      zod_errors: validatedFields.error.flatten().fieldErrors,
     };
   }
 

@@ -56,7 +56,7 @@ const messages: EmailMessageLang = {
 };
 
 const defaultUser: User = {
-  id: "testeId",
+  id: 1,
   email: "teste@teste.com",
   name: "Teste da silva",
   createdAt: new Date(),
@@ -77,7 +77,7 @@ const RecoverPassword = ({
   return (
     <Html>
       <Head />
-      <Preview>Netlify</Preview>
+      <Preview>Buttonline</Preview>
       <Tailwind
         config={{
           theme: {
@@ -98,7 +98,7 @@ const RecoverPassword = ({
         <Body className="bg-offwhite text-base font-sans">
           <Img
             src={`/static/logo-inverse.png`}
-            alt="Netlify"
+            alt="buttonline logo"
             className="mx-auto my-20"
           />
           <Container className="bg-white p-45">

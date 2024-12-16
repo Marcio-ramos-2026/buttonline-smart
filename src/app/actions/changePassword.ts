@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 
 export async function changePassword(
   data: ChangePasswordType,
-  user_id: string
+  user_id: number
 ) {
   if (!user_id)
     return {
@@ -42,6 +42,11 @@ export async function changePassword(
         password: password,
       },
     });
+
+    return {
+      message: 'Senha trocada com sucesso!',
+      success: true
+    }
   } catch (e) {
     console.log("CHANGE PASSWORD ERROR", e);
     return {

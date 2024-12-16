@@ -17,6 +17,7 @@ import { recoverPassword } from "@/app/actions/recoverPassword";
 import { Mail } from "lucide-react";
 import { recoverPasswordSchema, RecoverPasswordType } from "@/lib/zod-schemas";
 import { Alert } from "@/components/alert";
+import { toast } from "@/hooks/use-toast";
 
 export const RecoverPasswordForm = () => {
   const formSchema = recoverPasswordSchema();
@@ -30,7 +31,7 @@ export const RecoverPasswordForm = () => {
 
   const onSubmit = async (data: RecoverPasswordType) => {
     const result = await recoverPassword(data);
-    if (result.zod_errors) {
+    if (result?.zod_errors) {
       Object.entries(result.zod_errors).forEach(([field, value]) => {
         setError(field as keyof RecoverPasswordType, {
           type: "manual",
@@ -41,12 +42,19 @@ export const RecoverPasswordForm = () => {
 
     //TODO arrumar tipo
     //@ts-ignore
-    if (result.error) {
+    if (result?.error) {
       setError("root.global", {
         type: "manual",
         //@ts-ignore
         message: result.error,
       });
+    }
+
+    if (result?.success) {
+      toast({
+        title: 'Sucesso',
+        description: result.message
+      })
     }
   };
   return (
