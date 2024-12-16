@@ -12,6 +12,14 @@ export const createAdminSchema = (t: any) => {
 
 export type CreateAdminType = z.infer<ReturnType<typeof createAdminSchema>>;
 
+export const deleteAdminSchema = (t: any) => {
+  return z.object({
+    user_id: z.number().min(1, { message: t("required.name") })
+  });
+};
+
+export type DeleteAdminType = z.infer<ReturnType<typeof deleteAdminSchema>>;
+
 ////////////////////////////////////////
 
 export const updateUserSchema = (t: any) => {

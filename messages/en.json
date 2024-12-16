@@ -94,6 +94,12 @@
           "labelName": "User Name:",
           "labelEmail": "User Email:",
           "submit": "Update"
+        },
+        "modalDeleteUser": {
+          "title":"Arquivar usuário {name}?",
+          "description":"O usuáro não será excluido, mas sim arquivado.",
+          "cancel":"Cancelar",
+          "confirm":"Sim, Desejo Arquivar"
         }
       }
     },

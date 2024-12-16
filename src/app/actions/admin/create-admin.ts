@@ -6,6 +6,8 @@ import bcrypt from "bcrypt";
 import { randomBytes } from "crypto";
 import { createAdminSchema, CreateAdminType } from "@/lib/zod-schemas";
 import { getTranslations } from "next-intl/server";
+import { hasPermission } from "@/lib/permission-server";
+import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 
 function generateTempPassword(length: number = 8): string {
   return randomBytes(length).toString("base64").slice(0, length); // Gera uma string base64 e corta no tamanho desejado
@@ -13,6 +15,11 @@ function generateTempPassword(length: number = 8): string {
 
 export async function createAdminAction(data: CreateAdminType) {
   const t = await getTranslations("pages.generalApiReturns");
+
+  if (!(await hasPermission([ALLOWED_PERMISSIONS.ADMIN_USER_CREATE]))) {
+    return { error: t("permissionDenied") };
+  }
+
   const tForm = await getTranslations("pages.generalZodErrors");
   const schema = createAdminSchema(tForm);
 

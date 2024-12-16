@@ -25,7 +25,7 @@ export function EditForm({
 }: {
   name: string;
   email: string;
-  userId: string;
+  userId: number;
   roleId: number;
 }) {
   const t = useTranslations("pages.admin.users.modalUpdateUser");

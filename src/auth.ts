@@ -6,6 +6,7 @@ import type { Adapter } from 'next-auth/adapters';
 import bcrypt from 'bcrypt'
 import { randomUUID } from "crypto";
 import { encode } from "next-auth/jwt";
+import type {User as UserType} from '@prisma/client'
 
 const adapter = PrismaAdapter(prisma) as Adapter
 
@@ -21,7 +22,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: {type:'string'},
       },
       authorize: async (credentials) => {
-        let user;
+        let user: UserType | null;
 
         try {
           user = await prisma.user.findFirst({
@@ -53,7 +54,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const isSamePassword = await bcrypt.compare(credentials.password as string,user.password as string)
         if(!isSamePassword) throw new Error("Usuário ou senha inválidos.");
 
-        return user as User;
+        return user as unknown as User;
       },
     }),
   ],
@@ -81,7 +82,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const sessionToken = randomUUID();
         const createdSession = await adapter?.createSession?.({
           sessionToken: sessionToken,
-          userId: token.id as string,
+          //@ts-ignore
+          userId: Number(token.id),
           expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
         })
 
