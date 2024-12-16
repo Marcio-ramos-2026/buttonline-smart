@@ -12,7 +12,7 @@ export async function deleteAdminAction(id: number) {
   const t = await getTranslations("pages.generalApiReturns");
 
   if(id < 1) return {
-    message: t("missingId")
+    error: t("missingId")
   }
 
   if (!(await hasPermission([ALLOWED_PERMISSIONS.ADMIN_USER_DELETE]))) {

@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { deleteAdminAction } from "@/app/actions/admin/delete-admin";
 import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 export const UsersList = ({
   data,
@@ -138,7 +139,7 @@ export const UsersList = ({
           permissions: [ALLOWED_PERMISSIONS.IS_ADMIN],
         },
         size: 20,
-        cell: DeleteUser
+        cell: DeleteUser,
       },
     ];
   }, [t]);
@@ -165,13 +166,13 @@ type DeleteUserProsp = {
     deletedAt: Date | null;
     roleId: number;
     password: string | null;
-}>
-}
-
+  }>;
+};
 
 const DeleteUser = ({ row }: DeleteUserProsp) => {
   const [pending, setPending] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const router = useRouter();
   const t = useTranslations("pages.admin.users");
   if (row.original.email === "cardenas@cardenas.com.br") return null;
 
@@ -180,16 +181,29 @@ const DeleteUser = ({ row }: DeleteUserProsp) => {
     setPending(true);
 
     deleteAdminAction(row.original.id)
-      .then((s) => {
-        console.log("sUCESS", s);
+      .then((response) => {
+        if (response.message) {
+          toast({
+            variant: "default",
+            title: "Usuário arquivado com sucesso!",
+            description: response.message,
+          });
+          router.refresh();
+          return;
+        }
+
         toast({
-          title: 'Sucesso',
-          description: s.message
-        })
-        setOpenDialog(false)
+          variant: "destructive",
+          title: "Houve algum erro",
+          description: response.error,
+        });
       })
       .catch((e) => {
-        console.log("ERRO", e);
+        toast({
+          variant: "destructive",
+          title: "Houve algum erro",
+          description: e.message,
+        });
       })
       .finally(() => setPending(false));
   };
@@ -216,16 +230,10 @@ const DeleteUser = ({ row }: DeleteUserProsp) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel
-            asChild
-            className={`${pending ? "hidden" : ""}`}
-          >
+          <AlertDialogCancel asChild className={`${pending ? "hidden" : ""}`}>
             <Button>{t("modalDeleteUser.cancel")}</Button>
           </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={handleDelete}
-            asChild
-          >
+          <AlertDialogAction onClick={handleDelete} asChild>
             <Button loading={pending}>
               {pending
                 ? t("modalDeleteUser.arquiving")
@@ -236,4 +244,4 @@ const DeleteUser = ({ row }: DeleteUserProsp) => {
       </AlertDialogContent>
     </AlertDialog>
   );
-}
+};
