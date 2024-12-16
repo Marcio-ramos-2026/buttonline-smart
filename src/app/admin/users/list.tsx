@@ -21,6 +21,8 @@ import { useMemo, useState } from "react";
 import { EditForm } from "./updateUserForm";
 import { AlertDialog, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTrigger,AlertDialogAction, AlertDialogCancel, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { deleteAdminAction } from "@/app/actions/admin/delete-admin";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 export const UsersList = ({
   data,
@@ -128,6 +130,9 @@ export const UsersList = ({
         },
         size: 20,
         cell: ({ row }) => {
+          const router = useRouter();
+
+          const { toast } = useToast()
           const [pending, setPending] = useState(false)
           if(row.original.email === "cardenas@cardenas.com.br") return null;
 
@@ -155,10 +160,28 @@ export const UsersList = ({
                     e.preventDefault()
                     setPending(true)
 
-                    deleteAdminAction(row.original.id).then((s)=>{
-                      console.log('sUCESS',s)
+                    deleteAdminAction(row.original.id).then((response)=>{
+                      if(response.message) {
+                        toast({
+                          variant: "default",
+                          title: "Usuário criado com sucesso",
+                          description: `${row.original.name} agora é um administrador`
+                        }) 
+                        router.refresh()
+                        return
+                      }
+
+                      toast({
+                        variant: "destructive",
+                        title: "Houve algum erro",
+                        description: response.error
+                      })
                     }).catch((e)=>{
-                      console.log('ERRO',e)
+                      toast({
+                        variant: "destructive",
+                        title: "Houve algum erro",
+                        description: e.message
+                      })
                     }).finally(()=>setPending(false))
                   }}
                   asChild>
