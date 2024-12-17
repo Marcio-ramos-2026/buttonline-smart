@@ -7,9 +7,9 @@ import { useSidebar } from "@/components/ui/sidebar";
 export default async function LayoutApp({ children }: { children: ReactNode }) {
   const session = await auth();
 
-  // if (!session) {
-  //   redirect(`/login`);
-  // }
+  if (!session) {
+    redirect(`/login`);
+  }
   return (
     <div>
       <Navbar />
