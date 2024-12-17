@@ -1,3 +1,5 @@
+'use client'
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
@@ -8,6 +10,8 @@ import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, Pagi
 import { useTranslations } from "next-intl"
 import { useSession } from "next-auth/react"
 import { ALLOWED_PERMISSIONS } from "@/lib/permissions"
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useTableSort } from "@/hooks/useTableSorting"
 
 const TableElement = React.forwardRef<
   HTMLTableElement,
@@ -120,7 +124,9 @@ export interface TableOptions<T> extends TableActionsType {
 
 const Table = <T extends { }>(opt: TableOptions<T>) => {
   const { data: session } = useSession(); // Get session from NextAuth hook
-
+  const searchParams = useSearchParams()
+  const router = useRouter();
+  const {sorting, handleSort} = useTableSort()
   
   const dataDef = React.useMemo(() => {
     return opt.data;
@@ -151,8 +157,11 @@ const Table = <T extends { }>(opt: TableOptions<T>) => {
   }, [opt.columns,session]);
 
   const handleSorting = React.useCallback((updater: Updater<SortingState>) => {
+    const params = new URLSearchParams(searchParams);
     const sorted = functionalUpdate(updater, opt.sorting);
-    opt.handleSort(sorted);
+    params.set(sorted[0].id, sorted[0].desc ? 'desc' : 'asc');
+    router.replace(`/admin/users?${params.toString()}`)
+    handleSort(sorted);
   }, []);
 
   const handlePagination = React.useCallback((updater: Updater<PaginationState>) => {
@@ -173,13 +182,12 @@ const Table = <T extends { }>(opt: TableOptions<T>) => {
     data: dataDef,
     getCoreRowModel: getCoreRowModel(),
     state: {
-      sorting: opt.sorting,
+      sorting: sorting,
       pagination: {
         pageIndex: opt.pagination.pageIndex,
         pageSize: opt.pagination.pageSize,
       },
-    },
-    
+    },    
     onSortingChange: handleSorting,
     onPaginationChange: handlePagination,
   });
@@ -200,6 +208,7 @@ const Table = <T extends { }>(opt: TableOptions<T>) => {
               return (
                 <TableRow key={headerGroup.id} className="bg-primary/80 hover:bg-primary/80">
                   {headerGroup.headers.map((header) => {
+                    
                     return (
                       <TableHead
                         key={header.id}
