@@ -88,7 +88,7 @@ export function Editor({model}: EditorType) {
         className="min-h-[calc(100svh-40px)] relative"
       >
         <AppSidebar items={data.navMain} user={data.user} />
-        <SidebarInset className="min-h-[calc(100svh-40px)]">
+        <SidebarInset className="min-h-[calc(100svh-40px)] overflow-hidden">
           <header className="flex shrink-0 items-center gap-2 border-b bg-background p-2 md:p-4 h-14 md:h-auto">
             <SidebarTrigger className="-ml-1 hidden md:flex" />
             <Separator
@@ -106,9 +106,9 @@ export function Editor({model}: EditorType) {
               <LanguageSelector />
             </div>
           </header>
-          <main className="">
+          <section className="w-full h-full">
               <RenderCanvas model={canvas} />
-          </main>
+          </section>
         </SidebarInset>
       </SidebarProvider>
     </FabricContextProvider>

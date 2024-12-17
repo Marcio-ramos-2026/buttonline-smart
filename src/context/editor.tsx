@@ -124,7 +124,7 @@ export default function FabricContextProvider({ children, model }: IEditorProvid
     onResize    
   })
 
-  console.log('containerWidth',containerWidth)
+  //console.log('containerWidth',containerWidth)
 
   useEffect(() => {
     if (!model || !containerHeight || !containerWidth) return;
@@ -148,8 +148,9 @@ export default function FabricContextProvider({ children, model }: IEditorProvid
       })
       setcanvas(canvasInstance);
     }else{
-      // console.log('containerWidth,',containerWidth,containerHeight)
+      //console.log('containerWidth else',containerWidth,containerHeight)
       canvas.setDimensions({width:containerWidth,height:containerHeight})
+      //canvas.renderAll()
       centerAllObjects(canvas)
     }
   }, [model,containerWidth,containerHeight]);
@@ -226,8 +227,8 @@ export const RenderCanvas = ({model}:RenderCanvasType) => {
     },[canvas])
 
     return (
-      <div ref={containerRef} className="bg-gray-100 h-full w-full overflow-hidden">
-          <canvas ref={canvasEl} /> 
+      <div ref={containerRef} className="bg-gray-100 h-full w-full">
+          <canvas  ref={canvasEl} /> 
       </div>
     )
 }
