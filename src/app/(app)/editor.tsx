@@ -27,7 +27,6 @@ import { AddImage } from "@/components/editor/images/addImage";
 import { TabShapes } from "@/components/editor/shapes";
 import type { editor_canvas } from "@prisma/client";
 import { useState } from "react";
-import { LoadingIcon } from "@/components/loading";
 
 
 type EditorType = {
@@ -107,7 +106,7 @@ export function Editor({model}: EditorType) {
               <LanguageSelector />
             </div>
           </header>
-          <main className="h-full">
+          <main className="">
               <RenderCanvas model={canvas} />
           </main>
         </SidebarInset>

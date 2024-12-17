@@ -5,7 +5,7 @@ import { AddImage } from "@/components/editor/images/addImage";
 import { TabShapes } from "@/components/editor/shapes";
 import { AddText } from "@/components/editor/text/addText";
 import { Folder, ImageIcon, Baseline, SquareDashed, Pentagon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
 export default async function Page() {
 
@@ -17,7 +17,7 @@ export default async function Page() {
 
   if(!canvas) return <h1>nao achou nnehum</h1>
 
-  const t = useTranslations("pages.editor.sideBar");
+  const t = await getTranslations("pages.editor.sideBar");
 
   const data = {
     user: {
