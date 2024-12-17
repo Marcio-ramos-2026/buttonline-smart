@@ -9,31 +9,35 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { recoverPassword } from "@/app/actions/recoverPassword";
-import { Mail } from "lucide-react";
-import { recoverPasswordSchema, RecoverPasswordType } from "@/lib/zod-schemas";
-import { Alert } from "@/components/alert";
+import { InputPassword } from "@/components/ui/inputPassword";
+import { changePasswordSchema, ChangePasswordType } from "@/lib/zod-schemas";
+import { changePassword } from "@/app/actions/changePassword";
+import { useSearchParams } from 'next/navigation'
 import { toast } from "@/hooks/use-toast";
 
-export const RecoverPasswordForm = () => {
-  const formSchema = recoverPasswordSchema();
+export const ChangePasswordForm = () => {
+    const formSchema = changePasswordSchema()
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
-        email: ''
+        password: '',
+        confirmPassword: ''
     },
     resolver: zodResolver(formSchema),
   });
-  const { formState, setError } = form;
 
-  const onSubmit = async (data: RecoverPasswordType) => {
-    const result = await recoverPassword(data);
+  const { formState, setError } = form;
+  const searchParams = useSearchParams()
+  const userId = searchParams.get('user_id')
+  
+  const onSubmit = async (data: ChangePasswordType) => {
+    const result = await changePassword(data, Number(userId));
+    console.log('RESULTTTTTTTTTTTT', result)
     if (result?.zod_errors) {
       Object.entries(result.zod_errors).forEach(([field, value]) => {
-        setError(field as keyof RecoverPasswordType, {
+        setError(field as keyof ChangePasswordType, {
           type: "manual",
           message: value[0] ?? value,
         });
@@ -62,16 +66,15 @@ export const RecoverPasswordForm = () => {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
-          name="email"
+          name="password"
           render={({ field }) => {
             return (
               <FormItem>
-                <FormLabel>Email:</FormLabel>
+                <FormLabel>Senha:</FormLabel>
                 <FormControl>
-                  <Input
+                  <InputPassword
                     {...field}
                     disabled={formState.isSubmitting}
-                    icon={<Mail />}
                   />
                 </FormControl>
                 <FormMessage />
@@ -79,9 +82,26 @@ export const RecoverPasswordForm = () => {
             );
           }}
         />
-        {formState.errors.root?.global && <Alert variant='danger' content={formState.errors.root.global.message as string} />}        
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => {
+            return (
+              <FormItem>
+                <FormLabel>Confirmar senha:</FormLabel>
+                <FormControl>
+                  <InputPassword
+                    {...field}
+                    disabled={formState.isSubmitting}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
+        />
         <Button full type="submit">
-          Recuperar senha
+          Trocar senha
         </Button>
       </form>
     </Form>

@@ -1,13 +1,12 @@
-'use server'
+"use server";
 
-import { z } from "zod";
+import { renderRecoverPassword } from "@/emails/recoverPassword/recoverPassword";
+import { mailTransport } from "@/lib/email";
+import { recoverPasswordSchema, RecoverPasswordType } from "@/lib/zod-schemas";
+import { prisma } from "@/lib/prisma";
 
-const schema = z.object({
-  email: z.string().min(1, { message: "O email é obrigatório" }),
-});
-
-export async function recoverPassword(data: { email: string }) {
-  console.log("EMAIL RECOVER PASSWORD", data);
+export async function recoverPassword(data: RecoverPasswordType) {
+  const schema = recoverPasswordSchema();
 
   const validatedFields = schema.safeParse(data);
 
@@ -17,7 +16,39 @@ export async function recoverPassword(data: { email: string }) {
     };
   }
 
-  return {
-    message: ''
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        email: data.email,
+      },
+    });
+
+    if (!user) return {
+      error: 'Email não encontrado.'
+    }
+
+    const htmlEmail = await renderRecoverPassword({ locale: "pt-BR", user: user });
+    const transport = await mailTransport();
+    if (transport) {
+      await transport.sendMail({
+        from: process.env.EMAIL_SENDER,
+        to: user.email as string,
+        subject: "Recuperar senha.",
+        html: htmlEmail,
+      });
+    }
+    return {
+      message: `Uma mensagem foi enviada para o email: ${user.email}, abra a mensagem e acesse o link para recuperar sua senha.`,
+      success: true
+    }
+  } catch (e) {
+    console.log('ERROR RECOVER PASSWORD ACTION', e)
+    return {
+      error: 'Ocorreu um erro, contate o suporte.'
+    }
   }
+
+  return {
+    message: "",
+  };
 }

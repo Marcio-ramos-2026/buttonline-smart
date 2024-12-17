@@ -48,6 +48,7 @@ export async function createAdminAction(data: CreateAdminType) {
       },
     });
     return {
+      success: true,
       message: t("user.createdSuccess"),
     };
   } catch (e) {
