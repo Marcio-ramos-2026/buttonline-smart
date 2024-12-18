@@ -4,16 +4,25 @@ import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 import { getTranslations } from "next-intl/server";
 import { ProfileForm } from "./create-admin";
 
+type ParamsType = {
+  page: string | undefined,
+  name: string | undefined,
+  email: string | undefined
+}
+
 const AdminPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ page: string | undefined }>;
+  searchParams: Promise<ParamsType>;
 }) => {
   const filters = await searchParams;
   const LIMIT = 10;
 
   // If page is undefined, default to 0
   let page = filters.page ? parseInt(filters.page as string) : 1;
+
+  const filterKey = Object.keys(filters).find((key) => key !== "page") as keyof ParamsType | undefined;
+  const filterValue = filterKey ? filters[filterKey] : undefined;
 
   // Adjust skip logic: If it's the first page, skip 0 (same as page 1 in a typical pagination system)
   const skip = page == 0 ? 0 : (page - 1) * LIMIT; // skip starts at 0 for page 1
@@ -34,6 +43,11 @@ const AdminPage = async ({
     skip: skip,
     take: LIMIT,
     where: userWhere,
+    orderBy: filterKey
+      ? {
+          [filterKey]: filterValue
+        }
+      : undefined,
   });
 
   const totalUsers = await prisma.user.count({
