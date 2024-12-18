@@ -11,11 +11,11 @@ export default async function Page() {
 
   const canvas = await prisma.editor_canvas.findFirst({
     where: {
-      id: 1
+      id: 4
     }
   })
 
-  if(!canvas) return <h1>nao achou nnehum</h1>
+  if(!canvas) return <h1>nao achou nenhum</h1>
 
   const t = await getTranslations("pages.editor.sideBar");
 
