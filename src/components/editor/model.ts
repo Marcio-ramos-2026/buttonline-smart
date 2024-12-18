@@ -5,34 +5,45 @@ export type ModelType = {
   [key: string]: () => fabric.Object; // The key is a string and the value is a function returning an object
 };
 
-type ModelConfig = {
-  objects: ShapeCollection;
-};
-
-type ShapeEllipse = {
+type shapeEllipse = {
   type: string;
   width: number;
   height: number;
   strokeWidth?: number;
   strokeDashArray?: [number, number];
 };
-type ShapeCircle = { type: string; radius: number };
+type shapeCircle = { type: string; radius: number };
 
-type Shapes = ShapeCircle | ShapeEllipse;
+type Shapes = shapeCircle | shapeEllipse;
 
 type ShapeCollection = Record<string, Shapes>;
 
-export const getModels = (
+type ModelConfig = {
+  objects: ShapeCollection;
+};
+
+
+type canvasConfig = {
+  centerX: number,
+  centerY: number,
+  maxScale: number,
+  higherWidth: number
+}
+
+export const createModel = (
   canvas: fabric.Canvas,
   model: editor_canvas
-): ModelType | null => {
+): fabric.Object => {
   const maxSize = 800; // limite máximo do editor
   const canvasWidth = canvas.width || 0;
   const canvasHeight = canvas.height || 0;
-  const maxRadius = Math.min(canvasWidth, canvasHeight, maxSize) * 0.5; //determina o max radius entre o limite máximo do editor e o tamanho da tela
 
-  const centerX = canvas.width / 2;
-  const centerY = canvas.height / 2;
+  const canvasConfig = {
+    centerX: canvas.width / 2,
+    centerY: canvas.height / 2,
+    maxScale:  Math.min(canvasWidth, canvasHeight, maxSize) * 0.5,
+    higherWidth: 0,
+  }
 
   const createMark = (element: fabric.FabricObject) => {
     const markWidth = 10;
@@ -44,7 +55,7 @@ export const getModels = (
       strokeWidth: 1,
       selectable: false,
       moveCursor: "default",
-      top: centerY,
+      top: canvasConfig.centerY,
       left:
         element.left -
         element.width / 2 +
@@ -60,20 +71,25 @@ export const getModels = (
 
   const objConfig = model?.config as ModelConfig;
 
-  const elements = (Object.values(objConfig.objects) as Shapes[]).map((obj) => {
+  const elements = Object.values(objConfig.objects).map((obj,k) => {
     switch (obj.type) {
-      case "ShapeEllipse":
-        break;
+      case "ellipse":
+          const type  = obj as shapeEllipse
+          if(k === 0) {
+            canvasConfig.higherWidth = type.width
+          }
+          const fabricObject =  ellipse(type,canvasConfig)
+          return fabricObject
+      break;
     }
+  }).filter((el): el is NonNullable<typeof el> => el !== null);
+  console.log('elements',elements)
+
+  return new fabric.Group(elements, {
+    selectable: false,
+    moveCursor: "default",
+    hoverCursor: "default",
   });
-
-  return null;
-
-  // return new fabric.Group(elements, {
-  //   selectable: false,
-  //   moveCursor: "default",
-  //   hoverCursor: "default",
-  // });
 
   // return {
   //   circle: () => {
@@ -137,29 +153,26 @@ export const getModels = (
   // };
 };
 
-// const ellipse = (
-//   width: number,
-//   height: number,
-//   options: Partial<fabric.Rect> = {}
-// ) => {
-//   const scaleFactor = maxRadius / model?.config?.object_1.width;
+const ellipse = (
+  config: shapeEllipse,
+  props: canvasConfig
+): fabric.FabricObject => {
+  const scaleFactor = props.maxScale / props.higherWidth;
 
-//   return new fabric.Ellipse({
-//     rx: size.width * scaleFactor,
-//     ry: size.height * scaleFactor,
-//     fill: "white",
-//     stroke: "#000",
-//     strokeWidth: 4,
-//     selectable: false,
-//     moveCursor: "default",
-//     top: centerY,
-//     left: centerX,
-//     originX: "center",
-//     originY: "center",
-//     hoverCursor: "default",
-//     ...options,
-//   });
-// };
+  return new fabric.Ellipse({
+    rx: config.width * scaleFactor,
+    ry: config.height * scaleFactor,
+    fill: "white",
+    stroke: "#000",
+    strokeWidth: config?.strokeWidth ?? 2,
+    strokeDashArray: config?.strokeDashArray ?? [0,0],
+    selectable: false,
+    moveCursor: "default",
+    originX: "center",
+    originY: "center",
+    hoverCursor: "default",
+  });
+};
 
 // const circle = (radius: number, options: Partial<fabric.Circle> = {}) => {
 //   const scaleFactor = maxRadius / Number(model.object_1);

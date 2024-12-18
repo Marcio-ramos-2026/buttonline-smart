@@ -16,7 +16,7 @@ import { useResizeObserver } from "@/hooks/useResizeObserver";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../tailwind.config";
 import type { editor_canvas } from "@prisma/client";
-import { getModels, ModelType } from "@/components/editor/model";
+import { createModel, ModelType } from "@/components/editor/model";
 import { LoadingIcon } from "@/components/loading";
 import { useDebounceCallback } from "@/hooks/useDebounceCallback";
 
@@ -229,13 +229,12 @@ export const RenderCanvas = ({ model }: RenderCanvasType) => {
     if (!canvas) return;
     if (!model) return;
 
-    console.log("m", model);
-    const models = getModels(canvas, model);
-    const createShape = models[model.shape];
-    if (createShape) {
-      const shape = createShape();
+    
+    const canvasModel = createModel(canvas, model);
+    if (canvasModel) {
       canvas.remove(...canvas.getObjects());
-      canvas.add(shape);
+      canvas.add(canvasModel);
+      canvas.centerObject(canvasModel)
       canvas.renderAll();
     }
   }, [canvas]);
