@@ -11,7 +11,7 @@ export default async function Page() {
 
   const canvas = await prisma.editor_canvas.findFirst({
     where: {
-      id: 4
+      id: 1
     }
   })
 

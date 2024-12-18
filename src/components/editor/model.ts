@@ -5,6 +5,15 @@ export type ModelType = {
   [key: string]: () => fabric.Object; // The key is a string and the value is a function returning an object
 };
 
+type shapeRectangle = {
+  type: string;
+  width: number;
+  height: number;
+  strokeWidth?: number;
+  strokeDashArray?: [number, number];
+  radius?: number;
+};
+
 type shapeEllipse = {
   type: string;
   width: number;
@@ -12,7 +21,13 @@ type shapeEllipse = {
   strokeWidth?: number;
   strokeDashArray?: [number, number];
 };
-type shapeCircle = { type: string; radius: number };
+
+type shapeCircle = {
+  type: string;
+  radius: number;
+  strokeWidth?: number;
+  strokeDashArray?: [number, number];
+};
 
 type Shapes = shapeCircle | shapeEllipse;
 
@@ -22,13 +37,12 @@ type ModelConfig = {
   objects: ShapeCollection;
 };
 
-
 type canvasConfig = {
-  centerX: number,
-  centerY: number,
-  maxScale: number,
-  higherWidth: number
-}
+  centerX: number;
+  centerY: number;
+  maxScale: number;
+  higherWidth: number;
+};
 
 export const createModel = (
   canvas: fabric.Canvas,
@@ -41,9 +55,9 @@ export const createModel = (
   const canvasConfig = {
     centerX: canvas.width / 2,
     centerY: canvas.height / 2,
-    maxScale:  Math.min(canvasWidth, canvasHeight, maxSize) * 0.5,
+    maxScale: Math.min(canvasWidth, canvasHeight, maxSize) * 0.5,
     higherWidth: 0,
-  }
+  };
 
   const createMark = (element: fabric.FabricObject) => {
     const markWidth = 10;
@@ -71,86 +85,44 @@ export const createModel = (
 
   const objConfig = model?.config as ModelConfig;
 
-  const elements = Object.values(objConfig.objects).map((obj,k) => {
-    switch (obj.type) {
-      case "ellipse":
-          const type  = obj as shapeEllipse
-          if(k === 0) {
-            canvasConfig.higherWidth = type.width
+  const elements = Object.values(objConfig.objects)
+    .map((obj, k) => {
+      switch (obj.type) {
+        case "ellipse":
+          const typeEllipse = obj as shapeEllipse;
+          if (k === 0) {
+            canvasConfig.higherWidth = typeEllipse.width;
           }
-          const fabricObject =  ellipse(type,canvasConfig)
-          return fabricObject
-      break;
-    }
-  }).filter((el): el is NonNullable<typeof el> => el !== null);
-  console.log('elements',elements)
+          const fabricObjectEllipse = ellipse(typeEllipse, canvasConfig);
+          return fabricObjectEllipse;
+          break;
+        case "circle":
+          const typeCircle = obj as shapeCircle;
+          if (k === 0) {
+            canvasConfig.higherWidth = typeCircle.radius;
+          }
+          const fabricObjectCircle = circle(typeCircle, canvasConfig);
+          return fabricObjectCircle;
+          break;
+        case "rectangle":
+          const typeRectangle = obj as shapeRectangle;
+          if (k === 0) {
+            canvasConfig.higherWidth = typeRectangle.width;
+          }
+          const fabricObjectRectangle = rectangle(typeRectangle, canvasConfig);
+          return fabricObjectRectangle;
+          break;
+      }
+    })
+    .filter((el): el is NonNullable<typeof el> => el !== null);
+
+  // elements.push(createMark(elements[0]));
 
   return new fabric.Group(elements, {
     selectable: false,
     moveCursor: "default",
     hoverCursor: "default",
   });
-
-  // return {
-  //   circle: () => {
-  //     const elements = [createCircle(Number(model.object_1))];
-  //     elements.push(
-  //       createCircle(Number(model.object_2), { strokeDashArray: [5, 5] })
-  //     );
-  //     elements.push(createCircle(Number(model.object_3), { strokeWidth: 1 }));
-  //   },
-
-  //   square: () => {
-  //     const elements = [createSquare(Number(model.object_1))];
-  //     elements.push(
-  //       createSquare(Number(model.object_2), { strokeDashArray: [5, 5] })
-  //     );
-  //     elements.push(createSquare(Number(model.object_3), { strokeWidth: 1 }));
-  //     elements.push(createMark(elements[0]));
-
-  //     return new fabric.Group(elements, {
-  //       selectable: false,
-  //       moveCursor: "default",
-  //       hoverCursor: "default",
-  //     });
-  //   },
-
-  //   rectangle: () => {
-  //     const elements = [createRectangle(model?.config?.object_1)];
-  //     elements.push(
-  //       createRectangle(model?.config?.object_2, {
-  //         strokeDashArray: [5, 5],
-  //       })
-  //     );
-  //     elements.push(
-  //       createRectangle(model?.config?.object_3, { strokeWidth: 1 })
-  //     );
-  //     elements.push(createMark(elements[0]));
-
-  //     return new fabric.Group(elements, {
-  //       selectable: false,
-  //       moveCursor: "default",
-  //       hoverCursor: "default",
-  //     });
-  //   },
-
-  //   ellipse: () => {
-  //     const elements = [createEllipse(model?.config?.object_1)];
-  //     elements.push(
-  //       createEllipse(model?.config?.object_2, {
-  //         strokeDashArray: [5, 5],
-  //       })
-  //     );
-  //     elements.push(createEllipse(model?.config?.object_3, { strokeWidth: 1 }));
-  //     elements.push(createMark(elements[0]));
-
-  //     return new fabric.Group(elements, {
-  //       selectable: false,
-  //       moveCursor: "default",
-  //       hoverCursor: "default",
-  //     });
-  //   },
-  // };
 };
 
 const ellipse = (
@@ -164,8 +136,8 @@ const ellipse = (
     ry: config.height * scaleFactor,
     fill: "white",
     stroke: "#000",
-    strokeWidth: config?.strokeWidth ?? 2,
-    strokeDashArray: config?.strokeDashArray ?? [0,0],
+    strokeWidth: config?.strokeWidth ?? 4,
+    strokeDashArray: config?.strokeDashArray ?? [0, 0],
     selectable: false,
     moveCursor: "default",
     originX: "center",
@@ -174,66 +146,38 @@ const ellipse = (
   });
 };
 
-// const circle = (radius: number, options: Partial<fabric.Circle> = {}) => {
-//   const scaleFactor = maxRadius / Number(model.object_1);
-//   return new fabric.Circle({
-//     radius: radius * scaleFactor,
-//     fill: "white",
-//     stroke: "#000",
-//     strokeWidth: 4,
-//     selectable: false,
-//     moveCursor: "default",
-//     top: centerY,
-//     left: centerX,
-//     originX: "center",
-//     originY: "center",
-//     hoverCursor: "default",
-//     ...options,
-//   });
-// };
+const circle = (config: shapeCircle, props: canvasConfig) => {
+  const scaleFactor = props.maxScale / props.higherWidth;
+  return new fabric.Circle({
+    radius: config.radius * scaleFactor,
+    fill: "white",
+    stroke: "#000",
+    strokeWidth: config?.strokeWidth ?? 4,
+    strokeDashArray: config?.strokeDashArray ?? [0, 0],
+    selectable: false,
+    moveCursor: "default",
+    originX: "center",
+    originY: "center",
+    hoverCursor: "default",
+  });
+};
 
-// const square = (size: number, options: Partial<fabric.Rect> = {}) => {
-//   const scaleFactor = maxRadius / Number(model.object_1);
-//   return new fabric.Rect({
-//     width: size * scaleFactor,
-//     height: size * scaleFactor,
-//     fill: "white",
-//     stroke: "#000",
-//     strokeWidth: 4,
-//     selectable: false,
-//     moveCursor: "default",
-//     top: centerY,
-//     left: centerX,
-//     originX: "center",
-//     originY: "center",
-//     hoverCursor: "default",
-//     rx: 45,
-//     ry: 45,
-//     ...options,
-//   });
-// };
+const rectangle = (config: shapeRectangle, props: canvasConfig) => {
+  const scaleFactor = props.maxScale / props.higherWidth;
 
-// const rectangle = (
-//   size: { width: number; height: number },
-//   options: Partial<fabric.Rect> = {}
-// ) => {
-//   const scaleFactor = maxRadius / model.config.object_1.width;
-
-//   return new fabric.Rect({
-//     width: size.width * scaleFactor,
-//     height: size.height * scaleFactor,
-//     fill: "white",
-//     stroke: "#000",
-//     strokeWidth: 4,
-//     selectable: false,
-//     moveCursor: "default",
-//     top: centerY,
-//     left: centerX,
-//     originX: "center",
-//     originY: "center",
-//     hoverCursor: "default",
-//     rx: 5,
-//     ry: 5,
-//     ...options,
-//   });
-// };
+  return new fabric.Rect({
+    width: config.width * scaleFactor,
+    height: config.height * scaleFactor,
+    fill: "white",
+    stroke: "#000",
+    strokeWidth: config?.strokeWidth ?? 4,
+    strokeDashArray: config?.strokeDashArray ?? [0, 0],
+    selectable: false,
+    moveCursor: "default",
+    originX: "center",
+    originY: "center",
+    hoverCursor: "default",
+    rx: config?.radius ?? 0,
+    ry: config?.radius ?? 0,
+  });
+};
