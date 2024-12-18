@@ -203,7 +203,7 @@ export const useEditorContext = () => {
   return values;
 };
 
-type RenderCanvasType = {
+export type RenderCanvasType = {
   model: editor_canvas
 }
 
@@ -215,7 +215,7 @@ export const RenderCanvas = ({model}:RenderCanvasType) => {
       if(!model) return
 
      
-      const models = getModels(canvas);
+      const models = getModels(canvas,model);
         const createShape = models[model.shape];
         if (createShape) {
           const shape = createShape();
