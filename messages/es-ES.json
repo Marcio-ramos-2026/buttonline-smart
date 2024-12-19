@@ -12,6 +12,9 @@
     "showing": "Mostrando",
     "results": "resultados"
   },
+  "permissions": {
+    "denied": "¡No tienes permiso para ver esta información!"
+  },
   "pages": {
     "signIn": {
       "title": "Acceder a Buttonline",
@@ -46,6 +49,13 @@
         "createdError": "Error al crear usuario, por favor contacte al soporte.",
         "updatedSuccess": "Usuario actualizado con éxito.",
         "updatedError": "Error al actualizar el usuario, por favor contacte al soporte."
+      },
+      "clients": {
+        "emailInUse": "Este correo electrónico ya está en uso.",
+        "createdSuccess": "Cliente creado con éxito",
+        "createdError": "Error al crear el cliente, por favor contacte al soporte",
+        "updatedSuccess": "Cliente actualizado con éxito",
+        "updatedError": "Error al actualizar el cliente, por favor contacte al soporte"
       }
     },
     "generalZodErrors": {
@@ -94,6 +104,38 @@
           "labelName": "Nombre del Usuario:",
           "labelEmail": "Correo Electrónico del Usuario:",
           "submit": "Actualizar"
+        }
+      },
+      "clients": {
+        "title": "Clientes",
+        "description": "Un breve texto sobre la pantalla de clientes",
+        "columns": {
+          "name": "Nombre",
+          "email": "Correo Electrónico",
+          "lastAccess": "Último Acceso",
+          "createdAt": "Creado En"
+        },
+        "modalCreateClient": {
+          "button": "Nuevo Cliente",
+          "title": "Crear un Cliente",
+          "subTitle": "Este usuario tendrá todos los derechos de un cliente.",
+          "labelName": "Nombre del Cliente:",
+          "labelEmail": "Correo Electrónico del Cliente:",
+          "submit": "Crear"
+        },
+        "modalUpdateClient": {
+          "title": "Editar Cliente",
+          "subTitle": "Vas a actualizar la información de este cliente.",
+          "labelName": "Nombre del Cliente:",
+          "labelEmail": "Correo Electrónico del Cliente:",
+          "submit": "Actualizar"
+        },
+        "modalDeleteClient": {
+          "title": "¿Archivar cliente {name}?",
+          "description": "El usuario no será eliminado, sino archivado.",
+          "cancel": "Cancelar",
+          "confirm": "Sí, Deseo Archivar",
+          "arquiving": "Archivando..."
         }
       }
     },

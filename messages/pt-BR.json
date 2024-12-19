@@ -12,6 +12,9 @@
     "showing": "Mostrando",
     "results": "resultados"
   },
+  "permissions": {
+    "denied": "Você não possuí permissão para ver esta informação!"
+  },
   "pages": {
     "signIn": {
       "title": "Acessar o Buttonline",
@@ -48,6 +51,13 @@
         "createdError": "Erro ao criar usuário, por favor contate o suporte",
         "updatedSuccess": "Usurário atualizado com sucesso",
         "updatedError": "Erro ao atualizar o usuário, por favor contate o suporte"
+      },
+      "clients": {
+        "emailInUse": "Este e-mail já está em uso.",
+        "createdSuccess": "Cliente criado com sucesso",
+        "createdError": "Erro ao criar cliente, por favor contate o suporte",
+        "updatedSuccess": "Cliente atualizado com sucesso",
+        "updatedError": "Erro ao atualizar o cliente, por favor contate o suporte"
       }
     },
     "generalZodErrors": {
@@ -98,10 +108,42 @@
           "submit": "Atualizar"
         },
         "modalDeleteUser": {
-          "title":"Arquivar usuário {name}?",
-          "description":"O usuáro não será excluido, mas sim arquivado.",
-          "cancel":"Cancelar",
-          "confirm":"Sim, Desejo Arquivar",
+          "title": "Arquivar usuário {name}?",
+          "description": "O usuáro não será excluido, mas sim arquivado.",
+          "cancel": "Cancelar",
+          "confirm": "Sim, Desejo Arquivar",
+          "arquiving": "Arquivando..."
+        }
+      },
+      "clients": {
+        "title": "Clientes",
+        "description": "Um pequeno texto sobre a tela de clientes",
+        "columns": {
+          "name": "Nome",
+          "email": "Email",
+          "lastAccess": "Último Acesso",
+          "createdAt": "Criado em"
+        },
+        "modalCreateClient": {
+          "button": "Novo Cliente",
+          "title": "Criar um cliente",
+          "subTitle": "Este usuário possuira todos os direitos de um cliente.",
+          "labelName": "Nome do cliente:",
+          "labelEmail": "Email do cliente:",
+          "submit": "Criar"
+        },
+        "modalUpdateClient": {
+          "title": "Editar cliente",
+          "subTitle": "Você alterará as informações deste cliente.",
+          "labelName": "Nome do cliente:",
+          "labelEmail": "Email do cliente:",
+          "submit": "Atualizar"
+        },
+        "modalDeleteClient": {
+          "title": "Arquivar cliente {name}?",
+          "description": "O cliente não será excluido, mas sim arquivado.",
+          "cancel": "Cancelar",
+          "confirm": "Sim, Desejo Arquivar",
           "arquiving": "Arquivando..."
         }
       }

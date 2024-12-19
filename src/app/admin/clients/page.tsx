@@ -1,5 +1,119 @@
-export default function ClientsPage() {
+import { prisma } from "@/lib/prisma";
+import { ClientList } from "./list";
+import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
+import { getTranslations } from "next-intl/server";
+import { CreateClient } from "./create-client";
+import { Prisma } from "@prisma/client";
+import { hasPermission } from "@/lib/permission-server";
+import { DeniedPermission } from "@/components/deniedPermission";
+
+type ParamsType = {
+  page: string | undefined;
+  name: string | undefined;
+  email: string | undefined;
+  search: string | undefined;
+};
+
+export default async function ClientPage({
+  searchParams,
+}: {
+  searchParams: Promise<ParamsType>;
+}) {
+  const filters = await searchParams;
+  const LIMIT = 10;
+
+  if (!(await hasPermission([ALLOWED_PERMISSIONS.ADMIN_CLIENTS]))) {
+    return <DeniedPermission />
+  }
+
+  // If page is undefined, default to 0
+  let page = filters.page ? parseInt(filters.page as string) : 1;
+
+  let orderByObj;
+  let filterConditions: Record<string, any>[] = [];
+  let clientWhere: Prisma.UserWhereInput = {
+    role: {
+      permissions: {
+        none: {
+          permission: {
+            name: ALLOWED_PERMISSIONS.IS_ADMIN,
+          },
+        },
+      },
+    },
+  };
+
+  Object.keys(filters).forEach((key) => {
+    const splitKey = key.split("_");
+    const columnName = splitKey[1];
+    const value = filters[key as keyof ParamsType];
+
+    if (key.includes("sort") && value) {
+      orderByObj = {
+        [columnName]: value,
+      };
+    }
+    if (key.includes("filter") && value) {
+      if (columnName === "search") {
+        filterConditions.push(
+          { name: { contains: value } },
+          { email: { contains: value } }
+        );
+      } else {
+        filterConditions.push({
+          [columnName]: {
+            contains: value,
+          },
+        });
+      }
+    }
+  });
+
+  if (filterConditions.length > 0) {
+    clientWhere = {
+      ...clientWhere,
+      OR: filterConditions,
+    };
+  }
+
+  // Adjust skip logic: If it's the first page, skip 0 (same as page 1 in a typical pagination system)
+  const skip = page == 0 ? 0 : (page - 1) * LIMIT; // skip starts at 0 for page
+
+  const users = await prisma.user.findMany({
+    skip: skip,
+    take: LIMIT,
+    where: clientWhere,
+    orderBy: orderByObj,
+  });
+
+  const totalClients = await prisma.user.count({
+    where: clientWhere,
+  });
+
+  const t = await getTranslations("pages.admin.clients");
+
   return (
-    <div className="p-6">Clientes</div>
+    <div className="p-6">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h1
+            id="order-history-heading"
+            className="text-3xl font-bold tracking-tight text-gray-900"
+          >
+            {t("title")}
+          </h1>
+          <p className="mt-2 text-sm text-gray-500">{t("description")}</p>
+        </div>
+        {/* <div>
+          <CreateClient />
+        </div> */}
+      </div>
+      <ClientList
+        data={users}
+        page={page as number}
+        totalClients={totalClients}
+        limit={LIMIT}
+      />
+    </div>
   );
 }

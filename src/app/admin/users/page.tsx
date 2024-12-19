@@ -4,6 +4,8 @@ import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 import { getTranslations } from "next-intl/server";
 import { ProfileForm } from "./create-admin";
 import { Prisma } from "@prisma/client";
+import { hasPermission } from "@/lib/permission-server";
+import { DeniedPermission } from "@/components/deniedPermission";
 
 type ParamsType = {
   page: string | undefined;
@@ -19,6 +21,10 @@ const AdminPage = async ({
 }) => {
   const filters = await searchParams;
   const LIMIT = 10;
+
+  if (!(await hasPermission([ALLOWED_PERMISSIONS.ADMIN_USERS]))) {
+    return <DeniedPermission />;
+  }
 
   // If page is undefined, default to 0
   let page = filters.page ? parseInt(filters.page as string) : 1;

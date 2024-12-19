@@ -85,7 +85,7 @@ export const createModel = (
 
   const objConfig = model?.config as ModelConfig;
 
-  const elements = Object.values(objConfig.objects)
+  const elements = Object.values(objConfig?.objects)
     .map((obj, k) => {
       switch (obj.type) {
         case "ellipse":

@@ -14,7 +14,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createAdminAction } from "@/app/actions/admin/create-admin";
 import { useTranslations } from "next-intl";
 import { CreateAdminType, createAdminSchema } from "@/lib/zod-schemas";
 import {
@@ -30,10 +29,11 @@ import { UserPlus } from "lucide-react";
 import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
+import { createClientAction } from "@/app/actions/admin/create-client";
 
-export function ProfileForm() {
-  const tDialog = useTranslations("pages.admin.users");
-  const t = useTranslations("pages.admin.users.modalCreateAdmin");
+export function CreateClient() {
+  const tDialog = useTranslations("pages.admin.clients");
+  const t = useTranslations("pages.admin.clients.modalCreateClient");
   const tForm = useTranslations("pages.generalZodErrors");
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -58,7 +58,7 @@ export function ProfileForm() {
   };
 
   const onSubmit = async (data: CreateAdminType) => {
-    const result = await createAdminAction(data);
+    const result = await createClientAction(data);
     if (result.zod_errors) {
       Object.entries(result.zod_errors).forEach(([field, value]) => {
         setError(field as keyof CreateAdminType, {
@@ -86,7 +86,7 @@ export function ProfileForm() {
 
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-      <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN, ALLOWED_PERMISSIONS.ADMIN_USER_CREATE]}>
+      <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN, ALLOWED_PERMISSIONS.ADMIN_CLIENTS_CREATE]}>
         <DialogTrigger asChild>
           <Button
             icon={<UserPlus />}

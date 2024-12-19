@@ -18,7 +18,7 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import { Edit, Search, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React, { useMemo, useState } from "react";
-import { EditForm } from "./updateUserForm";
+import { EditForm } from "./updateClientForm";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -39,18 +39,18 @@ const filtersConfig = [
   { key: "search", label: "Pesquisa", icon: <Search />, type: "input" as const }
 ];
 
-export const UsersList = ({
+export const ClientList = ({
   data,
   page,
-  totalUsers,
+  totalClients,
   limit,
 }: {
   data: User[];
   page: number;
-  totalUsers: number;
+  totalClients: number;
   limit: number;
 }) => {
-  const t = useTranslations("pages.admin.users");
+  const t = useTranslations("pages.admin.clients");
   const columns = useMemo<ColumnDef<User>[]>(() => {
     return [
       {
@@ -102,7 +102,7 @@ export const UsersList = ({
         header: "",
         enableSorting: false,
         meta: {
-          permissions: [ALLOWED_PERMISSIONS.ADMIN_USER_EDIT],
+          permissions: [ALLOWED_PERMISSIONS.ADMIN_CLIENTS_EDIT],
         },
         size: 20,
         cell: ({ row }) => {
@@ -119,15 +119,15 @@ export const UsersList = ({
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle>{t("modalUpdateUser.title")}</DialogTitle>
+                  <DialogTitle>{t("modalUpdateClient.title")}</DialogTitle>
                   <DialogDescription>
-                    {t("modalUpdateUser.subTitle")}
+                    {t("modalUpdateClient.subTitle")}
                   </DialogDescription>
                 </DialogHeader>
                 <EditForm
                   name={row.original.name as string}
                   email={row.original.email as string}
-                  userId={row.original.id}
+                  clientId={row.original.id}
                   roleId={row.original.roleId as number}
                 />
               </DialogContent>
@@ -140,16 +140,16 @@ export const UsersList = ({
         header: "",
         enableSorting: false,
         meta: {
-          permissions: [ALLOWED_PERMISSIONS.IS_ADMIN, ALLOWED_PERMISSIONS.ADMIN_USER_DELETE],
+          permissions: [ALLOWED_PERMISSIONS.IS_ADMIN, ALLOWED_PERMISSIONS.ADMIN_CLIENTS_DELETE],
         },
         size: 20,
-        cell: DeleteUser,
+        cell: DeleteClient,
       },
     ];
   }, [t]);
 
   const actions = useTableAction({
-    totalItems: totalUsers,
+    totalItems: totalClients,
     pageIndex: page,
     pageSize: limit,
   });
@@ -167,7 +167,7 @@ export const UsersList = ({
   );
 };
 
-type DeleteUserProsp = {
+type DeleteClientProsp = {
   row: Row<{
     email: string | null;
     id: number;
@@ -183,11 +183,11 @@ type DeleteUserProsp = {
   }>;
 };
 
-const DeleteUser = ({ row }: DeleteUserProsp) => {
+const DeleteClient = ({ row }: DeleteClientProsp) => {
   const [pending, setPending] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const router = useRouter();
-  const t = useTranslations("pages.admin.users");
+  const t = useTranslations("pages.admin.clients");
   if (row.original.email === "cardenas@cardenas.com.br") return null;
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -237,21 +237,21 @@ const DeleteUser = ({ row }: DeleteUserProsp) => {
       >
         <AlertDialogHeader>
           <AlertDialogTitle>
-            {t("modalDeleteUser.title", { name: row.original.name })}
+            {t("modalDeleteClient.title", { name: row.original.name })}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            {t("modalDeleteUser.description")}
+            {t("modalDeleteClient.description")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel asChild className={`${pending ? "hidden" : ""}`}>
-            <Button>{t("modalDeleteUser.cancel")}</Button>
+            <Button>{t("modalDeleteClient.cancel")}</Button>
           </AlertDialogCancel>
           <AlertDialogAction onClick={handleDelete} asChild>
             <Button loading={pending}>
               {pending
-                ? t("modalDeleteUser.arquiving")
-                : t("modalDeleteUser.confirm")}
+                ? t("modalDeleteClient.arquiving")
+                : t("modalDeleteClient.confirm")}
             </Button>
           </AlertDialogAction>
         </AlertDialogFooter>

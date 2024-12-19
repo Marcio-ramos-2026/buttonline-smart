@@ -12,6 +12,9 @@
     "showing": "Showing",
     "results": "results"
   },
+  "permissions": {
+    "denied": "You do not have permission to view this information!"
+  },
   "pages": {
     "signIn": {
       "title": "Access Buttonline",
@@ -46,6 +49,13 @@
         "createdError": "Error creating user, please contact support.",
         "updatedSuccess": "User updated successfully.",
         "updatedError": "Error updating user, please contact support."
+      },
+      "clients": {
+        "emailInUse": "This email is already in use.",
+        "createdSuccess": "Client successfully created",
+        "createdError": "Error creating client, please contact support",
+        "updatedSuccess": "Client successfully updated",
+        "updatedError": "Error updating client, please contact support"
       }
     },
     "generalZodErrors": {
@@ -96,10 +106,42 @@
           "submit": "Update"
         },
         "modalDeleteUser": {
-          "title":"Arquivar usuário {name}?",
-          "description":"O usuáro não será excluido, mas sim arquivado.",
-          "cancel":"Cancelar",
-          "confirm":"Sim, Desejo Arquivar"
+          "title": "Arquivar usuário {name}?",
+          "description": "O usuáro não será excluido, mas sim arquivado.",
+          "cancel": "Cancelar",
+          "confirm": "Sim, Desejo Arquivar"
+        }
+      },
+      "clients": {
+        "title": "Clients",
+        "description": "A short text about the clients screen",
+        "columns": {
+          "name": "Name",
+          "email": "Email",
+          "lastAccess": "Last Access",
+          "createdAt": "Created At"
+        },
+        "modalCreateClient": {
+          "button": "New Client",
+          "title": "Create a Client",
+          "subTitle": "This user will have all the rights of a client.",
+          "labelName": "Client's Name:",
+          "labelEmail": "Client's Email:",
+          "submit": "Create"
+        },
+        "modalUpdateClient": {
+          "title": "Edit Client",
+          "subTitle": "You will update this client's information.",
+          "labelName": "Client's Name:",
+          "labelEmail": "Client's Email:",
+          "submit": "Update"
+        },
+        "modalDeleteClient": {
+          "title": "Archive client {name}?",
+          "description": "The user will not be deleted but archived.",
+          "cancel": "Cancel",
+          "confirm": "Yes, I Want to Archive",
+          "arquiving": "Archiving..."
         }
       }
     },
