@@ -116,7 +116,8 @@ export const createModel = (
     })
     .filter((el): el is NonNullable<typeof el> => el !== null);
 
-  // elements.push(createMark(elements[0]));
+  console.log("el", elements);
+  elements.push(createMark(elements[0]));
 
   return new fabric.Group(elements, {
     selectable: false,
@@ -143,6 +144,8 @@ const ellipse = (
     originX: "center",
     originY: "center",
     hoverCursor: "default",
+    top: props.centerY,
+    left: props.centerX,
   });
 };
 
@@ -159,6 +162,8 @@ const circle = (config: shapeCircle, props: canvasConfig) => {
     originX: "center",
     originY: "center",
     hoverCursor: "default",
+    top: props.centerY,
+    left: props.centerX,
   });
 };
 
@@ -179,5 +184,7 @@ const rectangle = (config: shapeRectangle, props: canvasConfig) => {
     hoverCursor: "default",
     rx: config?.radius ?? 0,
     ry: config?.radius ?? 0,
+    top: props.centerY,
+    left: props.centerX,
   });
 };
