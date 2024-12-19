@@ -126,7 +126,7 @@ export const useTableAction = ({
     });
   }, [handleSort, pathname, router, searchParams]);
 
-  const onFiltering = (filters: Record<string, string>) => {
+  const onFiltering = useCallback((filters: Record<string, string>) => {
     const params = new URLSearchParams();
     Object.keys(filters).forEach((key) => {
       params.set(`filter_${key}`, filters[key]);
@@ -135,7 +135,7 @@ export const useTableAction = ({
     setTimeout(() => {
       router.replace(`${pathname}?${params.toString()}`);
     }, 0);
-  };
+  }, [pathname, router]);
 
   return {
     sorting,
