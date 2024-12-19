@@ -15,7 +15,7 @@ export default async function Page() {
     }
   })
 
-  if(!canvas) return <h1>nao achou nnehum</h1>
+  if(!canvas) return <h1>nao achou nenhum</h1>
 
   const t = await getTranslations("pages.editor.sideBar");
 
