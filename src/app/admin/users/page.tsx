@@ -3,12 +3,14 @@ import { UsersList } from "./list";
 import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 import { getTranslations } from "next-intl/server";
 import { ProfileForm } from "./create-admin";
+import { Prisma } from "@prisma/client";
 
 type ParamsType = {
-  page: string | undefined,
-  name: string | undefined,
-  email: string | undefined
-}
+  page: string | undefined;
+  name: string | undefined;
+  email: string | undefined;
+  search: string | undefined;
+};
 
 const AdminPage = async ({
   searchParams,
@@ -21,13 +23,9 @@ const AdminPage = async ({
   // If page is undefined, default to 0
   let page = filters.page ? parseInt(filters.page as string) : 1;
 
-  const filterKey = Object.keys(filters).find((key) => key !== "page") as keyof ParamsType | undefined;
-  const filterValue = filterKey ? filters[filterKey] : undefined;
-
-  // Adjust skip logic: If it's the first page, skip 0 (same as page 1 in a typical pagination system)
-  const skip = page == 0 ? 0 : (page - 1) * LIMIT; // skip starts at 0 for page 1
-
-  const userWhere = {
+  let orderByObj;
+  let filterConditions: Record<string, any>[] = [];
+  let userWhere: Prisma.UserWhereInput = {
     role: {
       permissions: {
         some: {
@@ -39,15 +37,47 @@ const AdminPage = async ({
     },
   };
 
+  Object.keys(filters).forEach((key) => {
+    const splitKey = key.split("_");
+    const columnName = splitKey[1];
+    const value = filters[key as keyof ParamsType];
+
+    if (key.includes("sort") && value) {
+      orderByObj = {
+        [columnName]: value,
+      };
+    }
+    if (key.includes("filter") && value) {
+      if (columnName === "search") {
+        filterConditions.push(
+          { name: { contains: value } },
+          { email: { contains: value } }
+        );
+      } else {
+        filterConditions.push({
+          [columnName]: {
+            contains: value,
+          },
+        });
+      }
+    }
+  });
+
+  if (filterConditions.length > 0) {
+    userWhere = {
+      ...userWhere,
+      OR: filterConditions,
+    };
+  }
+
+  // Adjust skip logic: If it's the first page, skip 0 (same as page 1 in a typical pagination system)
+  const skip = page == 0 ? 0 : (page - 1) * LIMIT; // skip starts at 0 for page
+
   const users = await prisma.user.findMany({
     skip: skip,
     take: LIMIT,
     where: userWhere,
-    orderBy: filterKey
-      ? {
-          [filterKey]: filterValue
-        }
-      : undefined,
+    orderBy: orderByObj,
   });
 
   const totalUsers = await prisma.user.count({
@@ -58,7 +88,7 @@ const AdminPage = async ({
 
   return (
     <div className="p-6">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-4">
         <div>
           <h1
             id="order-history-heading"

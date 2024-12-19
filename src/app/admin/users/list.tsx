@@ -15,7 +15,7 @@ import { useTableAction } from "@/hooks/useTableActions";
 import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 import type { User } from "@prisma/client";
 import { ColumnDef, Row } from "@tanstack/react-table";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Search, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React, { useMemo, useState } from "react";
 import { EditForm } from "./updateUserForm";
@@ -33,6 +33,11 @@ import {
 import { deleteAdminAction } from "@/app/actions/admin/delete-admin";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { FiltersSection } from "@/components/filterSection";
+
+const filtersConfig = [
+  { key: "search", label: "Pesquisa", icon: <Search />, type: "input" as const }
+];
 
 export const UsersList = ({
   data,
@@ -46,7 +51,6 @@ export const UsersList = ({
   limit: number;
 }) => {
   const t = useTranslations("pages.admin.users");
-
   const columns = useMemo<ColumnDef<User>[]>(() => {
     return [
       {
@@ -67,7 +71,7 @@ export const UsersList = ({
       {
         accessorKey: "lastAccess",
         header: t("columns.lastAccess"),
-        enableSorting: false,
+        enableSorting: true,
         cell: ({ row }) => {
           return (
             <DateRelativeFormatter date={row.original.lastAccess as Date} />
@@ -77,7 +81,7 @@ export const UsersList = ({
       {
         accessorKey: "createdAt",
         header: t("columns.createdAt"),
-        enableSorting: false,
+        enableSorting: true,
         cell: ({ row }) => {
           return (
             <DateFormatter
@@ -150,7 +154,17 @@ export const UsersList = ({
     pageSize: limit,
   });
 
-  return <Table data={data} columns={columns} {...actions} />;
+  return (
+    <>
+      <div className="w-fit ml-auto mb-4">
+        <FiltersSection
+          filtersConfig={filtersConfig}
+          onApply={actions.onFiltering}
+        />
+      </div>
+      <Table data={data} columns={columns} {...actions} />
+    </>
+  );
 };
 
 type DeleteUserProsp = {

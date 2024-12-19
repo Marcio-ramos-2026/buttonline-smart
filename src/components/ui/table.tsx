@@ -1,17 +1,32 @@
-'use client'
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
-import { TableActionsType } from "@/hooks/useTableActions"
-import { ColumnDef, flexRender, functionalUpdate, getCoreRowModel, PaginationState, SortingState, Updater, useReactTable } from "@tanstack/react-table"
-import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react"
-import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationEllipsis, PaginationNext } from "./pagination"
-import { useTranslations } from "next-intl"
-import { useSession } from "next-auth/react"
-import { ALLOWED_PERMISSIONS } from "@/lib/permissions"
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useTableSort } from "@/hooks/useTableSorting"
+import { cn } from "@/lib/utils";
+import { TableActionsType } from "@/hooks/useTableActions";
+import {
+  ColumnDef,
+  flexRender,
+  functionalUpdate,
+  getCoreRowModel,
+  PaginationState,
+  SortingState,
+  Updater,
+  useReactTable,
+} from "@tanstack/react-table";
+import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationLink,
+  PaginationEllipsis,
+  PaginationNext,
+} from "./pagination";
+import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
+import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 
 const TableElement = React.forwardRef<
   HTMLTableElement,
@@ -24,16 +39,16 @@ const TableElement = React.forwardRef<
       {...props}
     />
   </div>
-))
-TableElement.displayName = "Table"
+));
+TableElement.displayName = "Table";
 
 const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
   <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
-))
-TableHeader.displayName = "TableHeader"
+));
+TableHeader.displayName = "TableHeader";
 
 const TableBody = React.forwardRef<
   HTMLTableSectionElement,
@@ -44,8 +59,8 @@ const TableBody = React.forwardRef<
     className={cn("[&_tr:last-child]:border-0", className)}
     {...props}
   />
-))
-TableBody.displayName = "TableBody"
+));
+TableBody.displayName = "TableBody";
 
 const TableFooter = React.forwardRef<
   HTMLTableSectionElement,
@@ -59,8 +74,8 @@ const TableFooter = React.forwardRef<
     )}
     {...props}
   />
-))
-TableFooter.displayName = "TableFooter"
+));
+TableFooter.displayName = "TableFooter";
 
 const TableRow = React.forwardRef<
   HTMLTableRowElement,
@@ -74,8 +89,8 @@ const TableRow = React.forwardRef<
     )}
     {...props}
   />
-))
-TableRow.displayName = "TableRow"
+));
+TableRow.displayName = "TableRow";
 
 const TableHead = React.forwardRef<
   HTMLTableCellElement,
@@ -89,8 +104,8 @@ const TableHead = React.forwardRef<
     )}
     {...props}
   />
-))
-TableHead.displayName = "TableHead"
+));
+TableHead.displayName = "TableHead";
 
 const TableCell = React.forwardRef<
   HTMLTableCellElement,
@@ -101,8 +116,8 @@ const TableCell = React.forwardRef<
     className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)}
     {...props}
   />
-))
-TableCell.displayName = "TableCell"
+));
+TableCell.displayName = "TableCell";
 
 const TableCaption = React.forwardRef<
   HTMLTableCaptionElement,
@@ -113,8 +128,8 @@ const TableCaption = React.forwardRef<
     className={cn("mt-4 text-sm text-muted-foreground", className)}
     {...props}
   />
-))
-TableCaption.displayName = "TableCaption"
+));
+TableCaption.displayName = "TableCaption";
 
 export interface TableOptions<T> extends TableActionsType {
   columns: ColumnDef<T>[];
@@ -122,77 +137,79 @@ export interface TableOptions<T> extends TableActionsType {
   isLoading?: boolean;
 }
 
-const Table = <T extends { }>(opt: TableOptions<T>) => {
-  const { data: session } = useSession(); // Get session from NextAuth hook
-  const searchParams = useSearchParams()
-  const router = useRouter();
-  const {sorting, handleSort} = useTableSort()
-  
+const Table = <T extends {}>(opt: TableOptions<T>) => {
+  const { data: session } = useSession();
+
   const dataDef = React.useMemo(() => {
     return opt.data;
   }, [opt.data]);
 
   const columnsDef = React.useMemo(() => {
-    let hiddenColumns: { [key: string]: boolean } = {};;
-    if(session?.user){
-      hiddenColumns = opt.columns.filter((column)=>{
-        if(column.meta?.permissions) {
-            const permissions = session?.permissions.find((p) => column.meta?.permissions?.includes(p as ALLOWED_PERMISSIONS))
-            if(permissions) {
-              return false
-            }else{
-              return true
+    let hiddenColumns: { [key: string]: boolean } = {};
+    if (session?.user) {
+      hiddenColumns = opt.columns
+        .filter((column) => {
+          if (column.meta?.permissions) {
+            const permissions = session?.permissions.find((p) =>
+              column.meta?.permissions?.includes(p as ALLOWED_PERMISSIONS)
+            );
+            if (permissions) {
+              return false;
+            } else {
+              return true;
             }
-        }
-        return false
-      }).reduce((acc, column) => {
-        const accessorKey = (column as any).accessorKey as string
-        if (accessorKey) {
-          acc[accessorKey] = false;
-        }
-        return acc;
-      }, {} as { [key: string]: boolean });
+          }
+          return false;
+        })
+        .reduce(
+          (acc, column) => {
+            const accessorKey = (column as any).accessorKey as string;
+            if (accessorKey) {
+              acc[accessorKey] = false;
+            }
+            return acc;
+          },
+          {} as { [key: string]: boolean }
+        );
     }
-    return {columns:opt.columns,hiddenColumns};
-  }, [opt.columns,session]);
+    return { columns: opt.columns, hiddenColumns };
+  }, [opt.columns, session]);
 
-  const handleSorting = React.useCallback((updater: Updater<SortingState>) => {
-    const params = new URLSearchParams(searchParams);
-    const sorted = functionalUpdate(updater, opt.sorting);
-    params.set(sorted[0].id, sorted[0].desc ? 'desc' : 'asc');
-    router.replace(`/admin/users?${params.toString()}`)
-    handleSort(sorted);
-  }, []);
+  const handlePagination = React.useCallback(
+    (updater: Updater<PaginationState>) => {
+      const sorted = functionalUpdate(updater, opt.pagination);
+      opt.onPaginate(sorted);
+    },
+    []
+  );
 
-  const handlePagination = React.useCallback((updater: Updater<PaginationState>) => {
-    const sorted = functionalUpdate(updater, opt.pagination);
-    opt.onPaginate(sorted);
-  }, []);
+  const totalPages = Math.ceil(
+    opt.pagination.totalPages / opt.pagination.pageSize
+  );
 
-  const totalPages = Math.ceil(opt.pagination.totalPages / opt.pagination.pageSize)
-
-  const pageStart = Math.max(opt.pagination.pageIndex - 2, 0)
-  const pageEnd = Math.min(pageStart + 4, totalPages - 1)
-  const pageRange = Array.from({ length: pageEnd - pageStart + 1 }, (_, i) => pageStart + i)
+  const pageStart = Math.max(opt.pagination.pageIndex - 2, 0);
+  const pageEnd = Math.min(pageStart + 4, totalPages - 1);
+  const pageRange = Array.from(
+    { length: pageEnd - pageStart + 1 },
+    (_, i) => pageStart + i
+  );
   const table = useReactTable({
     initialState: {
-      columnVisibility: columnsDef.hiddenColumns
+      columnVisibility: columnsDef.hiddenColumns,
     },
     columns: columnsDef.columns,
     data: dataDef,
     getCoreRowModel: getCoreRowModel(),
     state: {
-      sorting: sorting,
       pagination: {
         pageIndex: opt.pagination.pageIndex,
         pageSize: opt.pagination.pageSize,
       },
-    },    
-    onSortingChange: handleSorting,
+    },
     onPaginationChange: handlePagination,
   });
 
-  const t = useTranslations("table")
+  const t = useTranslations("table");
 
   const tableLength = table.getRowModel().rows?.length;
 
@@ -206,9 +223,11 @@ const Table = <T extends { }>(opt: TableOptions<T>) => {
           {tableLength ? (
             table.getHeaderGroups().map((headerGroup) => {
               return (
-                <TableRow key={headerGroup.id} className="bg-primary/80 hover:bg-primary/80">
+                <TableRow
+                  key={headerGroup.id}
+                  className="bg-primary/80 hover:bg-primary/80"
+                >
                   {headerGroup.headers.map((header) => {
-                    
                     return (
                       <TableHead
                         key={header.id}
@@ -217,8 +236,9 @@ const Table = <T extends { }>(opt: TableOptions<T>) => {
                             ? "cursor-pointer"
                             : "cursor-default"
                         }`}
-                        style={{width:header.getSize()}}
-                        onClick={header.column.getToggleSortingHandler()}
+                        style={{ width: header.getSize() }}
+                        // @ts-ignore
+                        onClick={() => opt.onSorting(header.column.columnDef.accessorKey)}
                       >
                         <div className="flex gap-1 items-center justify-center">
                           {header.isPlaceholder
@@ -250,7 +270,9 @@ const Table = <T extends { }>(opt: TableOptions<T>) => {
         </TableHeader>
         <TableBody>
           {opt.isLoading ? (
-            <tr><td>loading...</td></tr>
+            <tr>
+              <td>loading...</td>
+            </tr>
           ) : (
             <>
               {tableLength ? (
@@ -286,17 +308,20 @@ const Table = <T extends { }>(opt: TableOptions<T>) => {
         </TableBody>
       </TableElement>
       {/* Pagination Controls */}
-       <div className="flex items-center">
+      <div className="flex items-center">
         <div className="w-full">
-          <p>{t("showing")} {dataDef.length} de {opt.pagination.totalItems} {t("results")}</p>
+          <p>
+            {t("showing")} {dataDef.length} de {opt.pagination.totalItems}{" "}
+            {t("results")}
+          </p>
         </div>
         <Pagination>
           <PaginationContent>
             {/* Previous Button */}
-            
-              <PaginationItem>
+
+            <PaginationItem>
               <PaginationPrevious
-                href={`?page=${opt.pagination.pageIndex-1}`}
+                href={`?page=${opt.pagination.pageIndex - 1}`}
                 disabled={!opt.pagination.hasPreviousPage}
                 // onClick={(e) => {
                 //   e.preventDefault()
@@ -312,26 +337,28 @@ const Table = <T extends { }>(opt: TableOptions<T>) => {
 
             {/* Page Numbers */}
             {pageRange.map((page) => {
-              page = page +1
+              page = page + 1;
               return (
                 <PaginationItem key={page}>
-                <PaginationLink
-                  href={`?page=${[page]}`}
-                  // onClick={(e) => {
-                  //   e.preventDefault()
-                  //   opt.onPaginate({
-                  //     pageIndex: page,
-                  //     pageSize: 0
-                  //   })
-                  // }}
-                  className={cn(
-                    opt.pagination.pageIndex == page ? "bg-primary text-white" : "text-primary"
-                  )}
-                >
-                  {page}
-                </PaginationLink>
-              </PaginationItem>
-              )
+                  <PaginationLink
+                    href={`?page=${[page]}`}
+                    // onClick={(e) => {
+                    //   e.preventDefault()
+                    //   opt.onPaginate({
+                    //     pageIndex: page,
+                    //     pageSize: 0
+                    //   })
+                    // }}
+                    className={cn(
+                      opt.pagination.pageIndex == page
+                        ? "bg-primary text-white"
+                        : "text-primary"
+                    )}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              );
             })}
 
             {/* Ellipsis for skipped pages */}
@@ -344,8 +371,7 @@ const Table = <T extends { }>(opt: TableOptions<T>) => {
             {/* Next Button */}
             <PaginationItem>
               <PaginationNext
-                
-                href={`?page=${opt.pagination.pageIndex+1}`}
+                href={`?page=${opt.pagination.pageIndex + 1}`}
                 disabled={!opt.pagination.hasNextPage}
                 // onClick={(e) => {
                 //   e.preventDefault()
@@ -358,10 +384,9 @@ const Table = <T extends { }>(opt: TableOptions<T>) => {
                 // }}
               />
             </PaginationItem>
-            
           </PaginationContent>
         </Pagination>
-       </div>
+      </div>
     </div>
   );
 };
@@ -376,4 +401,4 @@ export {
   TableRow,
   TableCell,
   TableCaption,
-}
+};
