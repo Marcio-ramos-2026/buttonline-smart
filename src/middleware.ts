@@ -6,6 +6,7 @@ export async function middleware(request: NextRequest) {
     const token = await getToken({req:request,salt:'authjs.session-token',secret: process.env.AUTH_SECRET as string})
 
     if(request.nextUrl.pathname.startsWith('/admin')){
+      console.log('TOKEEEEN',token)
         if(!token) return NextResponse.redirect(new URL("/login", request.url));
 
         // Retrieve permissions, default to an empty array if not found
