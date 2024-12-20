@@ -40,7 +40,7 @@ export const useTableAction = ({
   const { sorting, handleSort } = useTableSort();
   const searchParams = useSearchParams();
 
-  const calculateTotalPages = () => Math.ceil(totalItems / pageSize);
+  const calculateTotalPages = useCallback(() => Math.ceil(totalItems / pageSize), [totalItems, pageSize]);
 
   const [page, setPage] = useState<
     PaginationState & {
@@ -71,7 +71,7 @@ export const useTableAction = ({
         hasPreviousPage: newPageIndex > 1,
       };
     });
-  }, [pageIndex, pageSize, totalItems, isMounted]);
+  }, [pageIndex, pageSize, totalItems, isMounted, calculateTotalPages]);
 
   const onPaginate = (x: PaginationState) => {
     const totalPages = calculateTotalPages();

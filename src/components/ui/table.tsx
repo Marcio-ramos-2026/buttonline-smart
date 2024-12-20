@@ -180,7 +180,7 @@ const Table = <T extends {}>(opt: TableOptions<T>) => {
       const sorted = functionalUpdate(updater, opt.pagination);
       opt.onPaginate(sorted);
     },
-    []
+    [opt]
   );
 
   const totalPages = Math.ceil(

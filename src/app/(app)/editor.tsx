@@ -9,6 +9,7 @@ import {
   Undo2,
   SquareDashed,
   Pentagon,
+  UserRoundCog,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -27,13 +28,16 @@ import { AddImage } from "@/components/editor/images/addImage";
 import { TabShapes } from "@/components/editor/shapes";
 import type { editor_canvas } from "@prisma/client";
 import { useState } from "react";
-
+import { Permission } from "@/components/permission";
+import Link from "next/link";
+import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
+import { Button } from "@/components/ui/button";
 
 type EditorType = {
-  model: editor_canvas
-}
-export function Editor({model}: EditorType) {
-  const [canvas,setCanvas] = useState(model)
+  model: editor_canvas;
+};
+export function Editor({ model }: EditorType) {
+  const [canvas, setCanvas] = useState(model);
   const t = useTranslations("pages.editor.sideBar");
 
   const data = {
@@ -45,37 +49,36 @@ export function Editor({model}: EditorType) {
       {
         id: "1",
         icon: Folder,
-        title: t('tabs.file.label'),
+        title: t("tabs.file.label"),
         content: Teste,
         active: true,
       },
       {
         id: "2",
         icon: ImageIcon,
-        title: t('tabs.image.label'),
+        title: t("tabs.image.label"),
         content: AddImage,
       },
       {
         id: "3",
         icon: Baseline,
-        title:t('tabs.text.label'),
+        title: t("tabs.text.label"),
         content: AddText,
       },
       {
         id: "4",
         icon: SquareDashed,
-        title: t('tabs.icon.label'),
+        title: t("tabs.icon.label"),
         content: TabIcons,
       },
       {
         id: "5",
         icon: Pentagon,
-        title: t('tabs.shape.label'),
+        title: t("tabs.shape.label"),
         content: TabShapes,
       },
     ],
   };
-  
 
   return (
     <FabricContextProvider model={model}>
@@ -102,12 +105,20 @@ export function Editor({model}: EditorType) {
               </div>
               <EditableBar />
             </div>
+            <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN]}>
+              <Link href={"/admin/users"}>
+                <Button icon={<UserRoundCog />}>
+                  {/* {t("notifications")} */}
+                  Admin
+                </Button>
+              </Link>
+            </Permission>
             <div className="space-x-2 text-black ml-auto">
               <LanguageSelector />
             </div>
           </header>
           <section className="w-full h-full">
-              <RenderCanvas model={canvas} />
+            <RenderCanvas model={canvas} />
           </section>
         </SidebarInset>
       </SidebarProvider>

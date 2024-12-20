@@ -60,6 +60,7 @@ const defaultUser: User = {
   email: "teste@teste.com",
   name: "Teste da silva",
   createdAt: new Date(),
+  deletedAt: null,
   updatedAt: new Date(),
   roleId: 1,
   emailVerified: null,

@@ -15,11 +15,11 @@ export default function LanguageSelector() {
   const t = useTranslations('language');
   const locale = useLocale()  
 
-  const [selectedLanguage, setSelectedLanguage] = useState<typeof langs[0] | undefined>(() => {
+  const [selectedLanguage, setSelectedLanguage] = useState<typeof langs[number] | undefined>(() => {
     return langs.find((lang) => lang.locale === locale) ?? langs[0];
   });
 
-  const selectLang = (lang:typeof langs[0]) => {
+  const selectLang = (lang:typeof langs[number]) => {
     setSelectedLanguage(lang)
     setUserLocale(lang)
   }

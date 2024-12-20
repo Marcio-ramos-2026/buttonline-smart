@@ -1,12 +1,8 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import {
-  FileText,
-  UserRound,
-  UsersRound,
-} from "lucide-react"
-import { NavMain } from "@/components/nav-main"
+import * as React from "react";
+import { FileText, Pencil, UserRound, UsersRound } from "lucide-react";
+import { NavMain } from "@/components/nav-main";
 import {
   Sidebar,
   SidebarContent,
@@ -14,9 +10,11 @@ import {
   SidebarHeader,
   SidebarRail,
   useSidebar,
-} from "@/components/ui/sidebar-admin"
-import { NavUser } from "../nav-user"
-import { TriggerSidebar } from "./triggerSideBar"
+} from "@/components/ui/sidebar-admin";
+import { NavUserAdmin } from "../nav-user-admin";
+import { TriggerSidebar } from "./triggerSideBar";
+import Link from "next/link";
+import { Button } from "../ui/button";
 
 // This is sample data.
 const data = {
@@ -28,36 +26,40 @@ const data = {
     {
       title: "Usuários",
       url: "/users",
-      icon: UserRound
+      icon: UserRound,
     },
     {
       title: "Clientes",
       url: "/clients",
-      icon: UsersRound
+      icon: UsersRound,
     },
     // {
     //   title: "Pedidos",
     //   url: "#",
     //   icon: FileText
     // }
-  ]
-}
+  ],
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { open } = useSidebar()
+  const { open } = useSidebar();
+  
   return (
     <Sidebar collapsible="icon" {...props} className="">
       <TriggerSidebar isOpenSidebar={open} />
-      <SidebarHeader>
-        {/*imagem logo*/}
-      </SidebarHeader>
+      <SidebarHeader>{/*imagem logo*/}</SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} title='Pessoas' prefix="/admin" />
+        <NavMain items={data.navMain} title="Pessoas" prefix="/admin" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <Link href={"/"} className="mb-4">
+          <Button variant={"outline"} color={"success"} full icon={<Pencil />} size={open ? 'default' : 'sm'}>
+            {open && 'Editor'}
+          </Button>
+        </Link>
+        <NavUserAdmin user={data.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

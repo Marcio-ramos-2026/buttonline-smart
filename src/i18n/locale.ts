@@ -12,6 +12,6 @@ export async function getUserLocale() {
   return cookies().get(COOKIE_NAME)?.value || langs[0].locale;
 }
 
-export async function setUserLocale(lang: typeof langs[0]) {
+export async function setUserLocale(lang: typeof langs[number]) {
   cookies().set(COOKIE_NAME, lang.locale);
 }

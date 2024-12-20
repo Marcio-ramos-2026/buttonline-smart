@@ -1,4 +1,5 @@
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
+import Image from "next/image";
 import { ForwardRefExoticComponent, RefAttributes, SVGProps } from "react";
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -20,7 +21,7 @@ export const NavbarAdmin = ({ navigation }: NavigationType) => {
   return (
     <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
       <div className="flex h-16 shrink-0 items-center">
-        <img
+        <Image
           alt="Your Company"
           src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
           className="h-8 w-auto"

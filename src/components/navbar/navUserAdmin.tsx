@@ -3,9 +3,9 @@ import {
   Bell,
   CreditCard,
   LogOut,
+  Pencil,
   Sparkles,
   User,
-  UserRoundCog,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -21,11 +21,8 @@ import { signOut } from "next-auth/react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tooltip } from "../tooltip/tooltip";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
-import { Permission } from "../permission";
-import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 
-export function NavUserSection({
+export function NavUserAdminSection({
   user,
 }: {
   user: {

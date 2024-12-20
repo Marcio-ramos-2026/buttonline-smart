@@ -166,7 +166,7 @@ export default function FabricContextProvider({
       //canvas.renderAll()
       centerAllObjects(canvas);
     }
-  }, [model, containerWidth, containerHeight]);
+  }, [model, containerWidth, containerHeight, canvas]);
 
   useEffect(() => {
     return () => {
@@ -237,7 +237,7 @@ export const RenderCanvas = ({ model }: RenderCanvasType) => {
       canvas.centerObject(canvasModel)
       canvas.renderAll();
     }
-  }, [canvas]);
+  }, [canvas, model]);
 
   return (
     <div ref={containerRef} className="bg-gray-100 h-full w-full">

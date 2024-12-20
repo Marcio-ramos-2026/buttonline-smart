@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { Navbar } from "@/components/navbar/navbarDefault";
 import { useSidebar } from "@/components/ui/sidebar";
+import { SessionProvider } from "next-auth/react";
 
 export default async function LayoutApp({ children }: { children: ReactNode }) {
   const session = await auth();
@@ -11,9 +12,11 @@ export default async function LayoutApp({ children }: { children: ReactNode }) {
     redirect(`/login`);
   }
   return (
-    <div>
-      <Navbar />
-      <div className="mt-10 md:mt-0">{children}</div>
-    </div>
+    <SessionProvider session={session}>
+      <div>
+        <Navbar />
+        <div className="mt-10 md:mt-0">{children}</div>
+      </div>
+    </SessionProvider>
   );
 }
