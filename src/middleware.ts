@@ -3,10 +3,9 @@ import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import {ROUTE_PERMISSION, ADMIN_ACCESS_PERMISSION} from '@/lib/permissions'
 export async function middleware(request: NextRequest) {
-    const token = await getToken({req:request,salt:'authjs.session-token',secret: process.env.AUTH_SECRET as string})
+    const token = await getToken({req:request,salt:'authjs.session-token',secret: process.env.AUTH_SECRET as string,secureCookie: true})
 
     if(request.nextUrl.pathname.startsWith('/admin')){
-      console.log('TOKEEEEN',token)
         if(!token) return NextResponse.redirect(new URL("/login", request.url));
 
         // Retrieve permissions, default to an empty array if not found
