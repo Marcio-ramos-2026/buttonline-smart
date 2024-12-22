@@ -2,8 +2,10 @@ import { getToken } from "next-auth/jwt";
 import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import {ROUTE_PERMISSION, ADMIN_ACCESS_PERMISSION} from '@/lib/permissions'
+const cookieKey = process.env.NODE_ENV === 'production' ? '__Secure-authjs.session-token' : 'authjs.session-token';
+
 export async function middleware(request: NextRequest) {
-    const token = await getToken({req:request,salt:'authjs.session-token',secret: process.env.AUTH_SECRET as string,secureCookie: true,cookieName:'authjs.session-token'})
+    const token = await getToken({req:request,salt:cookieKey,secret: process.env.AUTH_SECRET as string,cookieName:cookieKey})
 
     if(request.nextUrl.pathname.startsWith('/admin')){
         if(!token) return NextResponse.redirect(new URL("/login", request.url));
