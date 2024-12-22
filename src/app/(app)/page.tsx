@@ -9,14 +9,17 @@ import { getTranslations } from "next-intl/server";
 
 export default async function Page() {
 
-  const canvas = await prisma.editor_canvas.findFirst({
+  const allowed_models = await prisma.editor_canvas.findMany({
     where: {
-      id: 1
+      active: true
     }
   })
 
-  if(!canvas) return <h1>Layout não encontrado.</h1>
+  if(!allowed_models) {
+    return <h1>nada</h1>
+  }
 
+  const canvas = allowed_models[0]
   const t = await getTranslations("pages.editor.sideBar");
 
   const data = {
@@ -60,7 +63,7 @@ export default async function Page() {
   };
 
   return (
-      <Editor model={canvas} />
+      <Editor allowed_models={allowed_models} />
   )
 }
 

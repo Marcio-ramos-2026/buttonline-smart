@@ -114,6 +114,7 @@ model editor_canvas {
   object_3 String @db.LongText
   gabarito Json
   config   Json?
+  active Boolean @default(true)
 
   @@map("editor_canvas")
 }

@@ -116,13 +116,13 @@ export const createModel = (
     })
     .filter((el): el is NonNullable<typeof el> => el !== null);
 
-  console.log("el", elements);
-  elements.push(createMark(elements[0]));
+  
+    elements.push(createMark(elements[0]));
 
-  return new fabric.Group(elements, {
-    selectable: false,
-    moveCursor: "default",
-    hoverCursor: "default",
+    return new fabric.Group(elements, {
+      selectable: false,
+      moveCursor: "default",
+      hoverCursor: "default",
   });
 };
 

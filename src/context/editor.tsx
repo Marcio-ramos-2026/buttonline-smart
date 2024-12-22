@@ -19,12 +19,14 @@ import type { editor_canvas } from "@prisma/client";
 import { createModel, ModelType } from "@/components/editor/model";
 import { LoadingIcon } from "@/components/loading";
 import { useDebounceCallback } from "@/hooks/useDebounceCallback";
+import { Button } from "@/components/ui/button";
 
 const { theme } = resolveConfig(tailwindConfig);
 
 type IEditorProvider = {
   children: React.ReactNode;
   model?: editor_canvas;
+  allowed_models: editor_canvas[]
 };
 
 type IEditorContext = {
@@ -33,6 +35,8 @@ type IEditorContext = {
   containerRef: RefObject<HTMLDivElement>;
   clip: () => void;
   editable?: string;
+  currentModel?: editor_canvas
+  models: editor_canvas[]
 };
 
 const FabricContext = createContext<IEditorContext | null>(null);
@@ -109,8 +113,11 @@ type Size = {
 export default function FabricContextProvider({
   children,
   model,
+  allowed_models
 }: IEditorProvider) {
   const [canvas, setcanvas] = useState<fabric.Canvas | null>(null);
+  const [currentModel, setCurrentModel] = useState(model)
+  const [models, setModels] = useState(allowed_models)
   const [{ width: containerWidth, height: containerHeight }, setSize] =
     useState<Size>({
       width: undefined,
@@ -203,7 +210,7 @@ export default function FabricContextProvider({
 
   return (
     <FabricContext.Provider
-      value={{ canvas: canvas, canvasEl: canvasEl, containerRef, clip: clip }}
+      value={{ canvas: canvas, canvasEl: canvasEl, containerRef, clip: clip, currentModel:currentModel, models }}
     >
       {children}
     </FabricContext.Provider>
@@ -218,26 +225,46 @@ export const useEditorContext = () => {
   return values;
 };
 
-export type RenderCanvasType = {
-  model: editor_canvas;
-};
 
-export const RenderCanvas = ({ model }: RenderCanvasType) => {
-  const { canvasEl, containerRef, canvas } = useEditorContext();
+export const RenderCanvas = () => {
+  const { canvasEl, containerRef, canvas,currentModel,models } = useEditorContext();
 
   useEffect(() => {
     if (!canvas) return;
-    if (!model) return;
+    if (!currentModel) return;
 
     
-    const canvasModel = createModel(canvas, model);
+    const canvasModel = createModel(canvas, currentModel);
     if (canvasModel) {
       canvas.remove(...canvas.getObjects());
       canvas.add(canvasModel);
       canvas.centerObject(canvasModel)
       canvas.renderAll();
     }
-  }, [canvas, model]);
+  }, [canvas, currentModel]);
+
+  if(!currentModel) {
+    return (
+      <div className="flex items-center flex-col w-full p-8 gap-6">
+        <h1 className="text-4xl">selecione um modelo</h1>
+        <div className="grid grid-cols-4 w-full gap-6">
+          {models.map((m)=>{
+            return (
+              <div className="overflow-hidden rounded-lg bg-white shadow-sm border">
+                <div className="px-4 py-5 sm:px-6">
+                  <h5 className="text-primary text-center">{m.name}</h5>
+                </div>
+                <div className="px-4 py-5 sm:p-6">{/* Content goes here */}</div>
+                <div className="p-4">
+                  <Button full>eu quero esse</Button>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div ref={containerRef} className="bg-gray-100 h-full w-full">

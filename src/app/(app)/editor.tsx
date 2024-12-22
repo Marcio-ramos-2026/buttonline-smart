@@ -34,10 +34,10 @@ import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 import { Button } from "@/components/ui/button";
 
 type EditorType = {
-  model: editor_canvas;
+  model?: editor_canvas;
+  allowed_models: editor_canvas[]
 };
-export function Editor({ model }: EditorType) {
-  const [canvas, setCanvas] = useState(model);
+export function Editor({ model,allowed_models }: EditorType) {
   const t = useTranslations("pages.editor.sideBar");
 
   const data = {
@@ -81,7 +81,7 @@ export function Editor({ model }: EditorType) {
   };
 
   return (
-    <FabricContextProvider model={model}>
+    <FabricContextProvider model={model} allowed_models={allowed_models}>
       <SidebarProvider
         style={
           {
@@ -118,7 +118,7 @@ export function Editor({ model }: EditorType) {
             </div>
           </header>
           <section className="w-full h-full">
-            <RenderCanvas model={canvas} />
+            <RenderCanvas />
           </section>
         </SidebarInset>
       </SidebarProvider>
