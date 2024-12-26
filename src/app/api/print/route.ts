@@ -89,6 +89,7 @@ export async function GET(request: NextRequest) {
     return new NextResponse(pdfBytes, {
       headers: {
         "Content-Type": "application/pdf",
+        "Content-Disposition": "inline; filename='document.pdf'", // Open the PDF in the browser
       },
     });
   } catch (error) {
@@ -99,11 +100,6 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-
-    // return NextResponse.json(
-    //   { success: true, message: "Failed to generate PDF" },
-    //   { status: 200 }
-    // );
 }
 
 type shapeCircle = {
@@ -151,3 +147,8 @@ const circle = (config: shapeCircle) => {
   });
 };
 
+
+
+export async function POST(request: NextRequest) {
+  return GET(request)
+}

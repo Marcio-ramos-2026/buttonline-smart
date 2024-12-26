@@ -7,7 +7,6 @@ import React, {
   useRef,
   useEffect,
   RefObject,
-  useMemo,
 } from "react";
 import * as fabric from "fabric";
 
@@ -23,6 +22,12 @@ import { Button } from "@/components/ui/button";
 import { ReactSVG } from "react-svg";
 
 const { theme } = resolveConfig(tailwindConfig);
+
+function saveCanvasToLocalStorage(canvas: fabric.Canvas) {
+  const canvasJSON = canvas.toObject(["selectable","moveCursor","hoverCursor"]);
+  localStorage.setItem(`cardenas_obj`, JSON.stringify(canvasJSON));
+  console.log('Canvas saved!');
+}
 
 type canvasConfig = {
   centerX: number;
@@ -175,12 +180,21 @@ export default function FabricContextProvider({
       setcanvas(canvasInstance);
     } else {
       canvas.setDimensions({ width: containerWidth, height: containerHeight });
-      //canvas.renderAll()
+      // canvas.renderAll()
       centerAllObjects(canvas);
     }
+
   }, [model, containerWidth, containerHeight, canvas]);
 
   useEffect(() => {
+    canvas?.on('object:modified', () => {
+      saveCanvasToLocalStorage(canvas);
+    });
+    
+    canvas?.on('object:added', () => {
+      saveCanvasToLocalStorage(canvas);
+    });
+
     return () => {
       if (canvas) canvas.dispose();
     };
@@ -245,6 +259,7 @@ export const RenderCanvas = () => {
     if (!canvas) return;
     if (!currentModel) return;
 
+
     const maxSize = 800; // limite máximo do editor
     const canvasWidth = canvas.width || 0;
     const canvasHeight = canvas.height || 0;
@@ -255,6 +270,20 @@ export const RenderCanvas = () => {
       maxScale: Math.min(canvasWidth, canvasHeight, maxSize) * 0.7,
       higherWidth: 0,
     };
+
+    const canvasJSON = localStorage.getItem('cardenas_obj');
+    if (canvasJSON) {
+      canvas.loadFromJSON(JSON.parse(canvasJSON)).then(canvas => {
+        canvas.getObjects().forEach((obj) => {
+          console.log('obj',obj)
+          if (obj.selectable !== true) {
+            obj.set({ selectable: false });
+          }
+        });
+        canvas.renderAll()
+      });
+      return
+    }
 
     const canvasModel = createModel(currentModel);
     if (canvasModel) {
@@ -297,7 +326,34 @@ export const RenderCanvas = () => {
   }
 
   return (
-    <div ref={containerRef} className="bg-gray-100 h-full w-full">
+    <div ref={containerRef} className="bg-gray-100 h-full w-full relative">
+      <Button className="absolute r-10 t-10 z-50" onClick={async ()=> {
+        const svg = canvas?.toSVG({
+          //@ts-ignore
+          width: currentModel.config.objects["1"].radius,
+          //@ts-ignore
+          height: currentModel.config.objects["1"].radius,
+        })
+        fetch("/api/print", {
+          method: "POST",
+          body: JSON.stringify({ svgData: svg}), // Send any necessary data for PDF generation
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => response.blob())  // Get the response as a Blob (binary data)
+        .then((blob) => {
+          // Create a URL for the Blob
+          const url = window.URL.createObjectURL(blob);
+          
+          // Open the PDF in a new tab
+          window.open(url, "_blank");
+        })
+        .catch((error) => {
+          console.error("Error fetching the PDF:", error);
+        });
+
+      }}>imprimir</Button>
       <canvas ref={canvasEl} />
     </div>
   );

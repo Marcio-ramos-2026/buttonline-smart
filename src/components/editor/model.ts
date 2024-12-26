@@ -92,7 +92,7 @@ export const createModel = (model: editor_canvas): fabric.Object => {
   elements.push(createMark(elements[0]));
 
   return new fabric.Group(elements, {
-    selectable: true,
+    selectable: false,
     moveCursor: "default",
     hoverCursor: "default",
   });

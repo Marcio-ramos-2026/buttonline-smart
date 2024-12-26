@@ -63,7 +63,7 @@ export default async function Page() {
   };
 
   return (
-      <Editor allowed_models={allowed_models} />
+      <Editor allowed_models={allowed_models} model={allowed_models[0]} />
   )
 }
 
