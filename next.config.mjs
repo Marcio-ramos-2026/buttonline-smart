@@ -24,7 +24,10 @@ const nextConfig = {
 			},
         ],
         dangerouslyAllowSVG: true,
-    }
+    },
+	experimental: {
+		serverComponentsExternalPackages: ["pdfkit"],
+	},
 };
 
 export default withNextIntl(nextConfig);

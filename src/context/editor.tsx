@@ -20,6 +20,7 @@ import { LoadingIcon } from "@/components/loading";
 import { useDebounceCallback } from "@/hooks/useDebounceCallback";
 import { Button } from "@/components/ui/button";
 import { ReactSVG } from "react-svg";
+import { height, width } from "pdfkit/js/page";
 
 const { theme } = resolveConfig(tailwindConfig);
 
@@ -50,6 +51,8 @@ type IEditorContext = {
   editable?: string;
   currentModel?: editor_canvas;
   models: editor_canvas[];
+  setRealCanvas: React.Dispatch<fabric.FabricObject>
+  realCanvas: fabric.FabricObject
 };
 
 const FabricContext = createContext<IEditorContext | null>(null);
@@ -131,6 +134,8 @@ export default function FabricContextProvider({
   const [canvas, setcanvas] = useState<fabric.Canvas | null>(null);
   const [currentModel, setCurrentModel] = useState(model);
   const [models, setModels] = useState(allowed_models);
+  const [realCanvas, setRealCanvas] = useState<fabric.FabricObject|null>(null)
+
   const [{ width: containerWidth, height: containerHeight }, setSize] =
     useState<Size>({
       width: undefined,
@@ -236,6 +241,8 @@ export default function FabricContextProvider({
         clip: clip,
         currentModel: currentModel,
         models,
+        setRealCanvas,
+        realCanvas: realCanvas as fabric.FabricObject,
       }}
     >
       {children}
@@ -252,7 +259,7 @@ export const useEditorContext = () => {
 };
 
 export const RenderCanvas = () => {
-  const { canvasEl, containerRef, canvas, currentModel, models } =
+  const { canvasEl, containerRef, canvas, currentModel, models,setRealCanvas } =
     useEditorContext();
 
   useEffect(() => {
@@ -275,7 +282,6 @@ export const RenderCanvas = () => {
     if (canvasJSON) {
       canvas.loadFromJSON(JSON.parse(canvasJSON)).then(canvas => {
         canvas.getObjects().forEach((obj) => {
-          console.log('obj',obj)
           if (obj.selectable !== true) {
             obj.set({ selectable: false });
           }
@@ -295,6 +301,7 @@ export const RenderCanvas = () => {
       canvas.add(canvasModel);
       canvas.centerObject(canvasModel);
       canvas.renderAll();
+      setRealCanvas(canvasModel)
     }
   }, [canvas, currentModel]);
 
@@ -328,15 +335,33 @@ export const RenderCanvas = () => {
   return (
     <div ref={containerRef} className="bg-gray-100 h-full w-full relative">
       <Button className="absolute r-10 t-10 z-50" onClick={async ()=> {
+        const dpi = getScreenDPI()
+
+        const x = canvas?.getObjects().map(obj => {
+          return obj.toSVG()
+        })
+
+
         const svg = canvas?.toSVG({
           //@ts-ignore
-          width: currentModel.config.objects["1"].radius,
+          width: fabric.util.parseUnit(`${currentModel.config.objects["1"].radius}mm`),
           //@ts-ignore
-          height: currentModel.config.objects["1"].radius,
+          height: fabric.util.parseUnit(`${currentModel.config.objects["1"].radius}mm`),
+          // objects: canvas.getObjects().map(obj => {
+          //   return obj.toSVG()
+          // }),
+          // viewBox: {
+          //   //@ts-ignore
+          //   height:fabric.util.parseUnit(`${currentModel.config.objects["1"].radius}mm`),
+          //   //@ts-ignore
+          //   width:fabric.util.parseUnit(`${currentModel.config.objects["1"].radius}mm`),
+          //   x:0,
+          //   y:0
+          // }
         })
         fetch("/api/print", {
           method: "POST",
-          body: JSON.stringify({ svgData: svg}), // Send any necessary data for PDF generation
+          body: JSON.stringify({ svg: svg,model_id: currentModel.id,dpi}), // Send any necessary data for PDF generation
           headers: {
             "Content-Type": "application/json",
           },
@@ -358,3 +383,24 @@ export const RenderCanvas = () => {
     </div>
   );
 };
+
+
+function getScreenDPI() {
+  const div = document.createElement('div');
+  div.style.width = '1in'; // 1 inch in CSS units
+  div.style.height = '1in';
+  div.style.position = 'absolute';
+  div.style.visibility = 'hidden';
+  document.body.appendChild(div);
+
+  const dpi = div.offsetWidth; // The number of pixels in 1 inch
+  document.body.removeChild(div);
+
+  return dpi;
+}
+
+function pixelsToMillimeters(pixels: number) {
+  const dpi = getScreenDPI(); // Get the user's screen DPI
+  const mm = (pixels / dpi) * 25.4; // Convert to millimeters
+  return mm.toString();
+}
