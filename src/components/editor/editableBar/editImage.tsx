@@ -7,15 +7,18 @@ import {
 import { Slider } from "@/components/ui/slider";
 import * as fabric from "fabric";
 import { Blend } from "lucide-react";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import { ButtonIcon } from "./buttonIcon";
+import { RemoveActiveObject } from "./removeActiveObject";
 
 export const EditImage = ({
   object,
   canvas,
+  setObject,
 }: {
   object: fabric.FabricImage;
   canvas: fabric.Canvas | null;
+  setObject: (object: SetStateAction<fabric.Object | null>) => void;
 }) => {
   const [opacity, setOpacity] = useState<number[]>([object?.opacity * 100]);
 
@@ -29,7 +32,7 @@ export const EditImage = ({
   };
 
   return (
-    <>
+    <div className="flex gap-2 flex-1 [&_label]:w-fit">
       <DropdownMenu>
         <Tooltip content="Opacidade">
           <DropdownMenuTrigger asChild>
@@ -57,6 +60,7 @@ export const EditImage = ({
           />
         </DropdownMenuContent>
       </DropdownMenu>
-    </>
+      <RemoveActiveObject canvas={canvas} setObject={setObject} />
+    </div>
   );
 };

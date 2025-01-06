@@ -3,19 +3,23 @@ import { HandleOpacity } from "./handles/HandleOpacity";
 import { HandleStrokeColor } from "./handles/HandleStrokeColor";
 import { HandleFillColor } from "./handles/HandleFillColor";
 import { HandleLayer } from "./handles/HandleLayer";
+import { SetStateAction } from "react";
+import { RemoveActiveObject } from "./removeActiveObject";
 
 type EditShapedProps = {
   object: fabric.FabricImage;
   canvas: fabric.Canvas | null;
+  setObject: (object: SetStateAction<fabric.Object | null>) => void;
 };
 
-export const EditShapes = ({ object, canvas }: EditShapedProps) => {
+export const EditShapes = ({ object, canvas, setObject }: EditShapedProps) => {
   return (
     <div className="flex gap-2 flex-1">
       <HandleStrokeColor object={object} canvas={canvas} />
       <HandleFillColor object={object} canvas={canvas} />
       <HandleOpacity object={object} canvas={canvas} />
       <HandleLayer object={object} canvas={canvas} />
+      <RemoveActiveObject canvas={canvas} setObject={setObject} />
     </div>
   );
 };
