@@ -1,6 +1,10 @@
 "use client";
 
+import { LoadingIcon } from "@/components/loading";
+import { SearchInput } from "@/components/searchInput";
 import { useEditorContext } from "@/context/editor";
+import { useInifiteScroll } from "@/hooks/useInifiteScroll";
+import { useInifiteScrollImage } from "@/hooks/useInifiteScrollImage";
 import * as fabric from "fabric";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
@@ -26,6 +30,7 @@ export function AddImage() {
   const { canvas } = useEditorContext();
   const [images, setImages] = useState<string[]>(BATATAS_TESTE);
   const t = useTranslations("pages.editor.sideBar.tabs.image");
+  const [value, setValue] = useState("");
 
   const handleAddImage = async (src: string) => {
     if (!canvas) return;
@@ -70,6 +75,14 @@ export function AddImage() {
     });
   };
 
+  const { items, ref, loading } = useInifiteScrollImage({
+    endpoint: "https://pixabay.com/api/",
+    limit: 20,
+    get: `q=${value}&image_type=photo&key=391497-ce4d5e5bcc7e2531c2f8ebe17&lang=pt&per_page=20`,
+  });
+
+  console.log("ITEMS", items);
+
   return (
     <div className="text-textForefround h-full flex flex-col gap-3">
       <div className="w-full">
@@ -105,8 +118,7 @@ export function AddImage() {
               />
             </svg>
             <p className="mb-1 text-xs text-gray-500 dark:text-gray-400 text-center">
-              <span className="font-semibold">{t("load")}</span>{" "}
-              {t("drag")}.
+              <span className="font-semibold">{t("load")}</span> {t("drag")}.
             </p>
             <p className="text-[10px] text-gray-500 dark:text-gray-400">
               SVG, PNG, JPG or GIF (Max. 800px x 400px)
@@ -120,22 +132,27 @@ export function AddImage() {
           />
         </label>
       </div>
+
+      <SearchInput
+        onValueChange={(val) => {
+          setValue(val);
+        }}
+        debounceTime={300}
+      />
+
       <div className="overflow-y-auto h-[83vh] scrollBar pr-2">
-        <div
-          className="gap-2"
-          style={{ columnCount: "2" }}
-        >
-          {images.map((image) => {
+        <div className="gap-2" style={{ columnCount: "2" }}>
+          {items.map((image) => {
             return (
               <button
-                key={image}
+                key={image.id}
                 type="button"
-                onClick={() => handleAddImage(image)}
+                onClick={() => handleAddImage(image.webformatURL)}
                 className="rounded-md inline-block mb-2 last:mb-0"
               >
                 <Image
                   alt="imagem teste"
-                  src={image}
+                  src={image.previewURL}
                   width={150}
                   height={200}
                   className="w-full h-auto block rounded-md"
@@ -143,6 +160,11 @@ export function AddImage() {
               </button>
             );
           })}
+        </div>
+
+        <div className="flex justify-center items-center mt-8 bg-red-100" ref={ref}>
+          {/* {loading && <LoadingIcon />} */}
+          <LoadingIcon />
         </div>
       </div>
     </div>

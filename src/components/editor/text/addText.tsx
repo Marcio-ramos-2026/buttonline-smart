@@ -86,7 +86,7 @@ export function AddText() {
           fabric.GroupProps & fabric.TClassProperties<this>,
           keyof fabric.SerializedGroupProps
         >,
-        K extends keyof T = never
+        K extends keyof T = never,
       >(
         propertiesToInclude: K[] = []
       ): Pick<T, K> & fabric.SerializedGroupProps {
@@ -101,7 +101,7 @@ export function AddText() {
     }
 
     // Usage Example
-    const curvedText = new CurvedText("Texto curvado", {
+    const curvedText = new CurvedText("Texto curvo", {
       left: 200,
       top: 200,
       radius: 100,
@@ -119,14 +119,14 @@ export function AddText() {
         onClick={handleAddText}
         className="border border-gray-300 rounded-lg px-2 py-1"
       >
-        Texto teste
+        Inisira um texto
       </button>
       <button
         type="button"
         onClick={handleAddCurvedText}
         className="border border-gray-300 rounded-lg px-2 py-1"
       >
-        Texto curvado
+        Inisira um Texto curvo
       </button>
     </div>
   );

@@ -55,30 +55,42 @@ export const EditableBar = () => {
     <div className="flex items-center justify-between w-full">
       {(object.type === "textbox" || object.type === "group") && (
         <>
-          <EditText object={object as fabric.Textbox} canvas={canvas} />
-          <RemoveActiveObject canvas={canvas} setObject={setObject} />
+          <EditText
+            object={object as fabric.Textbox}
+            canvas={canvas}
+            setObject={setObject}
+          />
         </>
       )}
       {object.type === "image" && (
         <>
-          <EditImage object={object as fabric.FabricImage} canvas={canvas} />
-          <RemoveActiveObject canvas={canvas} setObject={setObject} />
+          <EditImage
+            object={object as fabric.FabricImage}
+            canvas={canvas}
+            setObject={setObject}
+          />
         </>
       )}
 
       {object.type === "path" && (
         //svg
         <>
-          <EditICon object={object as fabric.FabricImage} canvas={canvas} />
-          <RemoveActiveObject canvas={canvas} setObject={setObject} />
+          <EditICon
+            object={object as fabric.FabricImage}
+            canvas={canvas}
+            setObject={setObject}
+          />
         </>
       )}
 
       {shapesType.includes(object.type) && (
         //shapes
         <>
-          <EditShapes object={object as fabric.FabricImage} canvas={canvas} />
-          <RemoveActiveObject canvas={canvas} setObject={setObject} />
+          <EditShapes
+            object={object as fabric.FabricImage}
+            canvas={canvas}
+            setObject={setObject}
+          />
         </>
       )}
     </div>
