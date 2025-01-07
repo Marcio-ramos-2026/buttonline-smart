@@ -17,20 +17,24 @@ import { Alert } from "@/components/alert";
 import { Button } from "@/components/ui/button";
 import { editProfileAction } from "@/app/actions/editProfileAction";
 import { editProfileSchema, EditProfileSchema } from "@/lib/zod-schemas";
-import { useSearchParams } from "next/navigation";
+import type { User } from "@prisma/client";
+import { toast } from "@/hooks/use-toast";
 
-export function UserProfile() {
-  const searchParams = useSearchParams();
-  const userId = searchParams.get("id");
+export function UserProfile({user}: {user: User}) {
+  
   const formSchema = editProfileSchema();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: user.name as string,
+      email: user.email as string
+    }
   });
 
   const { formState, setError } = form;
 
   const onSubmit = async (data: EditProfileSchema) => {
-    const result = await editProfileAction(Number(userId), data);
+    const result = await editProfileAction(user.id, data);
 
     if (result?.zod_errors) {
       Object.entries(result.zod_errors).forEach(([field, value]) => {
@@ -45,6 +49,15 @@ export function UserProfile() {
       setError("root.global", {
         type: "manual",
         message: result.error,
+      });
+    }
+
+    console.log('result',result)
+
+    if (result.success) {
+      toast({
+        title: "Sucesso",
+        description: result.message
       });
     }
   };

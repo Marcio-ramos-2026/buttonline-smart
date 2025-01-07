@@ -1,6 +1,7 @@
+"use server"
+import { prisma } from "@/lib/prisma";
 import { editProfileSchema, EditProfileSchema } from "@/lib/zod-schemas";
 import { getTranslations } from "next-intl/server";
-import { prisma } from "@/lib/prisma";
 
 type WhereUpdateProfile = {
     email?: string
@@ -12,8 +13,6 @@ type WhereUpdateProfile = {
 export async function editProfileAction(userId: number, data: EditProfileSchema) {
   const tForm = await getTranslations("pages.generalZodErrors");
   const schema = editProfileSchema(tForm);
-
-  console.log('DATAAAAAAA', data)
 
   const validatedFields = schema.safeParse({
     email: data.email,
@@ -40,23 +39,23 @@ export async function editProfileAction(userId: number, data: EditProfileSchema)
   console.log('ACTION EDIT WHERE', updateUserWhere)
 
   try {
-    // const user = await prisma.user.findFirst({
-    //   where: {
-    //     id: userId,
-    //   },
-    // });
+    const user = await prisma.user.findFirst({
+      where: {
+        id: userId,
+      },
+    });
 
-    // if (!user)
-    //   return {
-    //     error: "Usuário não encontrado.",
-    //   };
+    if (!user)
+      return {
+        error: "Usuário não encontrado.",
+      };
 
-    // const updateUser = await prisma.user.update({
-    //     where: {
-    //         id: user.id
-    //     },
-    //     data: updateUserWhere
-    // })
+    const updateUser = await prisma.user.update({
+        where: {
+            id: user.id
+        },
+        data: updateUserWhere
+    })
 
     return {
       message: `Dados salvos com sucesso.`,

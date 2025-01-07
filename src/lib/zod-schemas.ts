@@ -110,8 +110,8 @@ export const editProfileSchema = (t?: any) => {
   return z
     .object({
       email: z.string().email({ message: "Email inválido" }),
-      password: z.string().trim(),
-      confirmPassword: z.string().trim(),
+      password: z.string().optional(),
+      confirmPassword: z.string().optional(),
       name: z.string(),
     })
     .superRefine(({ confirmPassword, password }, ctx) => {
