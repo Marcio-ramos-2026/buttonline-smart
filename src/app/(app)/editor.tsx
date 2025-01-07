@@ -46,13 +46,13 @@ export function Editor({ model, allowed_models }: EditorType) {
       email: "usuário@teste.com",
     },
     navMain: [
-      {
-        id: "1",
-        icon: Folder,
-        title: t("tabs.file.label"),
-        content: Teste,
-        active: true,
-      },
+      // {
+      //   id: "1",
+      //   icon: Folder,
+      //   title: t("tabs.file.label"),
+      //   content: Teste,
+      //   active: true,
+      // },
       {
         id: "2",
         icon: ImageIcon,

@@ -55,30 +55,42 @@ export const EditableBar = () => {
     <div className="flex gap-3 md:gap-6 xl:gap-10 items-center w-full">
       {(object.type === "textbox" || object.type === "group") && (
         <>
-          <RemoveActiveObject canvas={canvas} setObject={setObject} />
-          <EditText object={object as fabric.Textbox} canvas={canvas} />
+          <EditText
+            object={object as fabric.Textbox}
+            canvas={canvas}
+            setObject={setObject}
+          />
         </>
       )}
       {object.type === "image" && (
         <>
-          <RemoveActiveObject canvas={canvas} setObject={setObject} />
-          <EditImage object={object as fabric.FabricImage} canvas={canvas} />
+          <EditImage
+            object={object as fabric.FabricImage}
+            canvas={canvas}
+            setObject={setObject}
+          />
         </>
       )}
 
       {object.type === "path" && (
         //svg
         <>
-          <RemoveActiveObject canvas={canvas} setObject={setObject} />
-          <EditICon object={object as fabric.FabricImage} canvas={canvas} />
+          <EditICon
+            object={object as fabric.FabricImage}
+            canvas={canvas}
+            setObject={setObject}
+          />
         </>
       )}
 
       {shapesType.includes(object.type) && (
         //shapes
         <>
-          <RemoveActiveObject canvas={canvas} setObject={setObject} />
-          <EditShapes object={object as fabric.FabricImage} canvas={canvas} />
+          <EditShapes
+            object={object as fabric.FabricImage}
+            canvas={canvas}
+            setObject={setObject}
+          />
         </>
       )}
     </div>

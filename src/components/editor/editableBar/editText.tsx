@@ -21,7 +21,7 @@ import {
   AArrowUp,
   Radius,
 } from "lucide-react";
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent, useEffect, SetStateAction } from "react";
 import * as fabric from "fabric";
 import { Tooltip } from "@/components/tooltip/tooltip";
 import { Input } from "@/components/ui/input";
@@ -31,6 +31,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { RemoveActiveObject } from "./removeActiveObject";
 
 const MIN_FONT_SIZE = 1;
 const MAX_FONT_SIZE = 200;
@@ -40,9 +41,11 @@ const fontFamilys = ["Font 1", "Font 2", "Font 3"];
 export const EditText = ({
   object,
   canvas,
+  setObject,
 }: {
   object: fabric.Textbox;
   canvas: fabric.Canvas | null;
+  setObject: (object: SetStateAction<fabric.Object | null>) => void;
 }) => {
   const [color, setColor] = useState<string | fabric.TFiller | null>(null);
   const [fontFamily, setFontFamily] = useState("");
@@ -372,6 +375,7 @@ export const EditText = ({
           </DropdownMenu>
         </>
       )}
+      <RemoveActiveObject canvas={canvas} setObject={setObject} />
     </div>
   );
 };

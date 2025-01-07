@@ -37,39 +37,18 @@ type ModelConfig = {
   objects: ShapeCollection;
 };
 
-type canvasConfig = {
-  centerX: number;
-  centerY: number;
-  maxScale: number;
-  higherWidth: number;
-};
-
-export const createModel = (
-  canvas: fabric.Canvas,
-  model: editor_canvas
-): fabric.Object => {
-  const maxSize = 800; // limite máximo do editor
-  const canvasWidth = canvas.width || 0;
-  const canvasHeight = canvas.height || 0;
-
-  const canvasConfig = {
-    centerX: canvas.width / 2,
-    centerY: canvas.height / 2,
-    maxScale: Math.min(canvasWidth, canvasHeight, maxSize) * 0.5,
-    higherWidth: 0,
-  };
-
+export const createModel = (model: editor_canvas): fabric.Object => {
   const createMark = (element: fabric.FabricObject) => {
-    const markWidth = 10;
+    const markWidth = 2;
     const mark = new fabric.Rect({
       width: markWidth,
-      height: 25,
-      fill: "black",
-      stroke: "#000",
-      strokeWidth: 1,
+      height: 7,
+      fill: "red",
+      stroke: "red",
+      strokeWidth: 0,
       selectable: false,
       moveCursor: "default",
-      top: canvasConfig.centerY,
+
       left:
         element.left -
         element.width / 2 +
@@ -90,92 +69,73 @@ export const createModel = (
       switch (obj.type) {
         case "ellipse":
           const typeEllipse = obj as shapeEllipse;
-          if (k === 0) {
-            canvasConfig.higherWidth = typeEllipse.width;
-          }
-          const fabricObjectEllipse = ellipse(typeEllipse, canvasConfig);
+
+          const fabricObjectEllipse = ellipse(typeEllipse);
           return fabricObjectEllipse;
           break;
         case "circle":
           const typeCircle = obj as shapeCircle;
-          if (k === 0) {
-            canvasConfig.higherWidth = typeCircle.radius;
-          }
-          const fabricObjectCircle = circle(typeCircle, canvasConfig);
+
+          const fabricObjectCircle = circle(typeCircle);
           return fabricObjectCircle;
           break;
         case "rectangle":
           const typeRectangle = obj as shapeRectangle;
-          if (k === 0) {
-            canvasConfig.higherWidth = typeRectangle.width;
-          }
-          const fabricObjectRectangle = rectangle(typeRectangle, canvasConfig);
+
+          const fabricObjectRectangle = rectangle(typeRectangle);
           return fabricObjectRectangle;
           break;
       }
     })
     .filter((el): el is NonNullable<typeof el> => el !== null);
 
-  
-    elements.push(createMark(elements[0]));
+  elements.push(createMark(elements[0]));
 
-    return new fabric.Group(elements, {
-      selectable: false,
-      moveCursor: "default",
-      hoverCursor: "default",
+  return new fabric.Group(elements, {
+    selectable: false,
+    moveCursor: "default",
+    hoverCursor: "default",
   });
 };
 
-const ellipse = (
-  config: shapeEllipse,
-  props: canvasConfig
-): fabric.FabricObject => {
-  const scaleFactor = props.maxScale / props.higherWidth;
-
+const ellipse = (config: shapeEllipse): fabric.FabricObject => {
   return new fabric.Ellipse({
-    rx: config.width * scaleFactor,
-    ry: config.height * scaleFactor,
+    rx: config.width,
+    ry: config.height,
     fill: "white",
     stroke: "#000",
-    strokeWidth: config?.strokeWidth ?? 4,
+    strokeWidth: config?.strokeWidth ?? 1,
     strokeDashArray: config?.strokeDashArray ?? [0, 0],
     selectable: false,
     moveCursor: "default",
     originX: "center",
     originY: "center",
     hoverCursor: "default",
-    top: props.centerY,
-    left: props.centerX,
   });
 };
 
-const circle = (config: shapeCircle, props: canvasConfig) => {
-  const scaleFactor = props.maxScale / props.higherWidth;
+const circle = (config: shapeCircle) => {
   return new fabric.Circle({
-    radius: config.radius * scaleFactor,
+    radius: config.radius,
     fill: "white",
     stroke: "#000",
-    strokeWidth: config?.strokeWidth ?? 4,
+    strokeWidth: config?.strokeWidth ?? 1,
     strokeDashArray: config?.strokeDashArray ?? [0, 0],
     selectable: false,
     moveCursor: "default",
     originX: "center",
     originY: "center",
     hoverCursor: "default",
-    top: props.centerY,
-    left: props.centerX,
   });
 };
 
-const rectangle = (config: shapeRectangle, props: canvasConfig) => {
-  const scaleFactor = props.maxScale / props.higherWidth;
-
+const rectangle = (config: shapeRectangle) => {
   return new fabric.Rect({
-    width: config.width * scaleFactor,
-    height: config.height * scaleFactor,
+    width: config.width,
+    height: config.height,
     fill: "white",
     stroke: "#000",
-    strokeWidth: config?.strokeWidth ?? 4,
+    strokeWidth: config?.strokeWidth ?? 1,
     strokeDashArray: config?.strokeDashArray ?? [0, 0],
     selectable: false,
     moveCursor: "default",
@@ -184,7 +144,10 @@ const rectangle = (config: shapeRectangle, props: canvasConfig) => {
     hoverCursor: "default",
     rx: config?.radius ?? 0,
     ry: config?.radius ?? 0,
-    top: props.centerY,
-    left: props.centerX,
   });
+};
+
+export const generateSVG = (element: fabric.FabricObject) => {
+  const viewBox = `${-element.width / 2} ${-element.height / 2} ${element.width} ${element.height}`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${element.width}" height="${element.height}" viewBox="${viewBox}">${element.toSVG()}</svg>`;
 };

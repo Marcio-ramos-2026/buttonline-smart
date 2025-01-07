@@ -7,7 +7,6 @@ import React, {
   useRef,
   useEffect,
   RefObject,
-  useMemo,
 } from "react";
 import * as fabric from "fabric";
 
@@ -16,17 +15,31 @@ import { useResizeObserver } from "@/hooks/useResizeObserver";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../tailwind.config";
 import type { editor_canvas } from "@prisma/client";
-import { createModel, ModelType } from "@/components/editor/model";
+import { createModel, generateSVG, ModelType } from "@/components/editor/model";
 import { LoadingIcon } from "@/components/loading";
 import { useDebounceCallback } from "@/hooks/useDebounceCallback";
 import { Button } from "@/components/ui/button";
+import { ReactSVG } from "react-svg";
 
 const { theme } = resolveConfig(tailwindConfig);
+
+function saveCanvasToLocalStorage(canvas: fabric.Canvas) {
+  const canvasJSON = canvas.toObject(["selectable","moveCursor","hoverCursor"]);
+  localStorage.setItem(`cardenas_obj`, JSON.stringify(canvasJSON));
+  console.log('Canvas saved!');
+}
+
+type canvasConfig = {
+  centerX: number;
+  centerY: number;
+  maxScale: number;
+  higherWidth: number;
+};
 
 type IEditorProvider = {
   children: React.ReactNode;
   model?: editor_canvas;
-  allowed_models: editor_canvas[]
+  allowed_models: editor_canvas[];
 };
 
 type IEditorContext = {
@@ -35,8 +48,8 @@ type IEditorContext = {
   containerRef: RefObject<HTMLDivElement>;
   clip: () => void;
   editable?: string;
-  currentModel?: editor_canvas
-  models: editor_canvas[]
+  currentModel?: editor_canvas;
+  models: editor_canvas[];
 };
 
 const FabricContext = createContext<IEditorContext | null>(null);
@@ -113,11 +126,11 @@ type Size = {
 export default function FabricContextProvider({
   children,
   model,
-  allowed_models
+  allowed_models,
 }: IEditorProvider) {
   const [canvas, setcanvas] = useState<fabric.Canvas | null>(null);
-  const [currentModel, setCurrentModel] = useState(model)
-  const [models, setModels] = useState(allowed_models)
+  const [currentModel, setCurrentModel] = useState(model);
+  const [models, setModels] = useState(allowed_models);
   const [{ width: containerWidth, height: containerHeight }, setSize] =
     useState<Size>({
       width: undefined,
@@ -132,8 +145,6 @@ export default function FabricContextProvider({
     ref: containerRef,
     onResize,
   });
-
-  //console.log('containerWidth',containerWidth)
 
   useEffect(() => {
     if (!model || !containerHeight || !containerWidth) return;
@@ -168,14 +179,22 @@ export default function FabricContextProvider({
         });
       setcanvas(canvasInstance);
     } else {
-      //console.log('containerWidth else',containerWidth,containerHeight)
       canvas.setDimensions({ width: containerWidth, height: containerHeight });
-      //canvas.renderAll()
+      // canvas.renderAll()
       centerAllObjects(canvas);
     }
+
   }, [model, containerWidth, containerHeight, canvas]);
 
   useEffect(() => {
+    canvas?.on('object:modified', () => {
+      saveCanvasToLocalStorage(canvas);
+    });
+    
+    canvas?.on('object:added', () => {
+      saveCanvasToLocalStorage(canvas);
+    });
+
     return () => {
       if (canvas) canvas.dispose();
     };
@@ -210,7 +229,14 @@ export default function FabricContextProvider({
 
   return (
     <FabricContext.Provider
-      value={{ canvas: canvas, canvasEl: canvasEl, containerRef, clip: clip, currentModel:currentModel, models }}
+      value={{
+        canvas: canvas,
+        canvasEl: canvasEl,
+        containerRef,
+        clip: clip,
+        currentModel: currentModel,
+        models,
+      }}
     >
       {children}
     </FabricContext.Provider>
@@ -225,49 +251,109 @@ export const useEditorContext = () => {
   return values;
 };
 
-
 export const RenderCanvas = () => {
-  const { canvasEl, containerRef, canvas,currentModel,models } = useEditorContext();
+  const { canvasEl, containerRef, canvas, currentModel, models } =
+    useEditorContext();
 
   useEffect(() => {
     if (!canvas) return;
     if (!currentModel) return;
 
-    
-    const canvasModel = createModel(canvas, currentModel);
+
+    const maxSize = 800; // limite máximo do editor
+    const canvasWidth = canvas.width || 0;
+    const canvasHeight = canvas.height || 0;
+
+    const canvasConfig = {
+      centerX: canvas.width / 2,
+      centerY: canvas.height / 2,
+      maxScale: Math.min(canvasWidth, canvasHeight, maxSize) * 0.7,
+      higherWidth: 0,
+    };
+
+    const canvasJSON = localStorage.getItem('cardenas_obj');
+    if (canvasJSON) {
+      canvas.loadFromJSON(JSON.parse(canvasJSON)).then(canvas => {
+        canvas.getObjects().forEach((obj) => {
+          console.log('obj',obj)
+          if (obj.selectable !== true) {
+            obj.set({ selectable: false });
+          }
+        });
+        canvas.renderAll()
+      });
+      return
+    }
+
+    const canvasModel = createModel(currentModel);
     if (canvasModel) {
       canvas.remove(...canvas.getObjects());
+
+      const scale = canvasConfig.maxScale / canvasModel.width;
+      canvasModel.scale(scale);
+
       canvas.add(canvasModel);
-      canvas.centerObject(canvasModel)
+      canvas.centerObject(canvasModel);
       canvas.renderAll();
     }
   }, [canvas, currentModel]);
 
-  if(!currentModel) {
+  if (!currentModel) {
     return (
       <div className="flex items-center flex-col w-full p-8 gap-6">
         <h1 className="text-4xl">selecione um modelo</h1>
         <div className="grid grid-cols-4 w-full gap-6">
-          {models.map((m)=>{
+          {models.map((m) => {
             return (
               <div className="overflow-hidden rounded-lg bg-white shadow-sm border">
                 <div className="px-4 py-5 sm:px-6">
                   <h5 className="text-primary text-center">{m.name}</h5>
                 </div>
-                <div className="px-4 py-5 sm:p-6">{/* Content goes here */}</div>
+                <div className="px-4 py-5 sm:p-6">
+                  <ReactSVG
+                    src={`data:image/svg+xml;base64,${btoa(generateSVG(createModel(m)))}`}
+                  />
+                </div>
                 <div className="p-4">
                   <Button full>eu quero esse</Button>
                 </div>
               </div>
-            )
+            );
           })}
         </div>
       </div>
-    )
+    );
   }
 
   return (
-    <div ref={containerRef} className="bg-gray-100 h-full w-full">
+    <div ref={containerRef} className="bg-gray-100 h-full w-full relative">
+      <Button className="absolute r-10 t-10 z-50" onClick={async ()=> {
+        const svg = canvas?.toSVG({
+          //@ts-ignore
+          width: currentModel.config.objects["1"].radius,
+          //@ts-ignore
+          height: currentModel.config.objects["1"].radius,
+        })
+        fetch("/api/print", {
+          method: "POST",
+          body: JSON.stringify({ svgData: svg}), // Send any necessary data for PDF generation
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => response.blob())  // Get the response as a Blob (binary data)
+        .then((blob) => {
+          // Create a URL for the Blob
+          const url = window.URL.createObjectURL(blob);
+          
+          // Open the PDF in a new tab
+          window.open(url, "_blank");
+        })
+        .catch((error) => {
+          console.error("Error fetching the PDF:", error);
+        });
+
+      }}>imprimir</Button>
       <canvas ref={canvasEl} />
     </div>
   );
