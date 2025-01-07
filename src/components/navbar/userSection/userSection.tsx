@@ -1,3 +1,5 @@
+'use client'
+
 import {
   BadgeCheck,
   Bell,
@@ -15,24 +17,22 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "../../ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Tooltip } from "../tooltip/tooltip";
+import { Tooltip } from "../../tooltip/tooltip";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { Permission } from "../permission";
-import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
+// import Link from "next/link";
+// import { Permission } from "../../permission";
+// import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
+import type {User as UserType} from '@prisma/client'
 
 export function NavUserSection({
   user,
 }: {
-  user: {
-    name: string;
-    email: string;
-    avatar?: string;
-  };
+  user: UserType;
 }) {
   const router = useRouter();
   const isMobile = useIsMobile();
@@ -62,9 +62,14 @@ export function NavUserSection({
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem className="hover:bg-gray-300 rounded-md focus:bg-gray-300">
-            <BadgeCheck />
-            {t("perfil")}
+          <DropdownMenuItem
+            asChild
+            className="hover:bg-gray-300 rounded-md focus:bg-gray-300 cursor-pointer"
+          >
+            <Link href={`/userProfile?id=${user.id}`}>
+              <BadgeCheck />
+              {t("perfil")}
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className="hover:bg-gray-300 rounded-md focus:bg-gray-300">
             <Bell />

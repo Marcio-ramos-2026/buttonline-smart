@@ -18,16 +18,18 @@ import { Mail } from "lucide-react";
 import { recoverPasswordSchema, RecoverPasswordType } from "@/lib/zod-schemas";
 import { Alert } from "@/components/alert";
 import { toast } from "@/hooks/use-toast";
+import { useTranslations } from "next-intl";
 
 export const RecoverPasswordForm = () => {
   const formSchema = recoverPasswordSchema();
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
-        email: ''
+      email: "",
     },
     resolver: zodResolver(formSchema),
   });
   const { formState, setError } = form;
+  const t = useTranslations("pages.recoverPassword");
 
   const onSubmit = async (data: RecoverPasswordType) => {
     const result = await recoverPassword(data);
@@ -52,9 +54,9 @@ export const RecoverPasswordForm = () => {
 
     if (result?.success) {
       toast({
-        title: 'Sucesso',
-        description: result.message
-      })
+        title: "Sucesso",
+        description: result.message,
+      });
     }
   };
   return (
@@ -66,7 +68,7 @@ export const RecoverPasswordForm = () => {
           render={({ field }) => {
             return (
               <FormItem>
-                <FormLabel>Email:</FormLabel>
+                <FormLabel>{t("form.labelEmail")}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -79,9 +81,14 @@ export const RecoverPasswordForm = () => {
             );
           }}
         />
-        {formState.errors.root?.global && <Alert variant='danger' content={formState.errors.root.global.message as string} />}        
-        <Button full type="submit">
-          Recuperar senha
+        {formState.errors.root?.global && (
+          <Alert
+            variant="danger"
+            content={formState.errors.root.global.message as string}
+          />
+        )}
+        <Button full type="submit" loading={formState.isSubmitting} disabled={formState.isSubmitting}>
+          {t("form.submit")}
         </Button>
       </form>
     </Form>

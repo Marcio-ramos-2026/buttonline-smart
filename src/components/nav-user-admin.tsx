@@ -4,7 +4,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavUserAdminSection } from "./navbar/navUserAdmin";
+import { NavUserAdminSection } from "./navbar/userSection/userAdminSection";
 
 export function NavUserAdmin({
   user,

@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -15,6 +15,7 @@ import { NavUser } from "../nav-user";
 import { Bell } from "lucide-react";
 import { NavMobile } from "./mobile";
 import { SelectableContent } from "./selectableContent";
+import type {User as UserType} from '@prisma/client'
 
 export type NavBarItemsType = {
   id: string;
@@ -26,10 +27,7 @@ export type NavBarItemsType = {
 
 interface AppSideBarProps extends React.ComponentProps<typeof Sidebar> {
   items: NavBarItemsType[];
-  user: {
-    name: string;
-    email: string;
-  };
+  user: UserType;
 }
 
 export function AppSidebar({ items, user, ...props }: AppSideBarProps) {

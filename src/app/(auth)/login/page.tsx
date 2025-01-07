@@ -7,7 +7,7 @@ export default function LoginPage() {
   const t = useTranslations("pages.signIn");
 
   return (
-    <main className="w-full h-screen flex flex-col items-center justify-center bg-gray-50 sm:px-4">
+    <main className="w-full h-full flex flex-col items-center justify-center bg-gray-50 sm:px-4">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
         <div className="text-center">
           <Image

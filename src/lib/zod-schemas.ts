@@ -14,7 +14,7 @@ export type CreateAdminType = z.infer<ReturnType<typeof createAdminSchema>>;
 
 export const deleteAdminSchema = (t: any) => {
   return z.object({
-    user_id: z.number().min(1, { message: t("required.name") })
+    user_id: z.number().min(1, { message: t("required.name") }),
   });
 };
 
@@ -67,7 +67,10 @@ export type SignUpType = z.infer<ReturnType<typeof signUpSchema>>;
 
 export const recoverPasswordSchema = (t?: any) => {
   return z.object({
-    email: z.string().min(1, { message: "O email é obrigatório" }).email('Este não é um email válido.'),
+    email: z
+      .string()
+      .min(1, { message: "O email é obrigatório" })
+      .email("Este não é um email válido."),
   });
 };
 
@@ -78,25 +81,53 @@ export type RecoverPasswordType = z.infer<
 ////////////////////////////////////////
 
 export const changePasswordSchema = (t?: any) => {
-  return z.object({
-    password: z.string().trim().min(1, { message: "Senha é obrigatória." }),
-    confirmPassword: z
-      .string()
-      .trim()
-      .min(1, { message: "Senha é obrigatória." }),
-  }).superRefine(({ confirmPassword, password }, ctx) => {
-    if (confirmPassword !== password) {
-      ctx.addIssue({
-        code: "custom",
-        message: "As senhan devem ser idênticas",
-        path: ['confirmPassword']
-      });
-    }
-  });
+  return z
+    .object({
+      password: z.string().trim().min(1, { message: "Senha é obrigatória." }),
+      confirmPassword: z
+        .string()
+        .trim()
+        .min(1, { message: "Senha é obrigatória." }),
+    })
+    .superRefine(({ confirmPassword, password }, ctx) => {
+      if (confirmPassword !== password) {
+        ctx.addIssue({
+          code: "custom",
+          message: "As senhan devem ser idênticas",
+          path: ["confirmPassword"],
+        });
+      }
+    });
 };
 
 export type ChangePasswordType = z.infer<
   ReturnType<typeof changePasswordSchema>
+>;
+
+////////////////////////////////////////
+
+export const editProfileSchema = (t?: any) => {
+  return z
+    .object({
+      email: z.string().email({ message: "Email inválido" }),
+      password: z.string().optional(),
+      confirmPassword: z.string().optional(),
+      name: z.string(),
+    })
+    .superRefine(({ confirmPassword, password }, ctx) => {
+      if (!password) return;
+      if (confirmPassword !== password) {
+        ctx.addIssue({
+          code: "custom",
+          message: "As senhan devem ser idênticas",
+          path: ["confirmPassword"],
+        });
+      }
+    });
+};
+
+export type EditProfileSchema = z.infer<
+  ReturnType<typeof editProfileSchema>
 >;
 
 ////////////////////////////////////////

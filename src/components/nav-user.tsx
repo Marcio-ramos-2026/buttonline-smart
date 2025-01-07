@@ -4,16 +4,13 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavUserSection } from "./navbar/userSection";
+import { NavUserSection } from "./navbar/userSection/userSection";
+import type {User as UserType} from '@prisma/client'
 
 export function NavUser({
   user,
 }: {
-  user: {
-    name: string;
-    email: string;
-    avatar?: string;
-  };
+  user: UserType;
 }) {
   return (
     <SidebarMenu>

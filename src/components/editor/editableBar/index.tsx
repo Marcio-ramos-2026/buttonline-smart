@@ -52,7 +52,7 @@ export const EditableBar = () => {
   if (!object?.type) return;
 
   return (
-    <div className="flex items-center justify-between w-full">
+    <div className="flex gap-3 md:gap-6 xl:gap-10 items-center w-full">
       {(object.type === "textbox" || object.type === "group") && (
         <>
           <EditText
