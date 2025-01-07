@@ -81,10 +81,10 @@ export function AddImage() {
     get: `q=${value}&image_type=photo&key=391497-ce4d5e5bcc7e2531c2f8ebe17&lang=pt&per_page=20`,
   });
 
-  console.log("ITEMS", items);
+  // console.log("ITEMS", items);
 
   return (
-    <div className="text-textForefround h-full flex flex-col gap-3">
+    <div className="text-textForefround h-full flex flex-col gap-4">
       <div className="w-full">
         <label
           onDragOver={(e) => {
@@ -140,31 +140,33 @@ export function AddImage() {
         debounceTime={300}
       />
 
-      <div className="overflow-y-auto h-[83vh] scrollBar pr-2">
-        <div className="gap-2" style={{ columnCount: "2" }}>
+      <div className="overflow-y-auto h-[77vh] scrollBar pr-2">
+        <div className="gap-2 grid grid-cols-2">
           {items.map((image) => {
             return (
               <button
                 key={image.id}
                 type="button"
+                //@ts-ignore
                 onClick={() => handleAddImage(image.webformatURL)}
-                className="rounded-md inline-block mb-2 last:mb-0"
+                className="rounded-md inline-block last:mb-0 h-24"
+                data-id={image.id}
               >
                 <Image
                   alt="imagem teste"
+                  //@ts-ignore
                   src={image.previewURL}
                   width={150}
                   height={200}
-                  className="w-full h-auto block rounded-md"
+                  className="w-full h-24 block rounded-md object-cover"
                 />
               </button>
             );
           })}
         </div>
 
-        <div className="flex justify-center items-center mt-8 bg-red-100" ref={ref}>
-          {/* {loading && <LoadingIcon />} */}
-          <LoadingIcon />
+        <div className="flex justify-center items-center mt-2" ref={ref}>
+          {loading && <LoadingIcon />}
         </div>
       </div>
     </div>

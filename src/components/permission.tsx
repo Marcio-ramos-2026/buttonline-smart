@@ -18,7 +18,7 @@ type IPermission = {
 export const Permission = ({children, has}: IPermission) => {
     const { data: session } = useSession(); // Get session from NextAuth hook
 
-    const hasPermission = session?.permissions.find((p) => has?.includes(p as ALLOWED_PERMISSIONS))
+    const hasPermission = session?.permissions?.find((p) => has?.includes(p as ALLOWED_PERMISSIONS))
     if(!hasPermission) return null
     
     return children

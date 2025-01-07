@@ -27,24 +27,21 @@ import LanguageSelector from "@/components/language-selector";
 import { AddImage } from "@/components/editor/images/addImage";
 import { TabShapes } from "@/components/editor/shapes";
 import type { editor_canvas } from "@prisma/client";
-import { useState } from "react";
 import { Permission } from "@/components/permission";
 import Link from "next/link";
 import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 import { Button } from "@/components/ui/button";
+import type {User as UserType} from '@prisma/client'
 
 type EditorType = {
   model?: editor_canvas;
   allowed_models: editor_canvas[];
+  user: UserType
 };
-export function Editor({ model, allowed_models }: EditorType) {
+export function Editor({ model, allowed_models, user }: EditorType) {
   const t = useTranslations("pages.editor.sideBar");
 
   const data = {
-    user: {
-      name: "Usuário Teste",
-      email: "usuário@teste.com",
-    },
     navMain: [
       // {
       //   id: "1",
@@ -90,7 +87,7 @@ export function Editor({ model, allowed_models }: EditorType) {
         }
         className="min-h-[calc(100svh-40px)] relative"
       >
-        <AppSidebar items={data.navMain} user={data.user} />
+        <AppSidebar items={data.navMain} user={user} />
         <SidebarInset className="min-h-[calc(100svh-40px)] overflow-hidden">
           <header className="flex shrink-0 items-center gap-3 border-b bg-background p-2 md:p-4 h-14 md:h-auto">
             <SidebarTrigger className="-ml-1 hidden md:flex" />

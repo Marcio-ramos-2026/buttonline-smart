@@ -9,7 +9,7 @@ type WhereUpdateProfile = {
     confirmPassword?: string
 }
 
-export async function editProfileAction(data: EditProfileSchema) {
+export async function editProfileAction(userId: number, data: EditProfileSchema) {
   const tForm = await getTranslations("pages.generalZodErrors");
   const schema = editProfileSchema(tForm);
 
@@ -17,7 +17,9 @@ export async function editProfileAction(data: EditProfileSchema) {
 
   const validatedFields = schema.safeParse({
     email: data.email,
+    name: data.name,
     password: data.password,
+    confirmPassword: data.confirmPassword
   });
 
   if (!validatedFields.success) {
@@ -40,7 +42,7 @@ export async function editProfileAction(data: EditProfileSchema) {
   try {
     // const user = await prisma.user.findFirst({
     //   where: {
-    //     email: data.email,
+    //     id: userId,
     //   },
     // });
 
@@ -49,15 +51,11 @@ export async function editProfileAction(data: EditProfileSchema) {
     //     error: "Usuário não encontrado.",
     //   };
 
-    // console.log('ACTION USER', user)
-
     // const updateUser = await prisma.user.update({
     //     where: {
     //         id: user.id
     //     },
-    //     data: {
-
-    //     }
+    //     data: updateUserWhere
     // })
 
     return {

@@ -27,21 +27,16 @@ import Link from "next/link";
 // import Link from "next/link";
 // import { Permission } from "../../permission";
 // import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
+import type {User as UserType} from '@prisma/client'
 
 export function NavUserSection({
   user,
 }: {
-  user: {
-    name: string;
-    email: string;
-    avatar?: string;
-  };
+  user: UserType;
 }) {
   const router = useRouter();
   const isMobile = useIsMobile();
   const t = useTranslations("pages.navUserSection");
-
-  console.log('aaaaaaaa', user)
 
   return (
     <DropdownMenu>
@@ -71,7 +66,7 @@ export function NavUserSection({
             asChild
             className="hover:bg-gray-300 rounded-md focus:bg-gray-300 cursor-pointer"
           >
-            <Link href={`/userProfile`}>
+            <Link href={`/userProfile?id=${user.id}`}>
               <BadgeCheck />
               {t("perfil")}
             </Link>

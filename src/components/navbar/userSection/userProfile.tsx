@@ -17,8 +17,11 @@ import { Alert } from "@/components/alert";
 import { Button } from "@/components/ui/button";
 import { editProfileAction } from "@/app/actions/editProfileAction";
 import { editProfileSchema, EditProfileSchema } from "@/lib/zod-schemas";
+import { useSearchParams } from "next/navigation";
 
 export function UserProfile() {
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("id");
   const formSchema = editProfileSchema();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -27,7 +30,7 @@ export function UserProfile() {
   const { formState, setError } = form;
 
   const onSubmit = async (data: EditProfileSchema) => {
-    const result = await editProfileAction(data);
+    const result = await editProfileAction(Number(userId), data);
 
     if (result?.zod_errors) {
       Object.entries(result.zod_errors).forEach(([field, value]) => {
