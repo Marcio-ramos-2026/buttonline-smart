@@ -1,11 +1,13 @@
+'use client'
+
 import {
   BadgeCheck,
   Bell,
   CreditCard,
   LogOut,
-  Pencil,
   Sparkles,
   User,
+  UserRoundCog,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -15,14 +17,18 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "../../ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Tooltip } from "../tooltip/tooltip";
+import { Tooltip } from "../../tooltip/tooltip";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
+// import Link from "next/link";
+// import { Permission } from "../../permission";
+// import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 
-export function NavUserAdminSection({
+export function NavUserSection({
   user,
 }: {
   user: {
@@ -34,6 +40,8 @@ export function NavUserAdminSection({
   const router = useRouter();
   const isMobile = useIsMobile();
   const t = useTranslations("pages.navUserSection");
+
+  console.log('aaaaaaaa', user)
 
   return (
     <DropdownMenu>
@@ -59,9 +67,14 @@ export function NavUserAdminSection({
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem className="hover:bg-gray-300 rounded-md focus:bg-gray-300">
-            <BadgeCheck />
-            {t("perfil")}
+          <DropdownMenuItem
+            asChild
+            className="hover:bg-gray-300 rounded-md focus:bg-gray-300 cursor-pointer"
+          >
+            <Link href={`/userProfile`}>
+              <BadgeCheck />
+              {t("perfil")}
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className="hover:bg-gray-300 rounded-md focus:bg-gray-300">
             <Bell />

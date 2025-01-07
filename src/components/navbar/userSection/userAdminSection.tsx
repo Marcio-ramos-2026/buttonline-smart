@@ -3,9 +3,9 @@ import {
   Bell,
   CreditCard,
   LogOut,
+  Pencil,
   Sparkles,
   User,
-  UserRoundCog,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -15,17 +15,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "../../ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Tooltip } from "../tooltip/tooltip";
+import { Tooltip } from "../../tooltip/tooltip";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
-import { Permission } from "../permission";
-import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 
-export function NavUserSection({
+export function NavUserAdminSection({
   user,
 }: {
   user: {

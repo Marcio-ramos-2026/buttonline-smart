@@ -42,6 +42,25 @@
         "submit": "Registrarse"
       }
     },
+    "recoverPassword": {
+      "title": "Recuperar Contraseña",
+      "form": {
+        "labelEmail": "Correo Electrónico:",
+        "submit": "Recuperar Contraseña"
+      },
+      "changePassword": {
+        "title": "Cambiar Contraseña",
+        "gobackLogin": {
+          "text": "¿Ya cambiaste tu contraseña?",
+          "link": "Volver al inicio de sesión"
+        },
+        "form": {
+          "labelPassword": "Contraseña:",
+          "labelConfirmPassword": "Confirmar Contraseña:",
+          "submit": "Cambiar Contraseña"
+        }
+      }
+    },
     "generalApiReturns": {
       "user": {
         "emailInUse": "Este correo electrónico ya está en uso.",

@@ -1,10 +1,13 @@
 import Image from "next/image";
 import { RecoverPasswordForm } from "./form";
+import { useTranslations } from "next-intl";
 
 export default function RecoverPassword() {
+  const t = useTranslations("pages.recoverPassword");
+
   return (
     <>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="flex h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <Image
             alt="Buttonline"
@@ -14,7 +17,7 @@ export default function RecoverPassword() {
             className="mx-auto"
           />
           <h3 className="text-gray-800 text-2xl font-bold sm:text-3xl text-center mt-3">
-            Recuperar senha
+            {t("title")}
           </h3>
         </div>
 

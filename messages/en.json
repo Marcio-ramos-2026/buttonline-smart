@@ -42,6 +42,25 @@
         "submit": "Register"
       }
     },
+    "recoverPassword": {
+      "title": "Recover Password",
+      "form": {
+        "labelEmail": "Email:",
+        "submit": "Recover Password"
+      },
+      "changePassword": {
+        "title": "Change Password",
+        "gobackLogin": {
+          "text": "Already changed your password?",
+          "link": "Go back to login"
+        },
+        "form": {
+          "labelPassword": "Password:",
+          "labelConfirmPassword": "Confirm Password:",
+          "submit": "Change Password"
+        }
+      }
+    },
     "generalApiReturns": {
       "user": {
         "emailInUse": "This email is already in use.",

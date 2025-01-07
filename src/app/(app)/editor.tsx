@@ -35,9 +35,9 @@ import { Button } from "@/components/ui/button";
 
 type EditorType = {
   model?: editor_canvas;
-  allowed_models: editor_canvas[]
+  allowed_models: editor_canvas[];
 };
-export function Editor({ model,allowed_models }: EditorType) {
+export function Editor({ model, allowed_models }: EditorType) {
   const t = useTranslations("pages.editor.sideBar");
 
   const data = {
@@ -92,16 +92,20 @@ export function Editor({ model,allowed_models }: EditorType) {
       >
         <AppSidebar items={data.navMain} user={data.user} />
         <SidebarInset className="min-h-[calc(100svh-40px)] overflow-hidden">
-          <header className="flex shrink-0 items-center gap-2 border-b bg-background p-2 md:p-4 h-14 md:h-auto">
+          <header className="flex shrink-0 items-center gap-3 border-b bg-background p-2 md:p-4 h-14 md:h-auto">
             <SidebarTrigger className="-ml-1 hidden md:flex" />
             <Separator
               orientation="vertical"
-              className="mr-2 h-4 hidden md:flex"
+              className="mr-2 h-8 bg-gray-600/50 hidden md:flex"
             />
-            <div className="flex gap-3 items-center w-full">
-              <div className="flex gap-1 flex-0">
-                <Undo2 className="w-5 h-5" />
-                <Redo2 className="w-5 h-5" />
+            <div className="flex gap-4 items-center w-full">
+              <div className="flex gap-1.5 flex-0">
+                <button className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20">
+                  <Undo2 />
+                </button>
+                <button className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20">
+                  <Redo2 />
+                </button>
               </div>
               <EditableBar />
             </div>

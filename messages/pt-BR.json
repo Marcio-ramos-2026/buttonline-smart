@@ -42,6 +42,25 @@
         "submit": "Cadastrar"
       }
     },
+    "recoverPassword": {
+      "title": "Recuperar senha",
+      "form": {
+        "labelEmail": "Email:",
+        "submit": "Recuperar senha"
+      },
+      "changePassword": {
+        "title": "Trocar senha",
+        "gobackLogin": {
+          "text": "Já alterou sua senha ?",
+          "link": "Voltar ao login"
+        },
+        "form": {
+          "labelPassword": "Senha:",
+          "labelConfirmPassword": "Confirmar senha:",
+          "submit": "Trocar senha"
+        }
+      }
+    },
     "generalApiReturns": {
       "permissionDenied": "Permissão negada",
       "missingId": "O ID é obrigatório",

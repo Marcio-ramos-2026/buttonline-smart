@@ -1,7 +1,7 @@
 "use client";
 
 import { ForwardRefExoticComponent, RefAttributes, SVGProps } from "react";
-import { NavUserSection } from "./userSection";
+import { NavUserSection } from "./userSection/userSection";
 
 type NavigationType = {
   navigation?: {

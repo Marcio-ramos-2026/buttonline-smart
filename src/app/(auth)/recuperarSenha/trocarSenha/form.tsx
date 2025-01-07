@@ -15,26 +15,28 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { InputPassword } from "@/components/ui/inputPassword";
 import { changePasswordSchema, ChangePasswordType } from "@/lib/zod-schemas";
 import { changePassword } from "@/app/actions/changePassword";
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
+import { useTranslations } from "next-intl";
 
 export const ChangePasswordForm = () => {
-    const formSchema = changePasswordSchema()
+  const formSchema = changePasswordSchema();
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
-        password: '',
-        confirmPassword: ''
+      password: "",
+      confirmPassword: "",
     },
     resolver: zodResolver(formSchema),
   });
+  const t = useTranslations("pages.recoverPassword.changePassword");
 
   const { formState, setError } = form;
-  const searchParams = useSearchParams()
-  const userId = searchParams.get('user_id')
-  
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("user_id");
+
   const onSubmit = async (data: ChangePasswordType) => {
     const result = await changePassword(data, Number(userId));
-    console.log('RESULTTTTTTTTTTTT', result)
+    console.log("RESULTTTTTTTTTTTT", result);
     if (result?.zod_errors) {
       Object.entries(result.zod_errors).forEach(([field, value]) => {
         setError(field as keyof ChangePasswordType, {
@@ -56,9 +58,9 @@ export const ChangePasswordForm = () => {
 
     if (result?.success) {
       toast({
-        title: 'Sucesso',
-        description: result.message
-      })
+        title: "Sucesso",
+        description: result.message,
+      });
     }
   };
   return (
@@ -70,12 +72,9 @@ export const ChangePasswordForm = () => {
           render={({ field }) => {
             return (
               <FormItem>
-                <FormLabel>Senha:</FormLabel>
+                <FormLabel>{t("form.labelPassword")}</FormLabel>
                 <FormControl>
-                  <InputPassword
-                    {...field}
-                    disabled={formState.isSubmitting}
-                  />
+                  <InputPassword {...field} disabled={formState.isSubmitting} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -88,20 +87,17 @@ export const ChangePasswordForm = () => {
           render={({ field }) => {
             return (
               <FormItem>
-                <FormLabel>Confirmar senha:</FormLabel>
+                <FormLabel>{t("form.labelConfirmPassword")}</FormLabel>
                 <FormControl>
-                  <InputPassword
-                    {...field}
-                    disabled={formState.isSubmitting}
-                  />
+                  <InputPassword {...field} disabled={formState.isSubmitting} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             );
           }}
         />
-        <Button full type="submit">
-          Trocar senha
+        <Button full type="submit" loading={formState.isSubmitting} disabled={formState.isSubmitting}>
+          {t("form.submit")}
         </Button>
       </form>
     </Form>
