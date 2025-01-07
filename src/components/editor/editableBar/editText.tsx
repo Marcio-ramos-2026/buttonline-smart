@@ -20,6 +20,7 @@ import {
   AArrowDown,
   AArrowUp,
   Radius,
+  Type,
 } from "lucide-react";
 import { useState, ChangeEvent, useEffect, SetStateAction } from "react";
 import * as fabric from "fabric";
@@ -63,8 +64,6 @@ export const EditText = ({
   });
   //@ts-ignore
   const [radius, setRadius] = useState(object?.radius / 10);
-
-  console.log("AAAAAAAAAA", radius);
 
   const handleChangeSize = (e: ChangeEvent<HTMLInputElement>) => {
     if (!object || !canvas) return;
@@ -226,6 +225,16 @@ export const EditText = ({
     canvas.centerObject(object);
   };
 
+  const handleChangeText = (e: any) => {
+    if (!object || !canvas) return;
+    //@ts-ignore
+    object.setText(e.target.value);
+    //@ts-ignore
+    canvas.fire("modified", { target: object });
+    canvas.renderAll();
+    canvas.centerObject(object);
+  }
+
   useEffect(() => {
     if (!object || !canvas) return;
 
@@ -370,6 +379,26 @@ export const EditText = ({
                 step={1}
                 className="w-full"
                 onValueChange={handleChangeRadius}
+              />
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <Tooltip content="Texto">
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
+                >
+                  <Type className="w-6 h-6" />
+                </button>
+              </DropdownMenuTrigger>
+            </Tooltip>
+            <DropdownMenuContent className="h-auto w-64 px-4 py-3 rounded-md flex flex-col gap-1 items-center justify-center">
+              <Input
+                label="Texto"
+                name='changeCurvedText'
+                className="w-full"
+                onChange={handleChangeText}
               />
             </DropdownMenuContent>
           </DropdownMenu>

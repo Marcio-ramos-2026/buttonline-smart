@@ -66,7 +66,7 @@ export function NavUserSection({
             asChild
             className="hover:bg-gray-300 rounded-md focus:bg-gray-300 cursor-pointer"
           >
-            <Link href={`/userProfile?id=${user.id}`}>
+            <Link href={`/user/${user.id}`}>
               <BadgeCheck />
               {t("perfil")}
             </Link>
