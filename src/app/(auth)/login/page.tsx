@@ -2,6 +2,7 @@ import Image from "next/image";
 import { FormLogin } from "./formLogin";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import CookieBanner from "@/components/cookieBanner";
 
 export default function LoginPage() {
   const t = useTranslations("pages.signIn");
@@ -41,6 +42,7 @@ export default function LoginPage() {
           </Link>
         </div>
       </div>
+      <CookieBanner />
     </main>
   );
 }
