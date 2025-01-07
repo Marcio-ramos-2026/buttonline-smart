@@ -96,6 +96,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Pass the permissions and role into the session object
       if (token) {
         session.permissions = token.permissions;
+        //@ts-ignore
+        session.user.id = token.id
       }
       return session;
     },

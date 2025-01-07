@@ -15,6 +15,10 @@
   "permissions": {
     "denied": "You do not have permission to view this information!"
   },
+  "cookieConsent": {
+    "text": "This site uses cookies to ensure you get the best experience.",
+    "btn": "Accept"
+  },
   "pages": {
     "signIn": {
       "title": "Access Buttonline",
@@ -40,6 +44,25 @@
         "labelEmail": "Email:",
         "labelPassword": "Password:",
         "submit": "Register"
+      }
+    },
+    "recoverPassword": {
+      "title": "Recover Password",
+      "form": {
+        "labelEmail": "Email:",
+        "submit": "Recover Password"
+      },
+      "changePassword": {
+        "title": "Change Password",
+        "gobackLogin": {
+          "text": "Already changed your password?",
+          "link": "Go back to login"
+        },
+        "form": {
+          "labelPassword": "Password:",
+          "labelConfirmPassword": "Confirm Password:",
+          "submit": "Change Password"
+        }
       }
     },
     "generalApiReturns": {

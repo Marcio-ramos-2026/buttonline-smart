@@ -1,7 +1,8 @@
 "use client";
 
 import { ForwardRefExoticComponent, RefAttributes, SVGProps } from "react";
-import { NavUserSection } from "./userSection";
+import { NavUserSection } from "./userSection/userSection";
+import type {User as UserType} from '@prisma/client'
 
 type NavigationType = {
   navigation?: {
@@ -15,14 +16,10 @@ type NavigationType = {
     >;
     current: boolean;
   }[];
+  user: UserType
 };
 
-const user = {
-  name: "Usuário Teste",
-  email: "usuário@teste.com",
-}
-
-export const Navbar = ({ navigation }: NavigationType) => {
+export const Navbar = ({ navigation, user }: NavigationType) => {
   return (
     <nav className="bg-primary fixed top-0 w-full z-50 border-b border-b-gray-800/10 block md:hidden">
       <div className="flex justify-end items-center h-10 px-3">

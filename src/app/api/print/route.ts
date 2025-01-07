@@ -1,83 +1,92 @@
+import { createModel, pageSizes } from "@/components/editor/model";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { PDFDocument } from "pdf-lib";
 import sharp from 'sharp'
+import { ModelConfig } from "@/components/editor/model";
 
-import * as fabric from "fabric";
-    type ModelConfig = {
-    objects: ShapeCollection;
-    gabarito: gabarito
-  };
+interface printRequest  {
+  model_id: number;
+  svg: string;
+  dpi: number;
+}
 
-  type gabarito = {
-    pdf: keyof typeof pageSizes,
-    positions: Record<string,{x:number,y:number}>
-  }
-  type shapeRectangle = {
-    type: string;
-    width: number;
-    height: number;
-    strokeWidth?: number;
-    strokeDashArray?: [number, number];
-    radius?: number;
-  };
-  
-  type shapeEllipse = {
-    type: string;
-    width: number;
-    height: number;
-    strokeWidth?: number;
-    strokeDashArray?: [number, number];
-  };
-  
-  type Shapes = shapeCircle | shapeEllipse;
-  
-  type ShapeCollection = Record<string, Shapes>;
+const mmToPt = (mm: number) => mm * 2.83465;
 
-  const pageSizes = {
-    'A4': [595.44, 841.68], // A4 size in points
-    'Letter': [612, 792],    // Letter size in points
-  };
+export async function POST(request: NextRequest) {
+  const data: printRequest = await request.json()
+  const {model_id, svg, dpi} = data
 
-export async function GET(request: NextRequest) {
     const model = await prisma.editor_canvas.findFirst(({
         where: {
-            id:1
+            id:model_id
         }
     }))
 
-    const config = model?.config as ModelConfig
-    const gabarito = model?.gabarito as gabarito
+    if(!model){
+      return NextResponse.json(
+        { success: false, message: "Modelo não encontrando" },
+        { status: 400 }
+      );
+    }
+    
 
-    const element = Object.values(config.objects).map(obj => {
-        return circle(obj as shapeCircle)
-    }).reduce((acc,shape) => {
-        acc.add(shape)
-        return acc
-    }, new fabric.Group)
+    
+    const gabarito = model?.gabarito as ModelConfig["gabarito"]
+    const config = model?.config as ModelConfig
+
+    // Object.keys(config.objects).forEach((name)=>{
+    //   const obj = config.objects[name]
+
+    //   if ('radius' in obj && obj.radius) obj.radius = mmToPt(obj.radius)
+
+    //   if('width' in obj && obj.width) obj.width = mmToPt(obj.width)
+
+    //   if('height' in obj && obj.height) obj.width = mmToPt(obj.height)
+
+    //   config.objects[name] = obj
+    // })
+
+
+    const element = createModel(model)
+
+    console.log('before',element.width)
+
+    // element.width = pixelsToPoints(dpi,element.width/2)
+    // element.height = pixelsToPoints(dpi,element.height/2)
 
     const viewBox = `${-element.width / 2} ${-element.height / 2} ${element.width} ${element.height}`;
-    const completeSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${element.width}" height="${element.height}" viewBox="${viewBox}">${element.toSVG()}</svg>`;
+    const modelSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="${element.width}" height="${element.height}" viewBox="${viewBox}">${element.toSVG()}</svg>`;
+    const printSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="${element.width}" height="${element.height}" viewBox="${viewBox}">${svg}</svg>`;
 
+    console.log("a",printSVG)
   try {
     // Create a new PDF document
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage(pageSizes[gabarito.pdf] as [number,number]); // Define canvas size (width x height)
     const { width, height } = page.getSize();
 
-    const pngBuffer = await sharp(Buffer.from(completeSvg))
-      .resize(element.width,element.height,{fit:'contain',kernel: "lanczos3"})
-      .png({quality:100,compressionLevel:0})
+    const pngBuffer = await sharp(Buffer.from(svg ? svg : modelSVG),{density:1000})
+      // .resize(element.width,element.height)
+      .png({quality:100})
       .toBuffer();
     const pngImage = await pdfDoc.embedPng(pngBuffer);
+
+    const pngA = await sharp(Buffer.from(modelSVG),{density:1000})
+      // .resize(element.width,element.height)
+      .png({quality:100})
+      .toBuffer();
+    const pngImage2 = await pdfDoc.embedPng(pngA);
+    
     
 
-    Object.values(gabarito.positions).forEach(p => {
-      page.drawImage(pngImage, {
-        x: p.x,
-        y: height - element.height - p.y,
-        width: element.width,
-        height: element.height
+    Object.values(gabarito.positions).forEach((p,k) => {
+      
+      page.drawImage( k == 1 ? pngImage2 : pngImage, {
+        x: mmToPt(p.x),
+        y: height - pixelsToPoints(dpi,element.height) - mmToPt(p.y),
+        width: pixelsToPoints(dpi,element.width/2),
+        height: pixelsToPoints(dpi,element.height/2)
       });
     })
 
@@ -102,53 +111,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
-type shapeCircle = {
-    type: string;
-    radius: number;
-    strokeWidth?: number;
-    strokeDashArray?: [number, number];
-  };
-  
 
-//   // Function to export the object to PNG without DOM
-// const exportObjectToPNG = async (fabricObject: fabric.FabricObject) => {
-//   // Set up a virtual canvas
-//   const objectWidth = fabricObject.width * fabricObject.scaleX;
-//   const objectHeight = fabricObject.height * fabricObject.scaleY;
-//   const canvas = fabric.createCanvasForNode(objectWidth, objectHeight);
-
-//   // Adjust the object and add it to the virtual canvas
-//   fabricObject.clone((clonedObject) => {
-//     clonedObject.left = 0;
-//     clonedObject.top = 0;
-//     canvas.add(clonedObject);
-//     canvas.renderAll();
-
-//     // Export to PNG as a Buffer
-//     const out = canvas.toDataURL('image/png');
-
-//     // Save the PNG buffer or return it
-//     console.log(out); // Logs the Base64 data URL of the image
-//   });
-// };
-
-const circle = (config: shapeCircle) => {
-  return new fabric.Circle({
-    radius: config.radius,
-    fill: "white",
-    stroke: "#000",
-    strokeWidth: config?.strokeWidth ?? 4,
-    strokeDashArray: config?.strokeDashArray ?? [0, 0],
-    selectable: false,
-    moveCursor: "default",
-    originX: "center",
-    originY: "center",
-    hoverCursor: "default",
-  });
-};
-
-
-
-export async function POST(request: NextRequest) {
-  return GET(request)
+function pixelsToPoints(dpi: number,pixels: number) {
+  const inches = pixels / dpi; // Convert pixels to inches
+  const points = inches * 72; // Convert inches to points (1 inch = 72 points)
+  return points;
 }

@@ -5,6 +5,11 @@ export type ModelType = {
   [key: string]: () => fabric.Object; // The key is a string and the value is a function returning an object
 };
 
+export const pageSizes = {
+  'A4': [595.44, 841.68], // A4 size in points
+  'Letter': [612, 792],    // Letter size in points
+};
+
 type shapeRectangle = {
   type: string;
   width: number;
@@ -32,9 +37,14 @@ type shapeCircle = {
 type Shapes = shapeCircle | shapeEllipse;
 
 type ShapeCollection = Record<string, Shapes>;
+type gabarito = {
+  pdf: keyof typeof pageSizes,
+  positions: Record<string,{x:number,y:number}>
+}
 
-type ModelConfig = {
+export type ModelConfig = {
   objects: ShapeCollection;
+  gabarito: gabarito
 };
 
 export const createModel = (model: editor_canvas): fabric.Object => {
@@ -116,7 +126,7 @@ const ellipse = (config: shapeEllipse): fabric.FabricObject => {
 
 const circle = (config: shapeCircle) => {
   return new fabric.Circle({
-    radius: config.radius,
+    radius: fabric.util.parseUnit(`${config.radius}mm`),
     fill: "white",
     stroke: "#000",
     strokeWidth: config?.strokeWidth ?? 1,

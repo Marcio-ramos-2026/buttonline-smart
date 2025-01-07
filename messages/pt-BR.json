@@ -15,6 +15,10 @@
   "permissions": {
     "denied": "Você não possuí permissão para ver esta informação!"
   },
+  "cookieConsent":{
+    "text":"Este site usa cookies para garantir que você tenha a melhor experiência.",
+    "btn":"Aceitar"
+  },
   "pages": {
     "signIn": {
       "title": "Acessar o Buttonline",
@@ -40,6 +44,25 @@
         "labelEmail": "Email:",
         "labelPassword": "Senha:",
         "submit": "Cadastrar"
+      }
+    },
+    "recoverPassword": {
+      "title": "Recuperar senha",
+      "form": {
+        "labelEmail": "Email:",
+        "submit": "Recuperar senha"
+      },
+      "changePassword": {
+        "title": "Trocar senha",
+        "gobackLogin": {
+          "text": "Já alterou sua senha ?",
+          "link": "Voltar ao login"
+        },
+        "form": {
+          "labelPassword": "Senha:",
+          "labelConfirmPassword": "Confirmar senha:",
+          "submit": "Trocar senha"
+        }
       }
     },
     "generalApiReturns": {

@@ -12,8 +12,8 @@ export const RemoveActiveObject = ({ canvas, setObject }: { canvas: any, setObje
     canvas.requestRenderAll();
   };
   return (
-    <button className="text-red-500" onClick={handleRemoveActiveObject}>
-      <Trash2Icon />
+    <button className="border border-solid border-danger rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-danger-light/50" onClick={handleRemoveActiveObject}>
+      <Trash2Icon className="text-red-500" />
     </button>
   );
 };

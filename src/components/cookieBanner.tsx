@@ -1,35 +1,26 @@
 "use client";
 
-
-// components/CookieBanner.js
-import React, { useEffect, useState } from 'react';
-import CookieConsent from 'react-cookie-consent';
+import CookieConsent from "react-cookie-consent";
+import { useTranslations } from "next-intl";
 
 const CookieBanner = () => {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    // Garantir que o código só rode no lado do cliente
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) return null; // Não renderiza no servidor
+  const t = useTranslations("cookieConsent");
 
   return (
     <CookieConsent
       location="bottom"
-      buttonText="Aceitar"
+      buttonText={t("btn")}
       cookieName="userConsentXXXXXXX"
-      style={{ background: "#2B373B" }}
+      style={{ background: "#354a5f" }}
       buttonStyle={{
-        color: "#4e503b",
+        color: "#fff",
         fontSize: "13px",
-        background: "#f1d600",
+        background: "#ef7224",
         borderRadius: "5px",
       }}
       expires={150}
     >
-      Este site usa cookies para garantir que você tenha a melhor experiência.
+      {t("text")}
     </CookieConsent>
   );
 };

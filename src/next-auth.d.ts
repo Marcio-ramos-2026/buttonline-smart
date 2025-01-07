@@ -1,7 +1,7 @@
 import NextAuth, { DefaultSession, } from "next-auth"
 import { Roles } from "@/lib/types"
 import { JWT } from "next-auth/jwt"
-
+import type {User as UserType} from '@prisma/client'
 
 declare module "next-auth" {
   /**
@@ -11,7 +11,7 @@ declare module "next-auth" {
     permissions: [string]
     user: {
       roleId: number
-      id: number
+      id: string
       name?: string | null
       email?: string | null
       image?: string | nulltring
