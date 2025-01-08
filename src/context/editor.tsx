@@ -193,11 +193,11 @@ export default function FabricContextProvider({
 
   useEffect(() => {
     canvas?.on('object:modified', () => {
-      saveCanvasToLocalStorage(canvas);
+      // saveCanvasToLocalStorage(canvas);
     });
     
     canvas?.on('object:added', () => {
-      saveCanvasToLocalStorage(canvas);
+      // saveCanvasToLocalStorage(canvas);
     });
 
     return () => {
@@ -335,33 +335,40 @@ export const RenderCanvas = () => {
   return (
     <div ref={containerRef} className="bg-gray-100 h-full w-full relative">
       <Button className="absolute r-10 t-10 z-50" onClick={async ()=> {
+        if(!canvas) return
         const dpi = getScreenDPI()
 
-        const x = canvas?.getObjects().map(obj => {
-          return obj.toSVG()
-        })
+        const allObjects = canvas.getObjects();
+        const allObjectsGroup = new fabric.Group(allObjects, { left: 0, top: 0 });
+        
+        // Calculate the bounding dimensions of the group
+        const boundingRect = allObjectsGroup.getBoundingRect();
+        const groupWidth = boundingRect.width;
+        const groupHeight = boundingRect.height;
+        
+        // Fixed canvas size
+        const canvasWidth = fabric.util.parseUnit('65mm'); // Canvas width in px
+        const canvasHeight = fabric.util.parseUnit('65mm'); // Canvas height in px
+        
+        // Calculate the scale factor to fit content within canvas
+        const scaleFactor = Math.min(canvasWidth / groupWidth, canvasHeight / groupHeight);
+        
+        // Scale the group proportionally
+        allObjectsGroup.scale(scaleFactor);
+        allObjectsGroup.setCoords(); // Update coordinates after scaling
+        
+        // Create a new canvas with the fixed size
+        const printCanvas = new fabric.Canvas('c', {
+          width: canvasWidth,
+          height: canvasHeight,
+        });
 
-
-        const svg = canvas?.toSVG({
-          //@ts-ignore
-          width: fabric.util.parseUnit(`${currentModel.config.objects["1"].radius}mm`),
-          //@ts-ignore
-          height: fabric.util.parseUnit(`${currentModel.config.objects["1"].radius}mm`),
-          // objects: canvas.getObjects().map(obj => {
-          //   return obj.toSVG()
-          // }),
-          // viewBox: {
-          //   //@ts-ignore
-          //   height:fabric.util.parseUnit(`${currentModel.config.objects["1"].radius}mm`),
-          //   //@ts-ignore
-          //   width:fabric.util.parseUnit(`${currentModel.config.objects["1"].radius}mm`),
-          //   x:0,
-          //   y:0
-          // }
-        })
+        printCanvas.add(allObjectsGroup)
+        printCanvas.centerObject(allObjectsGroup)
+        
         fetch("/api/print", {
           method: "POST",
-          body: JSON.stringify({ svg: svg,model_id: currentModel.id,dpi}), // Send any necessary data for PDF generation
+          body: JSON.stringify({ svg: printCanvas.toSVG(),model_id: currentModel.id,dpi}), // Send any necessary data for PDF generation
           headers: {
             "Content-Type": "application/json",
           },
@@ -397,10 +404,4 @@ function getScreenDPI() {
   document.body.removeChild(div);
 
   return dpi;
-}
-
-function pixelsToMillimeters(pixels: number) {
-  const dpi = getScreenDPI(); // Get the user's screen DPI
-  const mm = (pixels / dpi) * 25.4; // Convert to millimeters
-  return mm.toString();
 }

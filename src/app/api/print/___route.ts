@@ -2,20 +2,18 @@ import { createModel, pageSizes } from "@/components/editor/model";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import PDFDocument from "pdfkit";
+import sharp from "sharp";
 import { ModelConfig } from "@/components/editor/model";
-import svgToPdf from 'svg-to-pdfkit';
 
-interface printRequest  {
+interface printRequest {
   model_id: number;
   svg: string;
+  dpi: number;
 }
-
-const mmToPt = (mm: number) => mm * 2.83465;
-
 
 export async function POST(request: NextRequest) {
   const data: printRequest = await request.json();
-  const { model_id, svg } = data;
+  const { model_id, svg, dpi } = data;
 
   const model = await prisma.editor_canvas.findFirst({
     where: {
@@ -31,47 +29,53 @@ export async function POST(request: NextRequest) {
   }
 
   const gabarito = model?.gabarito as ModelConfig["gabarito"];
+  const config = model?.config as ModelConfig;
+
   const element = createModel(model);
-  element.scale(2)
 
-  element.width = mmToPt(element.width)
-  element.height = mmToPt(element.height)
+  console.log("before", element.width);
 
-  const viewBox = `0 0 ${element.width} ${element.height}`;
+  const viewBox = `${-element.width / 2} ${-element.height / 2} ${element.width} ${element.height}`;
   const modelSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="${element.width}" height="${element.height}" viewBox="${viewBox}">${element.toSVG()}</svg>`;
-  const printSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="${element.width}" height="${element.height}" viewBox="${viewBox}">${svg}</svg>`;
+
   try {
-    // Create a new PDF document
-    const doc = new PDFDocument({ size: pageSizes[gabarito.pdf],margin:0 });
-    const buffers: Uint8Array[] = [];
-
-    // Collect chunks emitted by the PDFKit stream
-    doc.on("data", (chunk) => buffers.push(chunk));
-    doc.on("end", () => console.log("PDF generation complete."));
-
-    // Add the SVG to the PDF
-    Object.values(gabarito.positions).forEach(p => {
-      svgToPdf(doc, svg ? modelSVG : modelSVG, 0, 0, {
-        width: element.width,
-        height: element.height,
-      })
-    })
-
-    doc.end();
-
-    // Wait for the PDF to finish and concatenate the buffers
-    const pdfBuffer = await new Promise<Buffer>((resolve, reject) => {
-      doc.on("end", () => resolve(Buffer.concat(buffers)));
-      doc.on("error", reject);
+    // Create a new PDF document using pdfkit
+    const doc = new PDFDocument({
+      size: [210, 297], // A4 size in mm (width x height)
+      margin: 15,       // Margin in mm
+      
     });
 
-    // Return the PDF as a response
+    // Set up a writable stream to handle the PDF output
+    const pdfChunks: Buffer[] = [];
+    doc.on("data", (chunk) => pdfChunks.push(chunk));
+
+    
+    // Generate PNG buffer from SVG (using sharp)
+    const pngBuffer = await sharp(Buffer.from(svg ? modelSVG : modelSVG), { density: 1000 })
+      .png({ quality: 100 })
+      .toBuffer();
+
+    // Draw the image on the PDF page
+    // Object.values(gabarito.positions).forEach((p, k) => {
+    //   // Draw the first image at specified position
+    //   doc.image(pngBuffer, p.x, p.y, {
+    //     width: element.width,
+    //     height: element.height,
+    //   });
+    // });
+
+    // Finalize the PDF document
+    doc.end();
+
+    const pdfBuffer = Buffer.concat(pdfChunks);
     return new NextResponse(pdfBuffer, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": "inline; filename='document.pdf'", // Open the PDF in the browser
       },
     });
+
   } catch (error) {
     console.error("Error generating PDF:", error);
 

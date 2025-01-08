@@ -11,7 +11,11 @@ interface printRequest  {
   dpi: number;
 }
 
-const mmToPt = (mm: number) => mm * 2.83465;
+const mmToPt = (mm: number) => mm * 2.83465
+const mmToPx = (mm: number, dpi: number) => Math.round(mm * (dpi / 25.4))
+const pxToMm = (px: number, dpi: number) => px * 25.4 / dpi
+const pxToPt = (px: number, dpi: number) => px * (72/dpi)
+
 
 export async function POST(request: NextRequest) {
   const data: printRequest = await request.json()
@@ -30,36 +34,13 @@ export async function POST(request: NextRequest) {
       );
     }
     
-
-    
     const gabarito = model?.gabarito as ModelConfig["gabarito"]
-    const config = model?.config as ModelConfig
-
-    // Object.keys(config.objects).forEach((name)=>{
-    //   const obj = config.objects[name]
-
-    //   if ('radius' in obj && obj.radius) obj.radius = mmToPt(obj.radius)
-
-    //   if('width' in obj && obj.width) obj.width = mmToPt(obj.width)
-
-    //   if('height' in obj && obj.height) obj.width = mmToPt(obj.height)
-
-    //   config.objects[name] = obj
-    // })
-
 
     const element = createModel(model)
 
-    console.log('before',element.width)
-
-    // element.width = pixelsToPoints(dpi,element.width/2)
-    // element.height = pixelsToPoints(dpi,element.height/2)
-
     const viewBox = `${-element.width / 2} ${-element.height / 2} ${element.width} ${element.height}`;
     const modelSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="${element.width}" height="${element.height}" viewBox="${viewBox}">${element.toSVG()}</svg>`;
-    const printSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="${element.width}" height="${element.height}" viewBox="${viewBox}">${svg}</svg>`;
 
-    console.log("a",printSVG)
   try {
     // Create a new PDF document
     const pdfDoc = await PDFDocument.create();
@@ -67,26 +48,18 @@ export async function POST(request: NextRequest) {
     const { width, height } = page.getSize();
 
     const pngBuffer = await sharp(Buffer.from(svg ? svg : modelSVG),{density:1000})
-      // .resize(element.width,element.height)
+      // .resize(pxToMm(element.width,dpi),pxToMm(element.height,dpi))
       .png({quality:100})
       .toBuffer();
-    const pngImage = await pdfDoc.embedPng(pngBuffer);
-
-    const pngA = await sharp(Buffer.from(modelSVG),{density:1000})
-      // .resize(element.width,element.height)
-      .png({quality:100})
-      .toBuffer();
-    const pngImage2 = await pdfDoc.embedPng(pngA);
-    
-    
+    const pngImage = await pdfDoc.embedPng(pngBuffer);    
 
     Object.values(gabarito.positions).forEach((p,k) => {
       
-      page.drawImage( k == 1 ? pngImage2 : pngImage, {
+      page.drawImage(pngImage, {
         x: mmToPt(p.x),
-        y: height - pixelsToPoints(dpi,element.height) - mmToPt(p.y),
-        width: pixelsToPoints(dpi,element.width/2),
-        height: pixelsToPoints(dpi,element.height/2)
+        y: height - pxToPt(element.height/2,dpi) - mmToPt(p.y),
+        // width: pxToPt(element.width/2,dpi,),
+        // height: pxToPt(element.height/2,dpi)
       });
     })
 
@@ -109,11 +82,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-
-function pixelsToPoints(dpi: number,pixels: number) {
-  const inches = pixels / dpi; // Convert pixels to inches
-  const points = inches * 72; // Convert inches to points (1 inch = 72 points)
-  return points;
 }
