@@ -128,7 +128,7 @@ const ellipse = (config: shapeEllipse): fabric.FabricObject => {
 const circle = (config: shapeCircle) => {
   return new fabric.Circle({
     radius: fabric.util.parseUnit(`${config.radius}mm`),
-    fill: "white",
+    fill: "blue",
     stroke: "#000",
     strokeWidth: config?.strokeWidth ?? 1,
     strokeDashArray: config?.strokeDashArray ?? [0, 0],

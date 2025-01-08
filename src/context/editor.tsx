@@ -217,7 +217,8 @@ export const RenderCanvas = () => {
     currentModel,
     models,
     setRealCanvas,
-    clipMask
+    clipMask,
+    realCanvas
   } = useEditorContext();
 
   useEffect(() => {
@@ -235,18 +236,18 @@ export const RenderCanvas = () => {
       higherWidth: 0,
     };
 
-    const canvasJSON = localStorage.getItem("cardenas_obj");
-    if (canvasJSON) {
-      canvas.loadFromJSON(JSON.parse(canvasJSON)).then((canvas) => {
-        canvas.getObjects().forEach((obj) => {
-          if (obj.selectable !== true) {
-            obj.set({ selectable: false });
-          }
-        });
-        canvas.renderAll();
-      });
-      return;
-    }
+    // const canvasJSON = localStorage.getItem("cardenas_obj");
+    // if (canvasJSON) {
+    //   canvas.loadFromJSON(JSON.parse(canvasJSON)).then((canvas) => {
+    //     canvas.getObjects().forEach((obj) => {
+    //       if (obj.selectable !== true) {
+    //         obj.set({ selectable: false });
+    //       }
+    //     });
+    //     canvas.renderAll();
+    //   });
+    //   return;
+    // }
 
     let canvasModel = createModel(currentModel);
     if (canvasModel) {
@@ -350,11 +351,19 @@ export const RenderCanvas = () => {
         // Scale the group proportionally
         allObjectsGroup.scale(scaleFactor);
         allObjectsGroup.setCoords(); // Update coordinates after scaling
+
+        
+        // const copyRealCanvas = await realCanvas.clone()
+        // copyRealCanvas.width = allObjectsGroup.getScaledWidth()
+        // copyRealCanvas.height = allObjectsGroup.getScaledHeight()
+
+        // realCanvas.backgroundColor = 'blue'
         
         // Create a new canvas with the fixed size
         const printCanvas = new fabric.Canvas('c', {
           width: canvasWidth,
           height: canvasHeight,
+          // clipPath: realCanvas
         });
         
 
