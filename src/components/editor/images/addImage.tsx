@@ -145,7 +145,7 @@ export function AddImage() {
           {items.map((image) => {
             return (
               <button
-                key={image.id}
+                key={image.id + image.tag}
                 type="button"
                 //@ts-ignore
                 onClick={() => handleAddImage(image.webformatURL)}

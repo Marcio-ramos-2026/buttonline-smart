@@ -14,17 +14,18 @@ export function useInifiteScrollImage({
   limit,
   get = "",
 }: InfiniteScrollParams) {
-  const [items, setItems] = useState<{ svg: string, id: string }[]>([]);
+  const [items, setItems] = useState<
+    { tag: string; id: number; webformatURL: string; previewURL: string }[]
+  >([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const { isIntersecting, ref } = useIntersectionObserver({ threshold: 1 });
   const [hasMore, setHasMore] = useState(true);
 
   const newItems = async () => {
-    setLoading(true);  
+    setLoading(true);
 
     const response = await fetch(`${endpoint}?${get}&page=1&limit=${limit}`);
-
 
     const { hits } = await response.json();
 
