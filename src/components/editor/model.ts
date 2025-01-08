@@ -105,6 +105,7 @@ export const createModel = (model: editor_canvas): fabric.Object => {
     selectable: false,
     moveCursor: "default",
     hoverCursor: "default",
+    cardenas_canvas: "true"
   });
 };
 
@@ -136,6 +137,7 @@ const circle = (config: shapeCircle) => {
     originX: "center",
     originY: "center",
     hoverCursor: "default",
+    cardenas_canvas: "true",
   });
 };
 

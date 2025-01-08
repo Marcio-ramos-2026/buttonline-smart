@@ -52,7 +52,7 @@ type IEditorContext = {
   canvas: fabric.Canvas | null;
   canvasEl: RefObject<HTMLCanvasElement>;
   containerRef: RefObject<HTMLDivElement>;
-  clip: () => void;
+  clipMask: (clip: boolean) => void;
   editable?: string;
   currentModel?: editor_canvas;
   models: editor_canvas[];
@@ -62,70 +62,6 @@ type IEditorContext = {
 
 const FabricContext = createContext<IEditorContext | null>(null);
 
-const getClip = (canvas: fabric.Canvas, model?: editor_canvas) => {
-  const centerX = canvas.width / 2;
-  const centerY = canvas.height / 2;
-
-  let radius = (canvas.height * 0.6) / 2;
-  if (radius >= 800) radius = 800;
-
-  const first = new fabric.Circle({
-    radius: radius,
-    fill: "white",
-    stroke: "#000",
-    strokeWidth: 4,
-
-    selectable: false,
-    moveCursor: "default",
-    top: centerY,
-    left: centerX,
-    originX: "center",
-    originY: "center",
-    hoverCursor: "default",
-  });
-  if (!first) return;
-
-  const second = new fabric.Circle({
-    radius: radius - 20,
-    fill: "transparent",
-    stroke: "#000",
-    strokeWidth: 4,
-    strokeDashArray: [10, 10],
-
-    selectable: false,
-    moveCursor: "default",
-    top: centerY,
-    left: centerX,
-    originX: "center",
-    originY: "center",
-    hoverCursor: "default",
-    excludeFromExport: true,
-  });
-  if (!second) return;
-
-  const third = new fabric.Circle({
-    radius: radius - 40,
-    fill: "transparent",
-    stroke: "#000",
-    strokeWidth: 1,
-
-    selectable: false,
-    moveCursor: "default",
-    top: centerY,
-    left: centerX,
-    originX: "center",
-    originY: "center",
-    hoverCursor: "default",
-    excludeFromExport: true,
-  });
-  if (!third) return;
-
-  return new fabric.Group([first, second, third], {
-    selectable: false,
-    moveCursor: "default",
-    hoverCursor: "default",
-  });
-};
 type Size = {
   width?: number;
   height?: number;
@@ -234,8 +170,17 @@ export default function FabricContextProvider({
     canvas.renderAll();
   }
 
-  const clip = () => {
-    // Your clip logic
+  const clipMask = (clip: boolean) => {
+    if(!realCanvas || !canvas) return
+
+    if(clip) {
+      canvas.clipPath = realCanvas
+    }else{
+      canvas.clipPath = undefined
+    }
+    
+    canvas.renderAll();
+
   };
 
   return (
@@ -244,7 +189,7 @@ export default function FabricContextProvider({
         canvas: canvas,
         canvasEl: canvasEl,
         containerRef,
-        clip: clip,
+        clipMask: clipMask,
         currentModel: currentModel,
         models,
         setRealCanvas,
@@ -272,6 +217,7 @@ export const RenderCanvas = () => {
     currentModel,
     models,
     setRealCanvas,
+    clipMask
   } = useEditorContext();
 
   useEffect(() => {
@@ -302,12 +248,13 @@ export const RenderCanvas = () => {
       return;
     }
 
-    const canvasModel = createModel(currentModel);
+    let canvasModel = createModel(currentModel);
     if (canvasModel) {
       canvas.remove(...canvas.getObjects());
 
       const scale = canvasConfig.maxScale / canvasModel.width;
       canvasModel.scale(scale);
+      // canvasModel = canvasModel.toObject()
 
       canvas.add(canvasModel);
       canvas.centerObject(canvasModel);
@@ -414,8 +361,6 @@ export const RenderCanvas = () => {
         printCanvas.add(allObjectsGroup)
         printCanvas.centerObject(allObjectsGroup)
       
-
-        console.log('aaa',printCanvas.toSVG())
         
         fetch("/api/print", {
           method: "POST",
@@ -439,6 +384,8 @@ export const RenderCanvas = () => {
             icon={<Printer />}
           ></Button>
         </div>
+        <Button onClick={()=> clipMask(true)}>CLIP</Button>
+        <Button onClick={()=> clipMask(false)}>unclip</Button>
       </div>
 
       <div className="absolute left-0 right-0 bottom-2 z-50    flex justify-center">

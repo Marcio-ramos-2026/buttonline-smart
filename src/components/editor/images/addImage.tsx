@@ -126,10 +126,10 @@ export function AddImage() {
 
       <div className="overflow-y-auto h-[77vh] scrollBar pr-2">
         <div className="gap-2 grid grid-cols-2">
-          {items.map((image) => {
+          {items.map((image,k) => {
             return (
               <button
-                key={image.id + image.tag}
+                key={image.webformatURL}
                 type="button"
                 //@ts-ignore
                 onClick={() => handleAddImage(image.webformatURL)}
