@@ -47,7 +47,7 @@ model User {
   image         String?
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
-  voucherTime     DateTime?  @map("voucher_time")
+  voucherTime   DateTime? @map("voucher_time")
 
   lastAccess DateTime? @map("last_access")
   deletedAt  DateTime?
@@ -107,15 +107,13 @@ model VerificationToken {
 }
 
 model editor_canvas {
-  id       Int    @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   name     String
   shape    String
-  object_1 String @db.LongText
-  object_2 String @db.LongText
-  object_3 String @db.LongText
+  size     String?  @db.LongText
   gabarito Json
   config   Json?
-  active Boolean @default(true)
+  active   Boolean @default(true)
 
   @@map("editor_canvas")
 }
