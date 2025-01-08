@@ -8,7 +8,7 @@ const CookieBanner = () => {
 
   return (
     <CookieConsent
-      location="bottom"
+      location="top"
       buttonText={t("btn")}
       cookieName="userConsentXXXXXXX"
       style={{ background: "#354a5f" }}
