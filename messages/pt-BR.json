@@ -15,6 +15,10 @@
   "permissions": {
     "denied": "Você não possuí permissão para ver esta informação!"
   },
+  "cookieConsent":{
+    "text":"Este site usa cookies para garantir que você tenha a melhor experiência.",
+    "btn":"Aceitar"
+  },
   "pages": {
     "signIn": {
       "title": "Acessar o Buttonline",

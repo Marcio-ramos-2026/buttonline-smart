@@ -15,6 +15,10 @@
   "permissions": {
     "denied": "You do not have permission to view this information!"
   },
+  "cookieConsent": {
+    "text": "This site uses cookies to ensure you get the best experience.",
+    "btn": "Accept"
+  },
   "pages": {
     "signIn": {
       "title": "Access Buttonline",

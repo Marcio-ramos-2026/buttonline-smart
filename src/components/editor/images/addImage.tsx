@@ -10,32 +10,16 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
 
-const BATATAS_TESTE = [
-  "https://images.unsplash.com/photo-1732295160378-78fbd97fbf83?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTY5OTZ8MHwxfGFsbHwyfHx8fHx8fHwxNzMyNjUzMDMyfA&ixlib=rb-4.0.3&q=80&w=400",
-  "https://images.unsplash.com/photo-1719937051157-d3d81cc28e86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTY5OTZ8MXwxfGFsbHwxfHx8fHx8fHwxNzMyNjUzMDMyfA&ixlib=rb-4.0.3&q=80&w=400",
-  "https://images.unsplash.com/photo-1732613942657-61684c51eb55?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTY5OTZ8MHwxfGFsbHwzfHx8fHx8fHwxNzMyNjUzMDMyfA&ixlib=rb-4.0.3&q=80&w=400",
-  "https://images.unsplash.com/photo-1732364559459-c25543c82064?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTY5OTZ8MHwxfGFsbHw0fHx8fHx8fHwxNzMyNjUzMDMyfA&ixlib=rb-4.0.3&q=80&w=400",
-  "https://images.unsplash.com/photo-1732601471612-213023f569d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTY5OTZ8MHwxfGFsbHw1fHx8fHx8fHwxNzMyNjUzMDMyfA&ixlib=rb-4.0.3&q=80&w=400",
-  "https://images.unsplash.com/photo-1732530361158-09f4154b6b3b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTY5OTZ8MHwxfGFsbHw3fHx8fHx8fHwxNzMyNjUzMDMyfA&ixlib=rb-4.0.3&q=80&w=400",
-  "https://images.unsplash.com/photo-1732521028694-2c1908915495?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTY5OTZ8MHwxfGFsbHwxMHx8fHx8fHx8MTczMjY1MzAzMnw&ixlib=rb-4.0.3&q=80&w=400",
-  "https://images.unsplash.com/photo-1732540988407-1f38cf012f0a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTY5OTZ8MHwxfGFsbHwxMnx8fHx8fHx8MTczMjY1MzAzMnw&ixlib=rb-4.0.3&q=80&w=400",
-  "https://images.unsplash.com/photo-1732482124543-84aecd47788d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTY5OTZ8MHwxfGFsbHwxNnx8fHx8fHx8MTczMjY1MzAzMnw&ixlib=rb-4.0.3&q=80&w=400",
-  "https://images.unsplash.com/photo-1732482124543-e9bb4ed3fede?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTY5OTZ8MHwxfGFsbHwxN3x8fHx8fHx8MTczMjY1MzAzMnw&ixlib=rb-4.0.3&q=80&w=400",
-  "https://images.unsplash.com/photo-1732444827571-3b16b9a837e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTY5OTZ8MHwxfGFsbHwxOXx8fHx8fHx8MTczMjY1MzAzMnw&ixlib=rb-4.0.3&q=80&w=400",
-  "https://images.unsplash.com/photo-1732439857681-ece7fe1ff7eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTY5OTZ8MHwxfGFsbHwyMHx8fHx8fHx8MTczMjY1MzAzMnw&ixlib=rb-4.0.3&q=80&w=400",
-  "https://images.unsplash.com/photo-1721332154373-17e78d19b4a4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTY5OTZ8MXwxfGFsbHwyMXx8fHx8fHx8MTczMjY1NDg0N3w&ixlib=rb-4.0.3&q=80&w=400",
-];
-
 export function AddImage() {
   const { canvas } = useEditorContext();
-  const [images, setImages] = useState<string[]>(BATATAS_TESTE);
+  const [images, setImages] = useState<string[]>([]);
   const t = useTranslations("pages.editor.sideBar.tabs.image");
   const [value, setValue] = useState("");
 
   const handleAddImage = async (src: string) => {
     if (!canvas) return;
 
-    const image = await fabric.FabricImage.fromURL(src);
+    const image = await fabric.FabricImage.fromURL(src,{crossOrigin:"anonymous"});
     const canvasWidth = canvas.width || 0;
     const canvasHeight = canvas.height || 0;
     const scaleFactor = Math.min(
@@ -145,7 +129,7 @@ export function AddImage() {
           {items.map((image) => {
             return (
               <button
-                key={image.id}
+                key={image.id + image.tag}
                 type="button"
                 //@ts-ignore
                 onClick={() => handleAddImage(image.webformatURL)}

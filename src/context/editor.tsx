@@ -20,14 +20,19 @@ import { LoadingIcon } from "@/components/loading";
 import { useDebounceCallback } from "@/hooks/useDebounceCallback";
 import { Button } from "@/components/ui/button";
 import { ReactSVG } from "react-svg";
-import { height, width } from "pdfkit/js/page";
+// import { height, width } from "pdfkit/js/page";
+import { Printer } from "lucide-react";
 
 const { theme } = resolveConfig(tailwindConfig);
 
 function saveCanvasToLocalStorage(canvas: fabric.Canvas) {
-  const canvasJSON = canvas.toObject(["selectable","moveCursor","hoverCursor"]);
+  const canvasJSON = canvas.toObject([
+    "selectable",
+    "moveCursor",
+    "hoverCursor",
+  ]);
   localStorage.setItem(`cardenas_obj`, JSON.stringify(canvasJSON));
-  console.log('Canvas saved!');
+  console.log("Canvas saved!");
 }
 
 type canvasConfig = {
@@ -51,8 +56,8 @@ type IEditorContext = {
   editable?: string;
   currentModel?: editor_canvas;
   models: editor_canvas[];
-  setRealCanvas: React.Dispatch<fabric.FabricObject>
-  realCanvas: fabric.FabricObject
+  setRealCanvas: React.Dispatch<fabric.FabricObject>;
+  realCanvas: fabric.FabricObject;
 };
 
 const FabricContext = createContext<IEditorContext | null>(null);
@@ -134,7 +139,9 @@ export default function FabricContextProvider({
   const [canvas, setcanvas] = useState<fabric.Canvas | null>(null);
   const [currentModel, setCurrentModel] = useState(model);
   const [models, setModels] = useState(allowed_models);
-  const [realCanvas, setRealCanvas] = useState<fabric.FabricObject|null>(null)
+  const [realCanvas, setRealCanvas] = useState<fabric.FabricObject | null>(
+    null
+  );
 
   const [{ width: containerWidth, height: containerHeight }, setSize] =
     useState<Size>({
@@ -188,7 +195,6 @@ export default function FabricContextProvider({
       // canvas.renderAll()
       centerAllObjects(canvas);
     }
-
   }, [model, containerWidth, containerHeight, canvas]);
 
   useEffect(() => {
@@ -259,13 +265,18 @@ export const useEditorContext = () => {
 };
 
 export const RenderCanvas = () => {
-  const { canvasEl, containerRef, canvas, currentModel, models,setRealCanvas } =
-    useEditorContext();
+  const {
+    canvasEl,
+    containerRef,
+    canvas,
+    currentModel,
+    models,
+    setRealCanvas,
+  } = useEditorContext();
 
   useEffect(() => {
     if (!canvas) return;
     if (!currentModel) return;
-
 
     const maxSize = 800; // limite máximo do editor
     const canvasWidth = canvas.width || 0;
@@ -278,17 +289,17 @@ export const RenderCanvas = () => {
       higherWidth: 0,
     };
 
-    const canvasJSON = localStorage.getItem('cardenas_obj');
+    const canvasJSON = localStorage.getItem("cardenas_obj");
     if (canvasJSON) {
-      canvas.loadFromJSON(JSON.parse(canvasJSON)).then(canvas => {
+      canvas.loadFromJSON(JSON.parse(canvasJSON)).then((canvas) => {
         canvas.getObjects().forEach((obj) => {
           if (obj.selectable !== true) {
             obj.set({ selectable: false });
           }
         });
-        canvas.renderAll()
+        canvas.renderAll();
       });
-      return
+      return;
     }
 
     const canvasModel = createModel(currentModel);
@@ -301,7 +312,7 @@ export const RenderCanvas = () => {
       canvas.add(canvasModel);
       canvas.centerObject(canvasModel);
       canvas.renderAll();
-      setRealCanvas(canvasModel)
+      setRealCanvas(canvasModel);
     }
   }, [canvas, currentModel]);
 
@@ -334,11 +345,47 @@ export const RenderCanvas = () => {
 
   return (
     <div ref={containerRef} className="bg-gray-100 h-full w-full relative">
-      <Button className="absolute r-10 t-10 z-50" onClick={async ()=> {
-        if(!canvas) return
+      <div className="absolute left-0 right-0 z-50  top-2  flex justify-center">
+        <div className="bg-background inline-flex justify-center items-center gap-4 mx-auto  p-2 rounded-lg drop-shadow-md">
+          <p>{currentModel.name}</p>
+
+          <Button
+            size={"default"}
+            onClick={async () => {
+              if(!canvas) return
         const dpi = getScreenDPI()
 
-        const allObjects = canvas.getObjects();
+        let allObjects = canvas.getObjects();
+        allObjects = allObjects.map((obj) => {
+          if (obj.type === 'image') {
+            const image = obj as fabric.FabricImage
+            const imageElement = image.getElement() as HTMLImageElement
+
+            const url = new URL(imageElement.src);
+            const pathname = url.pathname; // Get the file path
+            const extension = pathname.split('.').pop()?.toLowerCase(); // Extract the file extension (before query params)
+
+            // Check for file format based on the extension
+            const isJpeg = extension === 'jpg' || extension === 'jpeg';
+              // Convert the image to Base64
+              const base64 = image.toDataURL({
+                format: isJpeg ? 'jpeg' : 'png', // Use 'jpeg' if needed
+                quality: 1,    // High quality for JPEG
+              });
+      
+            
+            // Replace the image source with the Base64 data
+            imageElement.src = base64;
+
+            image.set({
+              element: imageElement
+            })
+            return image
+          }
+
+          return obj
+        });
+      
         const allObjectsGroup = new fabric.Group(allObjects, { left: 0, top: 0 });
         
         // Calculate the bounding dimensions of the group
@@ -362,9 +409,13 @@ export const RenderCanvas = () => {
           width: canvasWidth,
           height: canvasHeight,
         });
+        
 
         printCanvas.add(allObjectsGroup)
         printCanvas.centerObject(allObjectsGroup)
+      
+
+        console.log('aaa',printCanvas.toSVG())
         
         fetch("/api/print", {
           method: "POST",
@@ -384,20 +435,44 @@ export const RenderCanvas = () => {
         .catch((error) => {
           console.error("Error fetching the PDF:", error);
         });
+            }}
+            icon={<Printer />}
+          ></Button>
+        </div>
+      </div>
 
-      }}>imprimir</Button>
+      <div className="absolute left-0 right-0 bottom-2 z-50    flex justify-center">
+        <div className=" p-2 rounded-lg ">
+          <div className="flex justify-center items-center gap-2">
+            <div className="flex justify-center items-center gap-[2px]">
+              <span className="w-5 h-[3px] bg-black inline-block"></span> Limite
+              de corte
+            </div>
+
+            <div className="flex justify-center items-center gap-[2px]">
+              <span className="w-5 border-t border-t-black border-dashed	inline-block"></span>
+              Posição da marca
+            </div>
+
+            <div className="flex justify-center items-center gap-[2px]">
+              <span className="w-5 h-[1px] bg-black inline-block"></span> Frente
+              do button
+            </div>
+          </div>
+        </div>
+      </div>
+
       <canvas ref={canvasEl} />
     </div>
   );
 };
 
-
 function getScreenDPI() {
-  const div = document.createElement('div');
-  div.style.width = '1in'; // 1 inch in CSS units
-  div.style.height = '1in';
-  div.style.position = 'absolute';
-  div.style.visibility = 'hidden';
+  const div = document.createElement("div");
+  div.style.width = "1in"; // 1 inch in CSS units
+  div.style.height = "1in";
+  div.style.position = "absolute";
+  div.style.visibility = "hidden";
   document.body.appendChild(div);
 
   const dpi = div.offsetWidth; // The number of pixels in 1 inch

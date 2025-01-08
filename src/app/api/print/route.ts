@@ -41,6 +41,9 @@ export async function POST(request: NextRequest) {
     const viewBox = `${-element.width / 2} ${-element.height / 2} ${element.width} ${element.height}`;
     const modelSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="${element.width}" height="${element.height}" viewBox="${viewBox}">${element.toSVG()}</svg>`;
 
+    const Elementwidth = model.shape == 'circle' ? element.width / 2 : element.width
+    const Elementheight = model.shape == 'circle' ? element.height / 2 : element.height
+
   try {
     // Create a new PDF document
     const pdfDoc = await PDFDocument.create();
@@ -53,13 +56,12 @@ export async function POST(request: NextRequest) {
       .toBuffer();
     const pngImage = await pdfDoc.embedPng(pngBuffer);    
 
-    Object.values(gabarito.positions).forEach((p,k) => {
-      
+    Object.values(gabarito.positions).forEach((p) => {
       page.drawImage(pngImage, {
         x: mmToPt(p.x),
-        y: height - pxToPt(element.height/2,dpi) - mmToPt(p.y),
-        // width: pxToPt(element.width/2,dpi,),
-        // height: pxToPt(element.height/2,dpi)
+        y: height - pxToPt(Elementheight,dpi) - mmToPt(p.y),
+        width: pxToPt(Elementwidth,dpi,),
+        height: pxToPt(Elementheight,dpi)
       });
     })
 

@@ -81,6 +81,11 @@ export function AddText() {
         this.updateCurvedText();
       }
 
+      setText(newText: string) {
+        this.text = newText;
+        this.updateCurvedText();
+      }
+
       toObject<
         T extends Omit<
           fabric.GroupProps & fabric.TClassProperties<this>,
