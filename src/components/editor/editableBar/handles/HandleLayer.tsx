@@ -77,14 +77,14 @@ export const HandleLayer = ({ object, canvas }: EditIconProps) => {
             className="flex gap-2 items-center px-2 rounded-full hover:bg-gray-300/70 w-[145px]"
             onClick={() => handleChangeLayer("front")}
           >
-            <ChevronsUp className="w-6 h-6" /> {t("layer.back")}
+            <ChevronsUp className="w-6 h-6" /> {t("layer.forward")}
           </button>
           <button
             type="button"
             className="flex gap-2 items-center px-2 rounded-full hover:bg-gray-300/70 w-[145px]"
             onClick={() => handleChangeLayer("back")}
           >
-            <ChevronsDown className="w-6 h-6" /> {t("layer.forward")}
+            <ChevronsDown className="w-6 h-6" /> {t("layer.back")}
           </button>
         </div>
       </DropdownMenuContent>

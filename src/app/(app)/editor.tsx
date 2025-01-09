@@ -10,6 +10,7 @@ import {
   SquareDashed,
   Pentagon,
   UserRoundCog,
+  Eclipse,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -31,12 +32,15 @@ import { Permission } from "@/components/permission";
 import Link from "next/link";
 import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 import { Button } from "@/components/ui/button";
-import type {User as UserType} from '@prisma/client'
+import type { User as UserType } from "@prisma/client";
+import { useEditorContext } from "@/context/editor";
+import { useState } from "react";
+import { Tooltip } from "@/components/tooltip/tooltip";
 
 type EditorType = {
   model?: editor_canvas;
   allowed_models: editor_canvas[];
-  user: UserType
+  user: UserType;
 };
 export function Editor({ model, allowed_models, user }: EditorType) {
   const t = useTranslations("pages.editor.sideBar");
@@ -103,6 +107,7 @@ export function Editor({ model, allowed_models, user }: EditorType) {
                 <button className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20">
                   <Redo2 />
                 </button>
+                <ClipButton />
               </div>
               <EditableBar />
             </div>
@@ -130,3 +135,24 @@ export function Editor({ model, allowed_models, user }: EditorType) {
 function Teste({ content }: { content: string }) {
   return <p className="text-textForefround">{content}</p>;
 }
+
+const ClipButton = () => {
+  const { clipMask } = useEditorContext();
+  const [isClipActive, setIsClipActive] = useState(false);
+
+  const handleToggleClip = () => {
+    const newClipState = !isClipActive;
+    setIsClipActive(newClipState);
+    clipMask(newClipState);
+  };
+
+  return (
+    <Tooltip content="Esconder conteúdo fora do Button">
+      <Button
+        variant={isClipActive ? "solid" : "outline"}
+        onClick={handleToggleClip}
+        icon={<Eclipse />}
+      ></Button>
+    </Tooltip>
+  );
+};

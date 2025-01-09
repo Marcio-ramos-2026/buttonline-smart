@@ -134,11 +134,11 @@ export default function FabricContextProvider({
   }, [model, containerWidth, containerHeight, canvas]);
 
   useEffect(() => {
-    canvas?.on('object:modified', () => {
+    canvas?.on("object:modified", () => {
       // saveCanvasToLocalStorage(canvas);
     });
-    
-    canvas?.on('object:added', () => {
+
+    canvas?.on("object:added", () => {
       // saveCanvasToLocalStorage(canvas);
     });
 
@@ -171,16 +171,15 @@ export default function FabricContextProvider({
   }
 
   const clipMask = (clip: boolean) => {
-    if(!realCanvas || !canvas) return
+    if (!realCanvas || !canvas) return;
 
-    if(clip) {
-      canvas.clipPath = realCanvas
-    }else{
-      canvas.clipPath = undefined
+    if (clip) {
+      canvas.clipPath = realCanvas;
+    } else {
+      canvas.clipPath = undefined;
     }
-    
-    canvas.renderAll();
 
+    canvas.renderAll();
   };
 
   return (
@@ -217,8 +216,6 @@ export const RenderCanvas = () => {
     currentModel,
     models,
     setRealCanvas,
-    clipMask,
-    realCanvas
   } = useEditorContext();
 
   useEffect(() => {
@@ -300,101 +297,105 @@ export const RenderCanvas = () => {
           <Button
             size={"default"}
             onClick={async () => {
-              if(!canvas) return
-        const dpi = getScreenDPI()
+              if (!canvas) return;
+              const dpi = getScreenDPI();
 
-        let allObjects = canvas.getObjects();
-        allObjects = allObjects.map((obj) => {
-          if (obj.type === 'image') {
-            const image = obj as fabric.FabricImage
-            const imageElement = image.getElement() as HTMLImageElement
+              let allObjects = canvas.getObjects();
+              allObjects = allObjects.map((obj) => {
+                if (obj.type === "image") {
+                  const image = obj as fabric.FabricImage;
+                  const imageElement = image.getElement() as HTMLImageElement;
 
-            const url = new URL(imageElement.src);
-            const pathname = url.pathname; // Get the file path
-            const extension = pathname.split('.').pop()?.toLowerCase(); // Extract the file extension (before query params)
+                  const url = new URL(imageElement.src);
+                  const pathname = url.pathname; // Get the file path
+                  const extension = pathname.split(".").pop()?.toLowerCase(); // Extract the file extension (before query params)
 
-            // Check for file format based on the extension
-            const isJpeg = extension === 'jpg' || extension === 'jpeg';
-              // Convert the image to Base64
-              const base64 = image.toDataURL({
-                format: isJpeg ? 'jpeg' : 'png', // Use 'jpeg' if needed
-                quality: 1,    // High quality for JPEG
+                  // Check for file format based on the extension
+                  const isJpeg = extension === "jpg" || extension === "jpeg";
+                  // Convert the image to Base64
+                  const base64 = image.toDataURL({
+                    format: isJpeg ? "jpeg" : "png", // Use 'jpeg' if needed
+                    quality: 1, // High quality for JPEG
+                  });
+
+                  // Replace the image source with the Base64 data
+                  imageElement.src = base64;
+
+                  image.set({
+                    element: imageElement,
+                  });
+                  return image;
+                }
+
+                return obj;
               });
-      
-            
-            // Replace the image source with the Base64 data
-            imageElement.src = base64;
 
-            image.set({
-              element: imageElement
-            })
-            return image
-          }
+              const allObjectsGroup = new fabric.Group(allObjects, {
+                left: 0,
+                top: 0,
+              });
 
-          return obj
-        });
-      
-        const allObjectsGroup = new fabric.Group(allObjects, { left: 0, top: 0 });
-        
-        // Calculate the bounding dimensions of the group
-        const boundingRect = allObjectsGroup.getBoundingRect();
-        const groupWidth = boundingRect.width;
-        const groupHeight = boundingRect.height;
-        
-        // Fixed canvas size
-        const canvasWidth = fabric.util.parseUnit('65mm'); // Canvas width in px
-        const canvasHeight = fabric.util.parseUnit('65mm'); // Canvas height in px
-        
-        // Calculate the scale factor to fit content within canvas
-        const scaleFactor = Math.min(canvasWidth / groupWidth, canvasHeight / groupHeight);
-        
-        // Scale the group proportionally
-        allObjectsGroup.scale(scaleFactor);
-        allObjectsGroup.setCoords(); // Update coordinates after scaling
+              // Calculate the bounding dimensions of the group
+              const boundingRect = allObjectsGroup.getBoundingRect();
+              const groupWidth = boundingRect.width;
+              const groupHeight = boundingRect.height;
 
-        
-        // const copyRealCanvas = await realCanvas.clone()
-        // copyRealCanvas.width = allObjectsGroup.getScaledWidth()
-        // copyRealCanvas.height = allObjectsGroup.getScaledHeight()
+              // Fixed canvas size
+              const canvasWidth = fabric.util.parseUnit("65mm"); // Canvas width in px
+              const canvasHeight = fabric.util.parseUnit("65mm"); // Canvas height in px
 
-        // realCanvas.backgroundColor = 'blue'
-        
-        // Create a new canvas with the fixed size
-        const printCanvas = new fabric.Canvas('c', {
-          width: canvasWidth,
-          height: canvasHeight,
-          // clipPath: realCanvas
-        });
-        
+              // Calculate the scale factor to fit content within canvas
+              const scaleFactor = Math.min(
+                canvasWidth / groupWidth,
+                canvasHeight / groupHeight
+              );
 
-        printCanvas.add(allObjectsGroup)
-        printCanvas.centerObject(allObjectsGroup)
-      
-        
-        fetch("/api/print", {
-          method: "POST",
-          body: JSON.stringify({ svg: printCanvas.toSVG(),model_id: currentModel.id,dpi}), // Send any necessary data for PDF generation
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        .then((response) => response.blob())  // Get the response as a Blob (binary data)
-        .then((blob) => {
-          // Create a URL for the Blob
-          const url = window.URL.createObjectURL(blob);
-          
-          // Open the PDF in a new tab
-          window.open(url, "_blank");
-        })
-        .catch((error) => {
-          console.error("Error fetching the PDF:", error);
-        });
+              // Scale the group proportionally
+              allObjectsGroup.scale(scaleFactor);
+              allObjectsGroup.setCoords(); // Update coordinates after scaling
+
+              // const copyRealCanvas = await realCanvas.clone()
+              // copyRealCanvas.width = allObjectsGroup.getScaledWidth()
+              // copyRealCanvas.height = allObjectsGroup.getScaledHeight()
+
+              // realCanvas.backgroundColor = 'blue'
+
+              // Create a new canvas with the fixed size
+              const printCanvas = new fabric.Canvas("c", {
+                width: canvasWidth,
+                height: canvasHeight,
+                // clipPath: realCanvas
+              });
+
+              printCanvas.add(allObjectsGroup);
+              printCanvas.centerObject(allObjectsGroup);
+
+              fetch("/api/print", {
+                method: "POST",
+                body: JSON.stringify({
+                  svg: printCanvas.toSVG(),
+                  model_id: currentModel.id,
+                  dpi,
+                }), // Send any necessary data for PDF generation
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              })
+                .then((response) => response.blob()) // Get the response as a Blob (binary data)
+                .then((blob) => {
+                  // Create a URL for the Blob
+                  const url = window.URL.createObjectURL(blob);
+
+                  // Open the PDF in a new tab
+                  window.open(url, "_blank");
+                })
+                .catch((error) => {
+                  console.error("Error fetching the PDF:", error);
+                });
             }}
             icon={<Printer />}
           ></Button>
         </div>
-        <Button onClick={()=> clipMask(true)}>CLIP</Button>
-        <Button onClick={()=> clipMask(false)}>unclip</Button>
       </div>
 
       <div className="absolute left-0 right-0 bottom-2 z-50    flex justify-center">
