@@ -128,7 +128,7 @@ export default function FabricContextProvider({
       setcanvas(canvasInstance);
     } else {
       canvas.setDimensions({ width: containerWidth, height: containerHeight });
-      // canvas.renderAll()
+      canvas.renderAll()
       centerAllObjects(canvas);
     }
   }, [model, containerWidth, containerHeight, canvas]);
@@ -249,13 +249,22 @@ export const RenderCanvas = () => {
     //   return;
     // }
 
-    let canvasModel = createModel(currentModel);
+    let canvasModel = createModel(currentModel) as fabric.Group;
     if (canvasModel) {
       canvas.remove(...canvas.getObjects());
 
       const scale = canvasConfig.maxScale / canvasModel.width;
       canvasModel.scale(scale);
-      // canvasModel = canvasModel.toObject()
+      const c= canvasModel.getObjects()
+      // c.forEach((m,k) => {
+      //   canvas.add(m);
+      //   canvas.centerObject(m);
+      //   // canvas.bringObjectToFront(m)
+
+      //   if(k == 2) {
+      //     // canvas.bringObjectToFront(m)
+      //   }
+      // })
 
       canvas.add(canvasModel);
       canvas.centerObject(canvasModel);
@@ -301,7 +310,7 @@ export const RenderCanvas = () => {
             size={"default"}
             onClick={async () => {
               if(!canvas) return
-        const dpi = getScreenDPI()
+          const dpi = getScreenDPI()
 
         let allObjects = canvas.getObjects();
         allObjects = allObjects.map((obj) => {
@@ -333,19 +342,22 @@ export const RenderCanvas = () => {
 
           return obj
         });
+
+        // Fixed canvas size
+        const canvasWidth = fabric.util.parseUnit('65mm'); // Canvas width in px
+        const canvasHeight = fabric.util.parseUnit('65mm'); // Canvas height in px
       
-        const allObjectsGroup = new fabric.Group(allObjects, { left: 0, top: 0 });
+        const allObjectsGroup = new fabric.Group(allObjects, { left: canvasWidth / 2, top: canvasHeight / 2 });
         
         // Calculate the bounding dimensions of the group
         const boundingRect = allObjectsGroup.getBoundingRect();
         const groupWidth = boundingRect.width;
         const groupHeight = boundingRect.height;
         
-        // Fixed canvas size
-        const canvasWidth = fabric.util.parseUnit('65mm'); // Canvas width in px
-        const canvasHeight = fabric.util.parseUnit('65mm'); // Canvas height in px
         
         // Calculate the scale factor to fit content within canvas
+        console.log('CANVAS',canvasWidth,canvasHeight)
+        console.log('GROUP',groupWidth,groupHeight)
         const scaleFactor = Math.min(canvasWidth / groupWidth, canvasHeight / groupHeight);
         
         // Scale the group proportionally
@@ -353,27 +365,35 @@ export const RenderCanvas = () => {
         allObjectsGroup.setCoords(); // Update coordinates after scaling
 
         
-        // const copyRealCanvas = await realCanvas.clone()
-        // copyRealCanvas.width = allObjectsGroup.getScaledWidth()
-        // copyRealCanvas.height = allObjectsGroup.getScaledHeight()
-
-        // realCanvas.backgroundColor = 'blue'
+        const copyRealCanvas = await realCanvas.clone()
+        // copyRealCanvas.scale(scaleFactor)
+        
         
         // Create a new canvas with the fixed size
         const printCanvas = new fabric.Canvas('c', {
           width: canvasWidth,
-          height: canvasHeight,
-          // clipPath: realCanvas
+          // height: canvasHeight
         });
         
 
         printCanvas.add(allObjectsGroup)
-        printCanvas.centerObject(allObjectsGroup)
-      
+        printCanvas.centerObject(allObjectsGroup)      
+
+        printCanvas.clipPath = copyRealCanvas
+
+        const svg = printCanvas.toSVG({
+          viewBox: {
+            x: 0,
+            y: 0,
+            width: canvasWidth,
+            height: canvasHeight,
+          },
+        })
+
         
         fetch("/api/print", {
           method: "POST",
-          body: JSON.stringify({ svg: printCanvas.toSVG(),model_id: currentModel.id,dpi}), // Send any necessary data for PDF generation
+          body: JSON.stringify({ svg: svg,model_id: currentModel.id,dpi}), // Send any necessary data for PDF generation
           headers: {
             "Content-Type": "application/json",
           },
