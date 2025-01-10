@@ -2,6 +2,8 @@
 import { prisma } from "@/lib/prisma";
 import { editProfileSchema, EditProfileSchema } from "@/lib/zod-schemas";
 import { getTranslations } from "next-intl/server";
+import { unstable_update } from "@/auth";
+
 
 type WhereUpdateProfile = {
     email?: string
@@ -57,7 +59,10 @@ export async function editProfileAction(userId: number, data: EditProfileSchema)
         data: updateUserWhere
     })
 
+    console.log('UPDATED USER', updateUser)
+
     return {
+      user: updateUser,
       message: `Dados salvos com sucesso.`,
       success: true,
     };

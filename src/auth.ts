@@ -10,7 +10,7 @@ import type {User as UserType} from '@prisma/client'
 
 const adapter = PrismaAdapter(prisma) as Adapter
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   adapter: adapter,
   session: {
     strategy: "jwt", // Ensures the session uses database strategy
@@ -64,6 +64,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user, account }) {
       if(user){
+        console.log('JWT AUTHHHHH', user, token)
         token.id = user.id
         //@ts-ignore
         token.role = user.role.name as string
@@ -71,9 +72,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.permissions = user.role.permissions.map((permission) => {
           return permission.permission.name
         })
-
-        
-
       }
 
       if (account?.provider === "credentials") {

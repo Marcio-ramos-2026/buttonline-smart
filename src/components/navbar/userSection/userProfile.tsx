@@ -19,6 +19,7 @@ import { editProfileAction } from "@/app/actions/editProfileAction";
 import { editProfileSchema, EditProfileSchema } from "@/lib/zod-schemas";
 import type { User } from "@prisma/client";
 import { toast } from "@/hooks/use-toast";
+// import { useSession } from "next-auth/react";
 
 export function UserProfile({ user }: { user: User }) {
   const formSchema = editProfileSchema();
@@ -29,6 +30,7 @@ export function UserProfile({ user }: { user: User }) {
       email: user.email as string,
     },
   });
+  // const { update } = useSession()
 
   const { formState, setError } = form;
 
@@ -57,6 +59,11 @@ export function UserProfile({ user }: { user: User }) {
         description: result.message,
       });
     }
+
+    // if (result?.user) {
+    //   console.log('RESULT USERR', result?.user)
+    //   update({ ...user, name: result.user.name, email: result.user.email })
+    // }
   };
 
   return (
@@ -137,11 +144,13 @@ export function UserProfile({ user }: { user: User }) {
               />
             </div>
             {formState.errors.root?.global.message && (
-              <Alert
-                variant="danger"
-                content={formState.errors.root?.global.message as string}
-                title="Falha ao editar perfil."
-              />
+              <div className="col-span-1 md:col-span-6 justify-self-end w-fit">
+                <Alert
+                  variant="danger"
+                  content={formState.errors.root?.global.message as string}
+                  title="Falha ao editar perfil."
+                />
+              </div>
             )}
 
             <div className="col-span-1 md:col-span-6 w-full flex justify-end">

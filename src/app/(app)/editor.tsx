@@ -36,14 +36,29 @@ import type { User as UserType } from "@prisma/client";
 import { useEditorContext } from "@/context/editor";
 import { useState } from "react";
 import { Tooltip } from "@/components/tooltip/tooltip";
+import CanvasHistory from "@/lib/fabricHistory";
 
 type EditorType = {
   model?: editor_canvas;
   allowed_models: editor_canvas[];
   user: UserType;
 };
-export function Editor({ model, allowed_models, user }: EditorType) {
+
+type EditorProps = {
+  user: UserType;
+}
+
+export const EditorProvider = ({ model, allowed_models, user }: EditorType) => {
+  return (
+    <FabricContextProvider model={model} allowed_models={allowed_models}>
+      <Editor user={user} />
+    </FabricContextProvider>
+  );
+};
+
+export function Editor({ user }: EditorProps) {
   const t = useTranslations("pages.editor.sideBar");
+  const { canvas, history } = useEditorContext();
 
   const data = {
     navMain: [
@@ -82,58 +97,58 @@ export function Editor({ model, allowed_models, user }: EditorType) {
   };
 
   return (
-    <FabricContextProvider model={model} allowed_models={allowed_models}>
-      <SidebarProvider
-        style={
-          {
-            "--sidebar-width": "350px",
-          } as React.CSSProperties
-        }
-        className="min-h-[calc(100svh-40px)] relative"
-      >
-        <AppSidebar items={data.navMain} user={user} />
-        <SidebarInset className="min-h-[calc(100svh-40px)] overflow-hidden">
-          <header className="flex shrink-0 items-center gap-3 border-b bg-background p-2 md:p-4 h-14 md:h-auto">
-            {/* <SidebarTrigger className="-ml-1 hidden md:flex" /> */}
-            {/* <Separator
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "350px",
+        } as React.CSSProperties
+      }
+      className="min-h-[calc(100svh-40px)] relative"
+    >
+      <AppSidebar items={data.navMain} user={user} />
+      <SidebarInset className="min-h-[calc(100svh-40px)] overflow-hidden">
+        <header className="flex shrink-0 items-center gap-3 border-b bg-background p-2 md:p-4 h-14 md:h-auto">
+          {/* <SidebarTrigger className="-ml-1 hidden md:flex" /> */}
+          {/* <Separator
               orientation="vertical"
               className="mr-2 h-8 bg-gray-600/50 hidden md:flex"
             /> */}
-            <div className="flex gap-4 items-center w-full">
-              <div className="flex gap-1.5 flex-0">
-                <button className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20">
-                  <Undo2 />
-                </button>
-                <button className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20">
-                  <Redo2 />
-                </button>
-                <ClipButton />
-              </div>
-              <EditableBar />
+          <div className="flex gap-4 items-center w-full">
+            <div className="flex gap-1.5 flex-0">
+              <button
+                onClick={() => history('undo')}
+                className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
+              >
+                <Undo2 />
+              </button>
+              <button
+                onClick={() => history('redo')}
+                className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
+              >
+                <Redo2 />
+              </button>
+              <ClipButton />
             </div>
-            <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN]}>
-              <Link href={"/admin/users"}>
-                <Button icon={<UserRoundCog />}>
-                  {/* {t("notifications")} */}
-                  Admin
-                </Button>
-              </Link>
-            </Permission>
-            <div className="space-x-2 text-black ml-auto">
-              <LanguageSelector />
-            </div>
-          </header>
-          <section className="w-full h-full">
-            <RenderCanvas />
-          </section>
-        </SidebarInset>
-      </SidebarProvider>
-    </FabricContextProvider>
+            <EditableBar />
+          </div>
+          <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN]}>
+            <Link href={"/admin/users"}>
+              <Button icon={<UserRoundCog />}>
+                {/* {t("notifications")} */}
+                Admin
+              </Button>
+            </Link>
+          </Permission>
+          <div className="space-x-2 text-black ml-auto">
+            <LanguageSelector />
+          </div>
+        </header>
+        <section className="w-full h-full">
+          <RenderCanvas />
+        </section>
+      </SidebarInset>
+    </SidebarProvider>
   );
-}
-
-function Teste({ content }: { content: string }) {
-  return <p className="text-textForefround">{content}</p>;
 }
 
 const ClipButton = () => {

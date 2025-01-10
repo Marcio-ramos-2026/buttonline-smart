@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { ReactSVG } from "react-svg";
 // import { height, width } from "pdfkit/js/page";
 import { Printer } from "lucide-react";
+import CanvasHistory from "@/lib/fabricHistory";
 
 const { theme } = resolveConfig(tailwindConfig);
 
@@ -58,6 +59,7 @@ type IEditorContext = {
   models: editor_canvas[];
   setRealCanvas: React.Dispatch<fabric.FabricObject>;
   realCanvas: fabric.FabricObject;
+  history: (method: 'redo' | 'undo') => void;
 };
 
 const FabricContext = createContext<IEditorContext | null>(null);
@@ -78,6 +80,7 @@ export default function FabricContextProvider({
   const [realCanvas, setRealCanvas] = useState<fabric.FabricObject | null>(
     null
   );
+  const [historyCanvas, setHistoryCanvas] = useState<any>()
 
   const [{ width: containerWidth, height: containerHeight }, setSize] =
     useState<Size>({
@@ -134,13 +137,16 @@ export default function FabricContextProvider({
   }, [model, containerWidth, containerHeight, canvas]);
 
   useEffect(() => {
-    canvas?.on("object:modified", () => {
+    if (!canvas) return;
+    canvas.on("object:modified", () => {
       // saveCanvasToLocalStorage(canvas);
     });
 
-    canvas?.on("object:added", () => {
+    canvas.on("object:added", () => {
       // saveCanvasToLocalStorage(canvas);
     });
+    const canvasHistory = new CanvasHistory(canvas)
+    setHistoryCanvas(canvasHistory)
 
     return () => {
       if (canvas) canvas.dispose();
@@ -182,6 +188,17 @@ export default function FabricContextProvider({
     canvas.renderAll();
   };
 
+  const history = (method: 'redo' | 'undo') => {
+    if (method === 'redo') {
+      historyCanvas.redo()
+      return
+    } 
+    if (method === 'undo') {
+      historyCanvas.undo()
+      return
+    }
+  }
+
   return (
     <FabricContext.Provider
       value={{
@@ -193,6 +210,7 @@ export default function FabricContextProvider({
         models,
         setRealCanvas,
         realCanvas: realCanvas as fabric.FabricObject,
+        history
       }}
     >
       {children}
@@ -268,7 +286,7 @@ export const RenderCanvas = () => {
         <div className="grid grid-cols-4 w-full gap-6">
           {models.map((m) => {
             return (
-              <div className="overflow-hidden rounded-lg bg-white shadow-sm border">
+              <div key={m.id} className="overflow-hidden rounded-lg bg-white shadow-sm border">
                 <div className="px-4 py-5 sm:px-6">
                   <h5 className="text-primary text-center">{m.name}</h5>
                 </div>

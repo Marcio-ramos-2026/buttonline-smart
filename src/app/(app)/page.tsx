@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Editor } from "./editor";
+import { EditorProvider } from "./editor";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/auth";
 
@@ -21,7 +21,7 @@ export default async function Page() {
 
   return (
     <>
-      <Editor
+      <EditorProvider
         allowed_models={allowed_models}
         model={allowed_models[0]}
         //@ts-ignore

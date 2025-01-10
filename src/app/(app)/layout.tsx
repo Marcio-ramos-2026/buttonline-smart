@@ -10,6 +10,8 @@ export default async function LayoutApp({ children }: { children: ReactNode }) {
     redirect(`/login`);
   }
 
+  // console.log('SESSION', session)
+
   return (
     <SessionProvider session={session}>
       <div>
