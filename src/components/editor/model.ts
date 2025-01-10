@@ -6,8 +6,8 @@ export type ModelType = {
 };
 
 export const pageSizes = {
-  'A4': [595.44, 841.68], // A4 size in points
-  'Letter': [612, 792],    // Letter size in points
+  A4: [595.44, 841.68], // A4 size in points
+  Letter: [612, 792], // Letter size in points
 };
 
 type shapeRectangle = {
@@ -38,41 +38,80 @@ type Shapes = shapeCircle | shapeEllipse;
 
 type ShapeCollection = Record<string, Shapes>;
 type gabarito = {
-  pdf: keyof typeof pageSizes,
-  positions: Record<string,{x:number,y:number}>
-}
+  pdf: keyof typeof pageSizes;
+  positions: Record<string, { x: number; y: number }>;
+};
+
+type mark = {
+  position?: string;
+  height?: number;
+  width?: number;
+};
 
 export type ModelConfig = {
+  mark?: mark;
   objects: ShapeCollection;
-  gabarito: gabarito
+  gabarito: gabarito;
 };
 
 export const createModel = (model: editor_canvas): fabric.Object => {
+  const objConfig = model?.config as ModelConfig;
+
   const createMark = (element: fabric.FabricObject) => {
-    const markWidth = 2;
+    const markWidth = objConfig?.mark?.width ?? 10;
+    const markHeight = objConfig?.mark?.height ?? 10;
+
+    const positions = {
+      top: {
+        top:
+          element.top -
+          element.height / 2 +
+          markHeight / 2 +
+          element.strokeWidth / 2,
+      },
+      left: {
+        left:
+          element.left -
+          element.width / 2 +
+          markWidth / 2 +
+          element.strokeWidth / 2,
+      },
+      bottom: {
+        top:
+          element.top +
+          element.height / 2 -
+          markHeight / 2 -
+          element.strokeWidth / 2,
+      },
+      right: {
+        left:
+          element.left +
+          element.width / 2 -
+          markWidth / 2 -
+          element.strokeWidth / 2,
+      },
+    };
+
+    const position = objConfig?.mark?.position ?? "left";
+
     const mark = new fabric.Rect({
       width: markWidth,
-      height: 7,
+      height: markHeight,
       fill: "red",
       stroke: "red",
       strokeWidth: 0,
       selectable: false,
       moveCursor: "default",
-
-      left:
-        element.left -
-        element.width / 2 +
-        markWidth / 2 +
-        element.strokeWidth / 2,
       originX: "center",
       originY: "center",
       hoverCursor: "default",
+      ...positions[position as keyof typeof positions],
     });
 
     return mark;
   };
 
-  const objConfig = model?.config as ModelConfig;
+  ////////////////////////////////////////////////////////
 
   const elements = Object.values(objConfig?.objects)
     .map((obj, k) => {
@@ -105,7 +144,7 @@ export const createModel = (model: editor_canvas): fabric.Object => {
     selectable: false,
     moveCursor: "default",
     hoverCursor: "default",
-    cardenas_canvas: "true"
+    cardenas_canvas: "true",
   });
 };
 
@@ -128,7 +167,7 @@ const ellipse = (config: shapeEllipse): fabric.FabricObject => {
 const circle = (config: shapeCircle) => {
   return new fabric.Circle({
     radius: fabric.util.parseUnit(`${config.radius}mm`),
-    fill: "blue",
+    fill: "white",
     stroke: "#000",
     strokeWidth: config?.strokeWidth ?? 1,
     strokeDashArray: config?.strokeDashArray ?? [0, 0],
