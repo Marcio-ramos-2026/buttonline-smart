@@ -66,7 +66,8 @@ const defaultUser: User = {
   emailVerified: null,
   image: null,
   lastAccess: null,
-  password: null
+  password: null,
+  voucherTime: null
 };
 
 const RecoverPassword = ({

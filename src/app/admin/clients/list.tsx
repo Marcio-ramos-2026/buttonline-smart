@@ -207,14 +207,14 @@ const DeleteClient = ({ row }: DeleteClientProsp) => {
         }
 
         toast({
-          variant: "destructive",
+          variant: "danger",
           title: "Houve algum erro",
           description: response.error,
         });
       })
       .catch((e) => {
         toast({
-          variant: "destructive",
+          variant: "danger",
           title: "Houve algum erro",
           description: e.message,
         });
