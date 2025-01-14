@@ -35,6 +35,7 @@ export default function LoginPage() {
         <div className="bg-white shadow p-4 py-6 sm:p-6 sm:rounded-lg">
           <FormLogin />
         </div>
+
         <div className="flex justify-end">
           <Link href={"/recuperarSenha"} className="text-primary">
             {t("forgetPassword")}

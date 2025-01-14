@@ -1,0 +1,39 @@
+.policy p {
+    margin-bottom: 10px;
+}
+.policy h1,
+.policy h2,
+.policy h3 {
+    margin: 10px 0;
+    text-transform: uppercase;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0 
+}
+
+
+
+.table th,
+.table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+    /* Cor para linhas ímpares */
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #ffffff;
+    /* Cor para linhas pares */
+}
+
+.table tbody tr:hover {
+    background-color: #f1f1f1;
+    /* Cor ao passar o mouse */
+}
