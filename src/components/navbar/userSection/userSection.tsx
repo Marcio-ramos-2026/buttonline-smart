@@ -42,7 +42,7 @@ export function NavUserSection({
     <DropdownMenu>
       <Tooltip content={t("label")}>
         <DropdownMenuTrigger className="focus-within:outline-none">
-          <div className="flex items-center justify-center bg-gray-50 h-8 w-8 rounded-full">
+          <div className="flex items-center justify-center bg-gray-50 h-8 w-8 rounded-full border border-solid border-primary">
             <User className="h-5 w-5" />
           </div>
         </DropdownMenuTrigger>

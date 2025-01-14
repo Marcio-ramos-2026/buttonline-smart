@@ -54,7 +54,7 @@ export function FiltersSection({
     <div className="flex flex-col gap-4 p-4 bg-gray-50 rounded-lg shadow w-full max-w-full overflow-x-auto">
       <p className="text-xl font-semibold">Filtros</p>
       <div className="flex flex-col md:flex-row gap-5 items-center justify-between flex-wrap">
-        <div className="flex items-center gap-4 flex-wrap">
+        <div className="flex items-center gap-4 flex-wrap w-full">
           {filtersConfig.map((filter) => (
             <div key={filter.key} className="min-w-40 flex-shrink-0">
               <Label htmlFor={filter.key}>{filter.label}</Label>

@@ -36,7 +36,12 @@ import { useRouter } from "next/navigation";
 import { FiltersSection } from "@/components/filterSection";
 
 const filtersConfig = [
-  { key: "search", label: "Pesquisa", icon: <Search />, type: "input" as const }
+  {
+    key: "search",
+    label: "Pesquisa",
+    icon: <Search />,
+    type: "input" as const,
+  },
 ];
 
 export const UsersList = ({
@@ -51,6 +56,8 @@ export const UsersList = ({
   limit: number;
 }) => {
   const t = useTranslations("pages.admin.users");
+  //TODO arrumar tipo
+  //@ts-ignore
   const columns = useMemo<ColumnDef<User>[]>(() => {
     return [
       {
@@ -140,7 +147,10 @@ export const UsersList = ({
         header: "",
         enableSorting: false,
         meta: {
-          permissions: [ALLOWED_PERMISSIONS.IS_ADMIN, ALLOWED_PERMISSIONS.ADMIN_USER_DELETE],
+          permissions: [
+            ALLOWED_PERMISSIONS.IS_ADMIN,
+            ALLOWED_PERMISSIONS.ADMIN_USER_DELETE,
+          ],
         },
         size: 20,
         cell: DeleteUser,
@@ -156,13 +166,15 @@ export const UsersList = ({
 
   return (
     <>
-      <div className="w-fit ml-auto mb-4">
+      <div className="w-full md:w-fit ml-auto mb-4">
         <FiltersSection
           filtersConfig={filtersConfig}
           onApply={actions.onFiltering}
         />
       </div>
-      <Table data={data} columns={columns} {...actions} />
+      <div className="max-w-full">
+        <Table data={data} columns={columns} {...actions} />
+      </div>
     </>
   );
 };

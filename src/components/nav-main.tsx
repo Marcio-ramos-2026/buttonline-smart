@@ -54,7 +54,7 @@ export function NavMain({
             defaultOpen={item.isActive}
             className="group/collapsible"
           >
-            <SidebarMenuItem>
+            <SidebarMenuItem className='flex justify-center'>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton
                   tooltip={{

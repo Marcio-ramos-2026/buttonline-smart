@@ -233,7 +233,7 @@ export const EditText = ({
     canvas.fire("modified", { target: object });
     canvas.renderAll();
     canvas.centerObject(object);
-  }
+  };
 
   useEffect(() => {
     if (!object || !canvas) return;
@@ -243,7 +243,7 @@ export const EditText = ({
   }, [object, canvas]);
 
   return (
-    <div className="flex gap-2 flex-1 [&_label]:w-fit">
+    <div className="flex gap-1.5 md:gap-3 flex-1 [&_label]:w-fit [&_label]:h-full h-full">
       {object.type === "textbox" && (
         <>
           <Select
@@ -251,7 +251,7 @@ export const EditText = ({
               setFontFamily(e);
             }}
           >
-            <SelectTrigger className="w-fit focus:ring-0 focus:ring-offset-0 border border-solid border-gray-300">
+            <SelectTrigger className="w-fit h-full py-1 md:py-2 focus:ring-0 focus:ring-offset-0 border border-solid border-gray-300">
               <SelectValue placeholder={fontFamilys[0]} />
             </SelectTrigger>
             <SelectContent>
@@ -277,21 +277,21 @@ export const EditText = ({
           </Select>
           <Input
             type="number"
-            className="[&_input]:max-w-20 [&_input]:border-gray-300"
+            className="[&_input]:max-w-20 [&_input]:min-w-12 [&_input]:py-1 md:[&_input]:py-2 [&_input]:h-full [&_input]:border-gray-300 h-full"
             value={fontSize}
             onChange={handleChangeSize}
           />
           <ColorPicker
             value={color as string}
             onChange={handleChangeColor}
-            className="border-gray-300"
+            className="border-gray-300 h-full"
           />
           <Tooltip content="Negrito">
             <button
               type="button"
               onClick={handleTextBold}
               className={cn(
-                "border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none",
+                "border border-solid border-gray-300 rounded-lg px-2 py-0.5 md:py-1 focus:outline-none",
                 textBold
                   ? "bg-gray-900/20"
                   : "bg-transparent hover:bg-gray-900/20"
@@ -305,7 +305,7 @@ export const EditText = ({
               type="button"
               onClick={handleTextItalic}
               className={cn(
-                "border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none",
+                "border border-solid border-gray-300 rounded-lg px-2 py-0.5 md:py-1 focus:outline-none",
                 textItalic
                   ? "bg-gray-900/20"
                   : "bg-transparent hover:bg-gray-900/20"
@@ -319,7 +319,7 @@ export const EditText = ({
               type="button"
               onClick={handleTextUnderline}
               className={cn(
-                "border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none",
+                "border border-solid border-gray-300 rounded-lg px-2 py-0.5 md:py-1 focus:outline-none",
                 textUnderline
                   ? "bg-gray-900/20"
                   : "bg-transparent hover:bg-gray-900/20"
@@ -333,7 +333,7 @@ export const EditText = ({
               type="button"
               onClick={handleTextAlign}
               className={cn(
-                "border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none",
+                "border border-solid border-gray-300 rounded-lg px-2 py-0.5 md:py-1 focus:outline-none",
                 textUnderline
                   ? "bg-gray-900/20"
                   : "bg-transparent hover:bg-gray-900/20"
@@ -350,7 +350,7 @@ export const EditText = ({
             <button
               type="button"
               onClick={handleDirectionCurved}
-              className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
+              className="border border-solid border-gray-300 rounded-lg px-2 py-0.5 md:py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
             >
               <directionCurved.icon />
             </button>
@@ -360,7 +360,7 @@ export const EditText = ({
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
+                  className="border border-solid border-gray-300 rounded-lg px-2 py-0.5 md:py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
                 >
                   <Radius className="w-6 h-6" />
                 </button>
@@ -387,7 +387,7 @@ export const EditText = ({
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
+                  className="border border-solid border-gray-300 rounded-lg px-2 py-0.5 md:py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
                 >
                   <Type className="w-6 h-6" />
                 </button>
@@ -396,7 +396,7 @@ export const EditText = ({
             <DropdownMenuContent className="h-auto w-64 px-4 py-3 rounded-md flex flex-col gap-1 items-center justify-center">
               <Input
                 label="Texto"
-                name='changeCurvedText'
+                name="changeCurvedText"
                 className="w-full"
                 onChange={handleChangeText}
               />

@@ -32,7 +32,7 @@ export const EditImage = ({
   };
 
   return (
-    <div className="flex gap-2 flex-1 [&_label]:w-fit">
+    <div className="flex gap-1.5 md:gap-3 flex-1 [&_label]:w-fit h-full">
       <DropdownMenu>
         <Tooltip content="Opacidade">
           <DropdownMenuTrigger asChild>

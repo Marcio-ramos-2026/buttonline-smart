@@ -15,13 +15,14 @@ import { NavUserAdmin } from "../nav-user-admin";
 import { TriggerSidebar } from "./triggerSideBar";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import type { User as UserType } from "@prisma/client";
+
+interface AppSideBarAdminProps extends React.ComponentProps<typeof Sidebar> {
+  user: UserType;
+}
 
 // This is sample data.
 const data = {
-  user: {
-    name: "Usuário Teste",
-    email: "usuário@teste.com",
-  },
   navMain: [
     {
       title: "Usuários",
@@ -41,23 +42,33 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }: AppSideBarAdminProps) {
   const { open } = useSidebar();
-  
+
   return (
-    <Sidebar collapsible="icon" {...props} className="">
-      <TriggerSidebar isOpenSidebar={open} />
-      <SidebarHeader>{/*imagem logo*/}</SidebarHeader>
+    <Sidebar collapsible="icon" {...props}>
+      <div className="hidden md:block">
+        <TriggerSidebar isOpenSidebar={open} />
+      </div>
+      {/* <SidebarHeader>imagem logo</SidebarHeader> */}
       <SidebarContent>
         <NavMain items={data.navMain} title="Pessoas" prefix="/admin" />
       </SidebarContent>
       <SidebarFooter>
         <Link href={"/"} className="mb-4">
-          <Button variant={"outline"} color={"success"} full icon={<Pencil />} size={open ? 'default' : 'sm'}>
-            {open && 'Editor'}
+          <Button
+            variant={"outline"}
+            color={"success"}
+            full
+            icon={<Pencil />}
+            size={open ? "default" : "sm"}
+          >
+            {open && "Editor"}
           </Button>
         </Link>
-        <NavUserAdmin user={data.user} />
+        <div className="flex justify-center [&_ul]:w-fit">
+          <NavUserAdmin user={props.user} />
+        </div>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

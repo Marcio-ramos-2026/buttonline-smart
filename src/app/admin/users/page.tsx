@@ -93,8 +93,8 @@ const AdminPage = async ({
   const t = await getTranslations("pages.admin.users");
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-4">
+    <div className="p-2 md:p-6 w-full">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-4">
         <div>
           <h1
             id="order-history-heading"
@@ -104,7 +104,7 @@ const AdminPage = async ({
           </h1>
           <p className="mt-2 text-sm text-gray-500">{t("description")}</p>
         </div>
-        <div>
+        <div className="w-full flex justify-end">
           <ProfileForm />
         </div>
       </div>

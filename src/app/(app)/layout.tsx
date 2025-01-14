@@ -15,7 +15,7 @@ export default async function LayoutApp({ children }: { children: ReactNode }) {
   return (
     <SessionProvider session={session}>
       <div>
-        <div className="mt-10 md:mt-0">{children}</div>
+        <div>{children}</div>
       </div>
     </SessionProvider>
   );

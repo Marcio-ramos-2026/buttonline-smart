@@ -1,18 +1,20 @@
-"use server"
+"use server";
 import { prisma } from "@/lib/prisma";
 import { editProfileSchema, EditProfileSchema } from "@/lib/zod-schemas";
 import { getTranslations } from "next-intl/server";
 import { unstable_update } from "@/auth";
 
-
 type WhereUpdateProfile = {
-    email?: string
-    name?: string
-    password?: string
-    confirmPassword?: string
-}
+  email?: string;
+  name?: string;
+  password?: string;
+  confirmPassword?: string;
+};
 
-export async function editProfileAction(userId: number, data: EditProfileSchema) {
+export async function editProfileAction(
+  userId: number,
+  data: EditProfileSchema
+) {
   const tForm = await getTranslations("pages.generalZodErrors");
   const schema = editProfileSchema(tForm);
 
@@ -20,7 +22,7 @@ export async function editProfileAction(userId: number, data: EditProfileSchema)
     email: data.email,
     name: data.name,
     password: data.password,
-    confirmPassword: data.confirmPassword
+    confirmPassword: data.confirmPassword,
   });
 
   if (!validatedFields.success) {
@@ -29,18 +31,27 @@ export async function editProfileAction(userId: number, data: EditProfileSchema)
     };
   }
 
-  let updateUserWhere: WhereUpdateProfile = {}
+  let updateUserWhere: WhereUpdateProfile = {};
 
-  if (data.email) updateUserWhere['email'] = data.email
-  if (data.name) updateUserWhere['name'] = data.name
+  if (data.email) updateUserWhere["email"] = data.email;
+  if (data.name) updateUserWhere["name"] = data.name;
   if (data.password && data.confirmPassword) {
-    updateUserWhere['password'] = data.password
-    updateUserWhere['confirmPassword'] = data.confirmPassword
+    updateUserWhere["password"] = data.password;
+    updateUserWhere["confirmPassword"] = data.confirmPassword;
   }
 
-  console.log('ACTION EDIT WHERE', updateUserWhere)
+  console.log("ACTION EDIT WHERE", updateUserWhere);
 
   try {
+    if (data.email) {
+      const findExistingEmail = await prisma.user.findFirst({
+        where: {
+          email: data.email,
+        },
+      });
+      if (findExistingEmail) throw new Error('Este email ja está em uso.')
+    }
+
     const user = await prisma.user.findFirst({
       where: {
         id: userId,
@@ -53,13 +64,13 @@ export async function editProfileAction(userId: number, data: EditProfileSchema)
       };
 
     const updateUser = await prisma.user.update({
-        where: {
-            id: user.id
-        },
-        data: updateUserWhere
-    })
+      where: {
+        id: user.id,
+      },
+      data: updateUserWhere,
+    });
 
-    console.log('UPDATED USER', updateUser)
+    console.log("UPDATED USER", updateUser);
 
     return {
       user: updateUser,
@@ -69,7 +80,8 @@ export async function editProfileAction(userId: number, data: EditProfileSchema)
   } catch (e) {
     console.log("ERROR EDIT PROFILE ACTION", e);
     return {
-      error: "Ocorreu um erro, contate o suporte.",
+      //@ts-ignore
+      error: e?.message ?? "Ocorreu um erro, contate o suporte.",
     };
   }
 }

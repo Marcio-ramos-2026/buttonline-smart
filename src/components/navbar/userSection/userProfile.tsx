@@ -57,6 +57,7 @@ export function UserProfile({ user }: { user: User }) {
       toast({
         title: "Sucesso",
         description: result.message,
+        variant: 'success'
       });
     }
 

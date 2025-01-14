@@ -37,6 +37,7 @@ import { useEditorContext } from "@/context/editor";
 import { useState } from "react";
 import { Tooltip } from "@/components/tooltip/tooltip";
 import CanvasHistory from "@/lib/fabricHistory";
+import { NavUser } from "@/components/nav-user";
 
 type EditorType = {
   model?: editor_canvas;
@@ -46,7 +47,7 @@ type EditorType = {
 
 type EditorProps = {
   user: UserType;
-}
+};
 
 export const EditorProvider = ({ model, allowed_models, user }: EditorType) => {
   return (
@@ -107,22 +108,22 @@ export function Editor({ user }: EditorProps) {
     >
       <AppSidebar items={data.navMain} user={user} />
       <SidebarInset className="min-h-[calc(100svh-40px)] overflow-hidden">
-        <header className="flex shrink-0 items-center gap-3 border-b bg-background p-2 md:p-4 h-14 md:h-auto">
+        <header className="flex shrink-0 items-center gap-3 border-b bg-background px-2 md:px-4 py-1.5 md:py-3 w-full h-14 md:h-auto overflow-x-auto scrollBar">
           {/* <SidebarTrigger className="-ml-1 hidden md:flex" /> */}
           {/* <Separator
               orientation="vertical"
               className="mr-2 h-8 bg-gray-600/50 hidden md:flex"
             /> */}
-          <div className="flex gap-4 items-center w-full">
-            <div className="flex gap-1.5 flex-0">
+          <div className="flex gap-2.5 md:gap-4 items-center justify-between h-full md:w-full">
+            <div className="flex gap-1.5 md:gap-3 flex-0">
               <button
-                onClick={() => history('undo')}
+                onClick={() => history("undo")}
                 className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
               >
                 <Undo2 />
               </button>
               <button
-                onClick={() => history('redo')}
+                onClick={() => history("redo")}
                 className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
               >
                 <Redo2 />
@@ -130,17 +131,22 @@ export function Editor({ user }: EditorProps) {
               <ClipButton />
             </div>
             <EditableBar />
-          </div>
-          <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN]}>
-            <Link href={"/admin/users"}>
-              <Button icon={<UserRoundCog />}>
-                {/* {t("notifications")} */}
-                Admin
-              </Button>
-            </Link>
-          </Permission>
-          <div className="space-x-2 text-black ml-auto">
-            <LanguageSelector />
+            <div className="flex gap-1.5 md:gap-3 items-center">
+              <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN]}>
+                <Link href={"/admin/users"}>
+                  <Button icon={<UserRoundCog />}>
+                    {/* {t("notifications")} */}
+                    Admin
+                  </Button>
+                </Link>
+              </Permission>
+              <div className="text-black ml-auto">
+                <LanguageSelector />
+              </div>
+              <div className="block md:hidden">
+                <NavUser user={user} />
+              </div>
+            </div>
           </div>
         </header>
         <section className="w-full h-full">

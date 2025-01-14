@@ -30,7 +30,7 @@ const config = {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
           light: 'hsl(var(--primary-light))',
-          dark: 'hsl(var(--primary-dark))'
+          dark: 'hsl(var(--primary-dark))',
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -40,17 +40,20 @@ const config = {
         danger: {
           DEFAULT: "hsl(var(--danger))",
           light: 'hsl(var(--danger-light))',
-          dark: 'hsl(var(--danger-dark))'
+          dark: 'hsl(var(--danger-dark))',
+          bg: 'hsl(var(--danger-background))'
         },
         success: {
           DEFAULT: "hsl(var(--success))",
           light: 'hsl(var(--success-light))',
-          dark: 'hsl(var(--success-dark))'
+          dark: 'hsl(var(--success-dark))',
+          bg: 'hsl(var(--success-background))'
         },
         warning: {
           DEFAULT: "hsl(var(--warning))",
           light: 'hsl(var(--warning-light))',
-          dark: 'hsl(var(--warning-dark))'
+          dark: 'hsl(var(--warning-dark))',
+          bg: 'hsl(var(--warning-background))'
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",

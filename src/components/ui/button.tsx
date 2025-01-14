@@ -27,7 +27,7 @@ const buttonVariants = cva(
       },
       //IF U CHANGE SIZE MUST CHANGE ICON SIZE BELOW
       size: {
-        default: "h-7 lg:h-10 px-5 lg:px-7 text-xs lg:text-base",
+        default: "h-9 lg:h-12 px-5 lg:px-7 text-sm lg:text-base",
         sm: "h-5 lg:h-7 px-2.5 lg:px-4 text-xs lg:text-sm",
         lg: "h-8 lg:h-11 px-8 lg:px-10 text-sm lg:text-lg",
       },

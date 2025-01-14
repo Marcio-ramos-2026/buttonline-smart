@@ -23,12 +23,15 @@
     --danger: 0 72% 55%;
     --danger-light: 0 72% 75%;
     --danger-dark: 0 72% 35%;
+    --danger-background: 0 71% 85%;
     --success: 142 76% 55%;
     --success-light: 142 76% 75%;
     --success-dark: 142 76% 35%;
+    --success-background: 142 76% 85%;
     --warning: 48 96% 55%;
     --warning-light: 48 95% 75%;
     --warning-dark: 48 96% 35%;
+    --warning-background: 48 95% 85%;
     --muted: 220 14.3% 95.9%;
     --muted-foreground: 220 8.9% 46.1%;
     --accent: 220 14.3% 95.9%;

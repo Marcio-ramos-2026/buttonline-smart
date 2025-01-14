@@ -14,7 +14,7 @@ type EditIconProps = {
 
 export const EditICon = ({ object, canvas, setObject }: EditIconProps) => {
   return (
-    <div className="flex gap-2 flex-1">
+    <div className="flex gap-1.5 md:gap-3 flex-1 h-full">
       <HandleStrokeColor object={object} canvas={canvas} />
       <HandleFillColor object={object} canvas={canvas} />
       <HandleOpacity object={object} canvas={canvas} />

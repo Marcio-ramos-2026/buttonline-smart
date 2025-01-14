@@ -8,7 +8,7 @@ export default async function LayoutLogin({
   children: ReactNode;
 }) {
   return (
-    <div className="h-screen flex flex-col items-center justify-center">
+    <div className="h-screen flex flex-col items-center justify-center px-3">
       {children}
       <div className="py-2">
         <LanguageSelector />

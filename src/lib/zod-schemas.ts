@@ -109,7 +109,11 @@ export type ChangePasswordType = z.infer<
 export const editProfileSchema = (t?: any) => {
   return z
     .object({
-      email: z.string().email({ message: "Email inválido" }),
+      // email: z.string().email({ message: "Email inválido" }).optional(),
+      email: z.string().optional()
+      .refine(value => !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value), {
+        message: "Email inválido",
+      }),
       password: z.string().optional(),
       confirmPassword: z.string().optional(),
       name: z.string(),

@@ -23,6 +23,7 @@ import { ReactSVG } from "react-svg";
 // import { height, width } from "pdfkit/js/page";
 import { Printer } from "lucide-react";
 import CanvasHistory from "@/lib/fabricHistory";
+import { PrintButton } from "@/components/editor/printButton";
 
 const { theme } = resolveConfig(tailwindConfig);
 
@@ -311,125 +312,24 @@ export const RenderCanvas = () => {
       <div className="absolute left-0 right-0 z-50  top-2  flex justify-center">
         <div className="bg-background inline-flex justify-center items-center gap-4 mx-auto  p-2 rounded-lg drop-shadow-md">
           <p>{currentModel.name}</p>
-
-          <Button
-            size={"default"}
-            onClick={async () => {
-              if (!canvas) return;
-              const dpi = getScreenDPI();
-
-              let allObjects = canvas.getObjects();
-              allObjects = allObjects.map((obj) => {
-                if (obj.type === "image") {
-                  const image = obj as fabric.FabricImage;
-                  const imageElement = image.getElement() as HTMLImageElement;
-
-                  const url = new URL(imageElement.src);
-                  const pathname = url.pathname; // Get the file path
-                  const extension = pathname.split(".").pop()?.toLowerCase(); // Extract the file extension (before query params)
-
-                  // Check for file format based on the extension
-                  const isJpeg = extension === "jpg" || extension === "jpeg";
-                  // Convert the image to Base64
-                  const base64 = image.toDataURL({
-                    format: isJpeg ? "jpeg" : "png", // Use 'jpeg' if needed
-                    quality: 1, // High quality for JPEG
-                  });
-
-                  // Replace the image source with the Base64 data
-                  imageElement.src = base64;
-
-                  image.set({
-                    element: imageElement,
-                  });
-                  return image;
-                }
-
-                return obj;
-              });
-
-              const allObjectsGroup = new fabric.Group(allObjects, {
-                left: 0,
-                top: 0,
-              });
-
-              // Calculate the bounding dimensions of the group
-              const boundingRect = allObjectsGroup.getBoundingRect();
-              const groupWidth = boundingRect.width;
-              const groupHeight = boundingRect.height;
-
-              // Fixed canvas size
-              const canvasWidth = fabric.util.parseUnit("65mm"); // Canvas width in px
-              const canvasHeight = fabric.util.parseUnit("65mm"); // Canvas height in px
-
-              // Calculate the scale factor to fit content within canvas
-              const scaleFactor = Math.min(
-                canvasWidth / groupWidth,
-                canvasHeight / groupHeight
-              );
-
-              // Scale the group proportionally
-              allObjectsGroup.scale(scaleFactor);
-              allObjectsGroup.setCoords(); // Update coordinates after scaling
-
-              // const copyRealCanvas = await realCanvas.clone()
-              // copyRealCanvas.width = allObjectsGroup.getScaledWidth()
-              // copyRealCanvas.height = allObjectsGroup.getScaledHeight()
-
-              // realCanvas.backgroundColor = 'blue'
-
-              // Create a new canvas with the fixed size
-              const printCanvas = new fabric.Canvas("c", {
-                width: canvasWidth,
-                height: canvasHeight,
-                // clipPath: realCanvas
-              });
-
-              printCanvas.add(allObjectsGroup);
-              printCanvas.centerObject(allObjectsGroup);
-
-              fetch("/api/print", {
-                method: "POST",
-                body: JSON.stringify({
-                  svg: printCanvas.toSVG(),
-                  model_id: currentModel.id,
-                  dpi,
-                }), // Send any necessary data for PDF generation
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              })
-                .then((response) => response.blob()) // Get the response as a Blob (binary data)
-                .then((blob) => {
-                  // Create a URL for the Blob
-                  const url = window.URL.createObjectURL(blob);
-
-                  // Open the PDF in a new tab
-                  window.open(url, "_blank");
-                })
-                .catch((error) => {
-                  console.error("Error fetching the PDF:", error);
-                });
-            }}
-            icon={<Printer />}
-          ></Button>
+          <PrintButton canvas={canvas} currentModel={currentModel} />
         </div>
       </div>
 
-      <div className="absolute left-0 right-0 bottom-2 z-50    flex justify-center">
-        <div className=" p-2 rounded-lg ">
-          <div className="flex justify-center items-center gap-2">
-            <div className="flex justify-center items-center gap-[2px]">
+      <div className="absolute left-0 right-0 bottom-6 md:bottom-2 z-40 flex justify-end md:justify-center">
+        <div className=" p-2 rounded-lg">
+          <div className="flex flex-col md:flex-row justify-center items-start md:items-center gap-2">
+            <div className="flex justify-center items-center gap-[2px] text-sm md:text-lg">
               <span className="w-5 h-[3px] bg-black inline-block"></span> Limite
               de corte
             </div>
 
-            <div className="flex justify-center items-center gap-[2px]">
+            <div className="flex justify-center items-center gap-[2px] text-sm md:text-lg">
               <span className="w-5 border-t border-t-black border-dashed	inline-block"></span>
               Posição da marca
             </div>
 
-            <div className="flex justify-center items-center gap-[2px]">
+            <div className="flex justify-center items-center gap-[2px] text-sm md:text-lg">
               <span className="w-5 h-[1px] bg-black inline-block"></span> Frente
               do button
             </div>
@@ -441,17 +341,3 @@ export const RenderCanvas = () => {
     </div>
   );
 };
-
-function getScreenDPI() {
-  const div = document.createElement("div");
-  div.style.width = "1in"; // 1 inch in CSS units
-  div.style.height = "1in";
-  div.style.position = "absolute";
-  div.style.visibility = "hidden";
-  document.body.appendChild(div);
-
-  const dpi = div.offsetWidth; // The number of pixels in 1 inch
-  document.body.removeChild(div);
-
-  return dpi;
-}

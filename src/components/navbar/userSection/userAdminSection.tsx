@@ -24,15 +24,12 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Tooltip } from "../../tooltip/tooltip";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import type {User as UserType} from '@prisma/client'
 
 export function NavUserAdminSection({
   user,
 }: {
-  user: {
-    name: string;
-    email: string;
-    avatar?: string;
-  };
+  user: UserType;
 }) {
   const router = useRouter();
   const isMobile = useIsMobile();
@@ -62,8 +59,8 @@ export function NavUserAdminSection({
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem className="hover:bg-gray-300 rounded-md focus:bg-gray-300">
-            <Link href={`/userProfile`}>
+          <DropdownMenuItem asChild className="hover:bg-gray-300 rounded-md focus:bg-gray-300">
+            <Link href={`/admin/user/${user.id}`}>
               <BadgeCheck />
               {t("perfil")}
             </Link>

@@ -217,7 +217,7 @@ const Table = <T extends {}>(opt: TableOptions<T>) => {
   //TODO render options to table
 
   return (
-    <div className="h-full flex flex-col justify-between rounded-lg overflow-hidden">
+    <div className="h-full flex flex-col justify-between rounded-lg overflow-x-auto scrollBar">
       <TableElement>
         <TableHeader>
           {tableLength ? (
@@ -308,14 +308,14 @@ const Table = <T extends {}>(opt: TableOptions<T>) => {
         </TableBody>
       </TableElement>
       {/* Pagination Controls */}
-      <div className="flex items-center">
+      <div className="flex flex-col md:flex-row items-center">
         <div className="w-full">
           <p>
             {t("showing")} {dataDef.length} de {opt.pagination.totalItems}{" "}
             {t("results")}
           </p>
         </div>
-        <Pagination>
+        <Pagination className="px-4 md:px-8">
           <PaginationContent>
             {/* Previous Button */}
 

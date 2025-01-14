@@ -5,15 +5,12 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { NavUserAdminSection } from "./navbar/userSection/userAdminSection";
+import type {User as UserType} from '@prisma/client'
 
 export function NavUserAdmin({
   user,
 }: {
-  user: {
-    name: string;
-    email: string;
-    avatar?: string;
-  };
+  user: UserType;
 }) {
   return (
     <SidebarMenu>

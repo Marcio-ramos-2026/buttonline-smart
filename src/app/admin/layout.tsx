@@ -5,6 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import LanguageSelector from "@/components/language-selector";
+import type {User as UserType} from '@prisma/client'
 
 export default async function LayoutAdmin({
   children,
@@ -25,11 +26,10 @@ export default async function LayoutAdmin({
       </header>
       {/*@ts-ignore */}
       <SidebarProvider style={{ "--sidebar-width-icon": "64px" }}>
-        <AppSidebar />
+        {/*@ts-ignore */}
+        <AppSidebar user={session?.user} />
         <SidebarInset>
-          {/* <header className="py-2 px-4 flex items-center">
-        </header> */}
-          <div className="flex-1">{children}</div>
+          <div className="w-full">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </SessionProvider>
