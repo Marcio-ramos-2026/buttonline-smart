@@ -18,7 +18,7 @@ import { Button } from "../ui/button";
 import type { User as UserType } from "@prisma/client";
 
 interface AppSideBarAdminProps extends React.ComponentProps<typeof Sidebar> {
-  user: UserType;
+  user?: UserType;
 }
 
 // This is sample data.
@@ -67,7 +67,7 @@ export function AppSidebar({ ...props }: AppSideBarAdminProps) {
           </Button>
         </Link>
         <div className="flex justify-center [&_ul]:w-fit">
-          <NavUserAdmin user={props.user} />
+          <NavUserAdmin user={props.user as UserType} />
         </div>
       </SidebarFooter>
       <SidebarRail />

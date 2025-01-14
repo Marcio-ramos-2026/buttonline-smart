@@ -115,7 +115,7 @@ export function Editor({ user }: EditorProps) {
               className="mr-2 h-8 bg-gray-600/50 hidden md:flex"
             /> */}
           <div className="flex gap-2.5 md:gap-4 items-center justify-between h-full md:w-full">
-            <div className="flex gap-1.5 md:gap-3 flex-0">
+            <div className="flex gap-1.5 md:gap-3 flex-0 h-full">
               <button
                 onClick={() => history("undo")}
                 className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
@@ -129,8 +129,8 @@ export function Editor({ user }: EditorProps) {
                 <Redo2 />
               </button>
               <ClipButton />
+              <EditableBar />
             </div>
-            <EditableBar />
             <div className="flex gap-1.5 md:gap-3 items-center">
               <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN]}>
                 <Link href={"/admin/users"}>

@@ -35,7 +35,7 @@ export default function PolicyCookies() {
         <p>
           Cookies são pequenos arquivos, contendo algumas poucas informações
           sobre seu acesso, e que são armazenados em seu dispositivo quando você
-          visita um site. O termo "cookie" pode ser usado para descrever uma
+          visita um site. O termo &quot;cookie&quot; pode ser usado para descrever uma
           série de tecnologias, incluindo, mas não se limitando a pixel tags,
           web beacons e identificadores de dispositivo móvel.
         </p>
