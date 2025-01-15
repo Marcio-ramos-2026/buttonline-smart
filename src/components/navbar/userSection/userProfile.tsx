@@ -21,6 +21,7 @@ import type { User } from "@prisma/client";
 import { toast } from "@/hooks/use-toast";
 import { Voucher } from "@/components/voucherUser";
 // import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 export function UserProfile({ user }: { user: User }) {
   const formSchema = editProfileSchema();
@@ -31,6 +32,7 @@ export function UserProfile({ user }: { user: User }) {
       email: user.email as string,
     },
   });
+  const tToast = useTranslations("toast");
   // const { update } = useSession()
 
   const { formState, setError } = form;
@@ -56,7 +58,7 @@ export function UserProfile({ user }: { user: User }) {
 
     if (result.success) {
       toast({
-        title: "Sucesso",
+        title: tToast("success"),
         description: result.message,
         variant: "success",
       });

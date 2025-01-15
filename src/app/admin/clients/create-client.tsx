@@ -35,6 +35,7 @@ export function CreateClient() {
   const tDialog = useTranslations("pages.admin.clients");
   const t = useTranslations("pages.admin.clients.modalCreateClient");
   const tForm = useTranslations("pages.generalZodErrors");
+  const tToast = useTranslations("toast");
   const [openDialog, setOpenDialog] = useState(false);
 
   const schema = createAdminSchema(tForm);
@@ -42,9 +43,9 @@ export function CreateClient() {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: '',
-      email: ''
-    }
+      name: "",
+      email: "",
+    },
   });
 
   const { formState, setError } = form;
@@ -77,16 +78,21 @@ export function CreateClient() {
 
     if (result.success) {
       toast({
-        title: "Sucesso",
+        title: tToast("success"),
         description: result.message,
       });
-      handleCloseDialog()
+      handleCloseDialog();
     }
   };
 
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-      <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN, ALLOWED_PERMISSIONS.ADMIN_CLIENTS_CREATE]}>
+      <Permission
+        has={[
+          ALLOWED_PERMISSIONS.IS_ADMIN,
+          ALLOWED_PERMISSIONS.ADMIN_CLIENTS_CREATE,
+        ]}
+      >
         <DialogTrigger asChild>
           <Button
             icon={<UserPlus />}
@@ -100,9 +106,9 @@ export function CreateClient() {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{tDialog("modalCreateAdmin.title")}</DialogTitle>
-            <DialogDescription>
-              {tDialog("modalCreateAdmin.subTitle")}
-            </DialogDescription>
+          <DialogDescription>
+            {tDialog("modalCreateAdmin.subTitle")}
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">

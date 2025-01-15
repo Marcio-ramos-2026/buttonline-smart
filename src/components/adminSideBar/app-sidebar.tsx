@@ -16,34 +16,35 @@ import { TriggerSidebar } from "./triggerSideBar";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import type { User as UserType } from "@prisma/client";
+import { useTranslations } from "next-intl";
 
 interface AppSideBarAdminProps extends React.ComponentProps<typeof Sidebar> {
   user?: UserType;
 }
 
-// This is sample data.
-const data = {
-  navMain: [
-    {
-      title: "Usuários",
-      url: "/users",
-      icon: UserRound,
-    },
-    {
-      title: "Clientes",
-      url: "/clients",
-      icon: UsersRound,
-    },
-    // {
-    //   title: "Pedidos",
-    //   url: "#",
-    //   icon: FileText
-    // }
-  ],
-};
-
 export function AppSidebar({ ...props }: AppSideBarAdminProps) {
   const { open } = useSidebar();
+  const t = useTranslations("pages.admin.sideBar");
+
+  const data = {
+    navMain: [
+      {
+        title: t("tabs.users"),
+        url: "/users",
+        icon: UserRound,
+      },
+      {
+        title: t("tabs.clients"),
+        url: "/clients",
+        icon: UsersRound,
+      },
+      // {
+      //   title: "Pedidos",
+      //   url: "#",
+      //   icon: FileText
+      // }
+    ],
+  };
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -52,7 +53,7 @@ export function AppSidebar({ ...props }: AppSideBarAdminProps) {
       </div>
       {/* <SidebarHeader>imagem logo</SidebarHeader> */}
       <SidebarContent>
-        <NavMain items={data.navMain} title="Pessoas" prefix="/admin" />
+        <NavMain items={data.navMain} title={t("title")} prefix="/admin" />
       </SidebarContent>
       <SidebarFooter>
         <Link href={"/"} className="mb-4">
@@ -63,7 +64,7 @@ export function AppSidebar({ ...props }: AppSideBarAdminProps) {
             icon={<Pencil />}
             size={open ? "default" : "sm"}
           >
-            {open && "Editor"}
+            {open && t("editBtn")}
           </Button>
         </Link>
         <div className="flex justify-center [&_ul]:w-fit">

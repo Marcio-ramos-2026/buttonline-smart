@@ -30,6 +30,7 @@ export const RecoverPasswordForm = () => {
   });
   const { formState, setError } = form;
   const t = useTranslations("pages.recoverPassword");
+  const tToast = useTranslations("toast");
 
   const onSubmit = async (data: RecoverPasswordType) => {
     const result = await recoverPassword(data);
@@ -54,7 +55,7 @@ export const RecoverPasswordForm = () => {
 
     if (result?.success) {
       toast({
-        title: "Sucesso",
+        title: tToast("success"),
         description: result.message,
       });
     }
@@ -87,7 +88,12 @@ export const RecoverPasswordForm = () => {
             content={formState.errors.root.global.message as string}
           />
         )}
-        <Button full type="submit" loading={formState.isSubmitting} disabled={formState.isSubmitting}>
+        <Button
+          full
+          type="submit"
+          loading={formState.isSubmitting}
+          disabled={formState.isSubmitting}
+        >
           {t("form.submit")}
         </Button>
       </form>
