@@ -7,6 +7,7 @@ import { renderClientWelcome } from "@/emails/clients/welcome";
 import { mailTransport } from "@/lib/email";
 import { getTranslations } from "next-intl/server";
 import { signUpSchema, SignUpType } from "@/lib/zod-schemas";
+import { validateVoucher } from "@/lib/validateVoucher";
 
 export async function registerAction(data: SignUpType) {
   const tForm = await getTranslations("pages.generalZodErrors");
@@ -22,7 +23,7 @@ export async function registerAction(data: SignUpType) {
 
   try {
     const pass = await bcrypt.hash(data.password, 10);
-    await prisma.user.create({
+    const createdUser = await prisma.user.create({
       data: {
         name: data.name,
         email: data.email,
@@ -44,7 +45,9 @@ export async function registerAction(data: SignUpType) {
         subject: "preview test",
         html: htmlEmail,
       });
-    }    
+    }
+
+    const voucher = await validateVoucher(createdUser)
 
     return {
       message: "Usurário criado com sucesso",
