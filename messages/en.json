@@ -201,7 +201,8 @@
           "image": {
             "label": "Images",
             "load": "Click to load image",
-            "drag": "or drag and drop"
+            "drag": "or drag and drop",
+            "noImage": "No image found."
           },
           "text": { "label": "Text" },
           "icon": { "label": "Icons" },
