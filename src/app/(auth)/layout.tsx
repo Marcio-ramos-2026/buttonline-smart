@@ -1,6 +1,7 @@
 import LanguageSelector from "@/components/language-selector";
 import Link from "next/link";
 import { ReactNode } from "react";
+import { LayoutFooter } from "./layoutFooter";
 
 export default async function LayoutLogin({
   children,
@@ -13,12 +14,7 @@ export default async function LayoutLogin({
       <div className="py-2">
         <LanguageSelector />
       </div>
-      <div className="mb-4">
-        <Link href="politica-privacidade">Aviso de privacidade </Link>
-        <Link href="politica-cookies" className="ml-8">
-          Política de cookies{" "}
-        </Link>
-      </div>
+      <LayoutFooter />
     </div>
   );
 }

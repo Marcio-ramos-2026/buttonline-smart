@@ -44,7 +44,7 @@ export async function registerAction(data: SignUpType) {
         subject: "preview test",
         html: htmlEmail,
       });
-    }
+    }    
 
     return {
       message: "Usurário criado com sucesso",

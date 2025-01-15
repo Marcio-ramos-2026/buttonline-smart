@@ -28,6 +28,8 @@
   "pages": {
     "signIn": {
       "title": "Access Buttonline",
+      "pricavyNotice": "Privacy Notice",
+      "cookiesPolicy": "Cookies Policy",
       "createAcc": {
         "question": "Don't have an account?",
         "link": "Sign up"
@@ -218,6 +220,184 @@
           "down": "Down",
           "back": "Back",
           "forward": "Forward"
+        }
+      }
+    },
+    "privacy": {
+      "goBack": "Go Back",
+      "title": "Privacy Policy",
+      "lastUpdate": "Last updated on April 4, 2024.",
+      "body": {
+        "declaration": {
+          "title": "1. Privacy Declaration",
+          "content": "KIT BUTTON/CARDENAS understands how important it is to know and feel secure about the use of personal data it holds. Therefore, we are concerned with clarifying and explaining our Privacy Notice."
+        },
+        "personalInformation": {
+          "title": "2. What personal information do we collect",
+          "subTitle": "The personal information we obtain may be collected in the following ways:",
+          "site": {
+            "title": "Website",
+            "content": "Personal information is collected when the user interacts with our website by filling out a contact form, as well as when submitting testimonials. This personal information includes, among others, name, email, and phone number. The user of our portal is not required under any circumstances to provide any personal data to browse the pages of the site, except in the case of product purchases, in which case any information is provided voluntarily. Basic data collection is only necessary when the user desires a response to their contact. All personal information is collected in a fair and non-invasive manner, with their voluntary consent. The personal information collected is accessible only to those who need it to perform relevant activities, respecting the purpose for which it was provided."
+          },
+          "register": {
+            "title": "Registration",
+            "content": {
+              "firstParagraph": "Personal information is also collected for registration and access to the client area. The data is necessary to identify the user and allow them to purchase products through our website, as well as for issuing electronic invoices. Personal data is collected so that we can process, manage, deliver your purchases, exchange or return a product if the customer so wishes. The data collected for registration includes CPF/CNPJ, first name, last name, email, phone number, and address. If the holder chooses to fill it out, the date of birth and gender may also be collected.",
+              "secondParagraph": "Personal data may be collected according to the chosen payment method, such as credit or debit card number, CPF, full name, and billing address. Credit card information is not stored in our systems, and data processing for approval is done directly by card administrators and banks. Other personal data related to the customer's bank account may also be collected if necessary for refund purposes.",
+              "thirdParagraph": "It is important to note that the user will not be able to purchase products from the website without registering. Therefore, collecting information is a condition for providing our products through e-commerce. Upon registering, the user may voluntarily provide their email to receive electronic messages containing information, promotions, and updates. Unsubscribing from newsletters can be done at any time by clicking the cancellation link found in the email body."
+            }
+          },
+          "buttonline": {
+            "title": "Buttonline",
+            "content1": "To complete access to the system, we provide a registration tool at",
+            "link": "https://buttonline.com.br/",
+            "content2": ", which presents the user with a form and collects the following personal data: full name and email."
+          },
+          "newsletter": {
+            "title": "Newsletter",
+            "content": "The user may opt to receive our newsletter, containing coupons, discounts, and promotions, by filling out their email in the form on our website. The user can unsubscribe from our communications at any time by clicking the cancellation link found in the footer of the emails sent."
+          },
+          "channelService": {
+            "title": "Customer Service Channels",
+            "content": "The user can contact us via contact methods. Personal data is collected to identify the user, and through physical, telephone, email, or WhatsApp means to respond to their request. These may include, among others, name, email, and phone number. Additionally, any personal data provided voluntarily by the user is collected."
+          },
+          "cookies": {
+            "title": "Cookies",
+            "content": "Personal data may be collected through cookies. For more information, please consult our",
+            "link": "Cookie Policy."
+          },
+          "candidates": {
+            "title": "Job Applicants",
+            "content": "We may have access to personal information from job applicants, such as full name, phone number, email, and any other information provided voluntarily by the applicant."
+          },
+          "employees": {
+            "title": "Employees",
+            "content": "As for personal data collected from our employees, they are necessary for employee registration in compliance with labor laws and execution of the employment contract."
+          }
+        },
+        "socialMidias": {
+          "title": "3. Social Media",
+          "content": {
+            "firstParagraph": "KIT BUTTON / CARDENAS also uses Social Media to communicate and interact with its customers and consumers through third-party websites such as Instagram, Facebook, LinkedIn, and YouTube. These third-party websites are internet-based technologies not operated or controlled by KIT BUTTON / CARDENAS. By interacting, sharing, or 'liking' KIT BUTTON / CARDENAS' page on Instagram, Facebook, LinkedIn, YouTube, or other social media, you may disclose certain personal information to KIT BUTTON / CARDENAS or third parties.",
+            "secondParagraph": "We use 'social buttons' to allow our users to share or tag web pages. These are buttons from third-party social media sites, which may record information about your internet activities, including this website. Please review the respective terms of use and Privacy Notices of these platforms to understand exactly how they use your information, how to opt-out, or delete such information.",
+            "thirdParagraph": "The amount of personal information visible will depend on your own privacy settings on Instagram, Facebook, LinkedIn, YouTube, and other social media."
+          }
+        },
+        "legalBases": {
+          "title": "4. Purposes and Legal Bases",
+          "subTitle": "Below are the purposes and legal bases for the processing of data by KIT BUTTON / CARDENAS:",
+          "content": {
+            "table": {
+              "purposes": {
+                "title": "Purposes",
+                "col1": "Fulfill the terms and conditions set in the contract",
+                "col2": "Facilitate communication with you (including in emergencies and to provide you with requested information).",
+                "col3": "Comply with legal requirements.",
+                "col4": "Monitor your use of our systems (including monitoring the use of our website and any applications or tools you use).",
+                "col5": "Social listening (identifying and analyzing what is being said about KIT BUTTON / CARDENAS on social media [only publicly available content] to understand sentiment, intention, disposition, and market trends, as well as the needs of our stakeholders to improve our services.)",
+                "col6": "Improve the security and functionality of our website, networks, and information.",
+                "col7": "Administer benefits to employees",
+                "col8": "Offer our products and services to you (unless you have objected to such processing).",
+                "col9": "Administer benefits to employees.",
+                "col10": "Identification and authentication for access to KIT BUTTON / CARDENAS' premises through images and recordings of third parties, employees, and visitors.",
+                "col11": "Internal monitoring of company premises.",
+                "col12": "Provide necessary information to government authorities"
+              },
+              "legalBase": {
+                "title": "Legal Basis",
+                "col1": "Necessary for the execution of a contract to which the data subject is a party.",
+                "col2": "Justified based on our legitimate interests to ensure communication and adequate emergency management within the organization.",
+                "col3": "Necessary for compliance with a legal obligation to which we are subject.",
+                "col4": "Justified based on our legitimate interests to prevent non-compliance and protect our reputation.",
+                "col5": "Justified based on our legitimate interests to protect our assets and brand on social media.",
+                "col6": "Justified based on our legitimate interests to ensure you have an excellent user experience and that our networks and information are secure.",
+                "col7": "Justified based on the employee's consent, if they are interested in receiving a specific benefit.",
+                "col8": "Justified based on our legitimate interests to promote our business.",
+                "col9": "Justified based on the employee's consent, if they are interested in receiving a specific benefit.",
+                "col10": "Justified in the protection of life or physical integrity of the data subjects or third parties.",
+                "col11": "Justified based on our legitimate interests.",
+                "col12": "To fulfill a legal obligation"
+              }
+            },
+            "content": "We only rely on our legitimate interest for specific purposes. These personal data processing activities do not override the interests, rights, and freedoms of the data subjects."
+          }
+        },
+        "aboutShareAssignment": {
+          "title": "5. About the sharing and assignment of information",
+          "content": {
+            "firstParagraph": "KIT BUTTON/CARDENAS does not practice the disclosure of information that may identify the user and never shares, sells, or rents personal data to third parties. This data is for the exclusive internal use of the company to achieve the purposes outlined in the previous item.",
+            "secondParagraph": "Personal data to third parties. This data is for the exclusive internal use of the company to achieve the purposes outlined in the previous item.",
+            "thirdParagraph": "The data may be shared with third parties only under the following conditions:",
+            "list": {
+              "item1": "By judicial decision or request by government regulatory bodies;",
+              "item2": "Data transferred to public authorities to comply with current legislation, for example, personal data in electronic invoices and their respective XMLs, or data from our employees required for the payment of INSS or FGTS;",
+              "item3": "Data transferred to accounting or human resources service providers to fulfill fiscal and labor obligations;",
+              "item4": "Data transferred to financial institutions to facilitate payment options for our customers or to pay salaries to our employees and service providers;",
+              "item5": "Data shared with partners, operators, and service providers, representatives, international distributors, and those involved, directly or indirectly, in the development of KIT BUTTON/CARDENAS's commercial activities, such as billing, payment processing, online payment platforms, e-commerce platforms, customer service, email distribution, advertising and marketing, security and performance monitoring, order and transaction processing, verification of consumer registration information, research, data storage, auditing, and data processing.",
+              "item6": "Data transferred for the execution of the contract, as well as to protect KIT BUTTON/CARDENAS's interests in any type of conflict, including legal actions;",
+              "item7": "In the case of corporate operations such as mergers, acquisitions, transformations, splits, or partial or total asset sales, we may share, disclose, or transfer all personal data of the data subjects to the succeeding organization."
+            },
+            "fourthParagraph": "Some of the service providers mentioned above may be located abroad, and in such cases, KIT BUTTON/CARDENAS takes additional safeguards to ensure an adequate level of personal data protection, in accordance with the relevant Brazilian legislation.",
+            "fifthParagraph": "In operations of sharing personal data with data processors, we will require that they handle data according to our instructions, as the Data Controller of such information, including with other data processors involved in the data processing chain, including Sub-processors."
+          }
+        },
+        "informationSecurity": {
+          "title": "6. Information Security",
+          "content": {
+            "firstParagraph": "To ensure that your personal information is secure, we communicate our privacy and security guidelines to employees and business partners and strictly follow precautionary measures regarding privacy within the company.",
+            "secondParagraph": "We strive to protect your personal information, and those entrusted to us by our clients, through physical, technical, and organizational measures to reduce the risks of loss, misuse, unauthorized access, disclosure, and improper alteration of this data."
+          }
+        },
+        "holdersRights": {
+          "title": "7. Data Subject Rights",
+          "content": {
+            "firstParagraph": {
+              "content": "Data subjects have certain rights regarding their personal data and can exercise them by clicking here to access the Data Subject Access Request (DSAR) Form or by email:",
+              "link": "dpo@cardenas.com.br."
+            },
+            "list": {
+              "title": "The rights of data subjects are:",
+              "item1": "Confirmation of the existence of personal data processing;",
+              "item2": "Access to personal data, under the applicable legislation;",
+              "item3": "Correction of incomplete, inaccurate, or outdated personal data;",
+              "item4": "Portability of personal data;",
+              "item5": "Deletion of personal data when processed based on the consent of the data subject or when the data is unnecessary, excessive, or processed in non-compliance with the applicable legislation;",
+              "item6": "Request for information on the shared use of personal data;",
+              "item7": "Revocation of consent, where applicable."
+            },
+            "secondParagraph": "KIT BUTTON/CARDENAS will always evaluate the best way to fulfill a request to exercise any of your rights. However, KIT BUTTON/CARDENAS may decline to fulfill your request, either partially or fully, in specific situations protected by law, such as for the fulfillment of a legal obligation or a contract it maintains with you.",
+            "thirdParagraph": "We emphasize the importance of keeping your personal data accurate and up to date. Therefore, keep KIT BUTTON/CARDENAS informed if your personal data changes or is incorrect.",
+            "fourthParagraph": {
+              "content1": "For security reasons, requests made by email ",
+              "link": "dpo@cardenas.com.br",
+              "content2": ", will be processed once we have verified the user's identity. Therefore, we may request additional data or information to confirm the identity and authenticity of the data subject. This data and information will be protected during the storage period and eliminated as soon as the identity verification purpose is completed."
+            }
+          }
+        },
+        "endTreatment": {
+          "title": "8. End of Processing",
+          "content": {
+            "firstParagraph": "This Privacy Notice applies to the circumstances mentioned above during the entire period in which personal data is stored. We keep your information: (a) for the time required by law; (b) until the end of personal data processing, as mentioned below; or (c) for the time necessary to safeguard the company's rights. Thus, we will process your data, for example, during applicable statutory periods or as necessary to comply with legal or regulatory obligations.",
+            "secondParagraph": "The end of personal data processing will occur under the following circumstances: (a) when the purpose for which the personal data was collected is achieved, and/or the personal data collected is no longer necessary or relevant to achieve such purpose; (b) when the data subject requests the deletion of their data; and (c) when there is a legal determination in this regard. In cases of termination of personal data processing, except for the hypotheses established by applicable law or this Privacy Notice, personal data will be eliminated.",
+            "thirdParagraph": "In cases of termination of personal data processing, except for the hypotheses established by applicable law or this Privacy Policy, personal data will be eliminated."
+          }
+        },
+        "dpo": {
+          "title": "9. Data Protection Officer (DPO)",
+          "content": {
+            "firstParagraph": "KIT BUTTON/CARDENAS provides below the contact details of the Data Protection Officer (DPO), who is responsible for addressing any requests from data subjects or the National Authority related to personal data.",
+            "secondParagraph": "For any questions, requests, or complaints regarding personal data processing, please contact our Data Protection Officer:",
+            "thirdParagraph": {
+              "content1": "DPO EXPERT®",
+              "link1": "www.dpoexpert.com.br",
+              "content2": "– contact:",
+              "link2": "dpo@cardenas.com.br"
+            },
+            "fourthParagraph": "If, despite our commitment and efforts to protect your data, you believe that your data protection rights have not been met, we ask that you contact our DPO. Additionally, you have the right, at any time, to file a complaint directly with the National Data Protection Authority if you believe your personal data rights have been violated.",
+            "fifthParagraph": "Although our Privacy Notice has been presented in a clear, concise, and objective manner, please feel free to consult the DPO if you have any questions about this important document or the personal data processing activities we carry out.",
+            "sixthParagraph": "Although our Privacy Policy has been presented in a clear, concise, and objective manner, please feel free to consult the DPO if you have any questions about this important document or the personal data processing activities we carry out.",
+            "seventhParagraph": "KIT BUTTON/CARDENAS reserves the right to update or modify this Notice at any time without prior notice. However, we will always publish the new revised version on our website. If there are changes in the way we handle personal data, you will be informed to determine if you wish to continue using our services."
+          }
         }
       }
     }
