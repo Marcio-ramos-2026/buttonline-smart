@@ -68,8 +68,6 @@ export function AddImage() {
     get: `q=${value}&image_type=photo&key=${process.env.NEXT_PUBLIC_PIXABAY_KEY}&per_page=20`,
   });
 
-  console.log("ITEMS", items);
-
   return (
     <div className="text-textForefround h-full flex flex-col gap-4">
       <div className="w-full">
