@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useIntersectionObserver } from "./useIntersectionObserver";
+import { useLocale } from "next-intl";
 
 type InfiniteScrollParams = {
   endpoint: string;
@@ -14,16 +15,19 @@ export function useInifiteScroll({
   limit,
   get = "",
 }: InfiniteScrollParams) {
-  const [items, setItems] = useState<{ svg: string, id: string }[]>([]);
+  const [items, setItems] = useState<{ svg: string; id: string }[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const { isIntersecting, ref } = useIntersectionObserver({ threshold: 1 });
   const [hasMore, setHasMore] = useState(true);
+  const locale = useLocale();
 
   const newItems = async () => {
-    setLoading(true);  
+    setLoading(true);
 
-    const response = await fetch(`${endpoint}?${get}&page=1&limit=${limit}`);
+    const response = await fetch(
+      `${endpoint}?${get}&page=1&limit=${limit}&locale=${locale}`
+    );
     const { data } = await response.json();
 
     setItems(data);
@@ -36,7 +40,7 @@ export function useInifiteScroll({
     setLoading(true);
 
     const response = await fetch(
-      `${endpoint}?${get}&page=${page}&limit=${limit}`
+      `${endpoint}?${get}&page=${page}&limit=${limit}&locale=${locale}`
     );
     const { data } = await response.json();
 

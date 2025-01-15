@@ -7,6 +7,7 @@ import React, {
   useRef,
   useEffect,
   RefObject,
+  SetStateAction,
 } from "react";
 import * as fabric from "fabric";
 
@@ -25,7 +26,7 @@ import { Printer } from "lucide-react";
 import CanvasHistory from "@/lib/fabricHistory";
 import { PrintButton } from "@/components/editor/printButton";
 import { useTranslations } from "next-intl";
-import styles from "./styles.module.css"
+import styles from "./styles.module.css";
 
 const { theme } = resolveConfig(tailwindConfig);
 
@@ -59,6 +60,8 @@ type IEditorContext = {
   clipMask: (clip: boolean) => void;
   editable?: string;
   currentModel?: editor_canvas;
+  setCurrentModel?: any;
+  // setCurrentModel?: (object: SetStateAction<editor_canvas>) => void;
   models: editor_canvas[];
   setRealCanvas: React.Dispatch<fabric.FabricObject>;
   realCanvas: fabric.FabricObject;
@@ -210,6 +213,7 @@ export default function FabricContextProvider({
         containerRef,
         clipMask: clipMask,
         currentModel: currentModel,
+        setCurrentModel: setCurrentModel,
         models,
         setRealCanvas,
         realCanvas: realCanvas as fabric.FabricObject,
@@ -235,6 +239,7 @@ export const RenderCanvas = () => {
     containerRef,
     canvas,
     currentModel,
+    setCurrentModel,
     models,
     setRealCanvas,
   } = useEditorContext();
@@ -306,7 +311,9 @@ export const RenderCanvas = () => {
                 </div>
 
                 <div className="mt-auto p-4">
-                  <Button full> {t("models.select")}</Button>
+                  <Button onClick={() => setCurrentModel(m)} full>
+                    {t("models.select")}
+                  </Button>
                 </div>
               </div>
             );

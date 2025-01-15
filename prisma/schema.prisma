@@ -124,9 +124,9 @@ model editor_icons {
   category  String
   ptBR_name String?  @map("ptbr_name")
   enUS_name String?  @map("enus_name")
-  esEN_name String?  @map("esen_name")
+  esES_name String?  @map("eses_name")
   enabled   Boolean? @default(true)
 
-  @@index([category, ptBR_name, enUS_name, esEN_name])
+  @@index([category, ptBR_name, enUS_name, esES_name])
   @@map("editor_icons")
 }
