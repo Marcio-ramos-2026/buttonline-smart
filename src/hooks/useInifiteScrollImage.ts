@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useIntersectionObserver } from "./useIntersectionObserver";
+import { useLocale } from "next-intl";
 
 type InfiniteScrollParams = {
   endpoint: string;
@@ -21,11 +22,20 @@ export function useInifiteScrollImage({
   const [loading, setLoading] = useState(false);
   const { isIntersecting, ref } = useIntersectionObserver({ threshold: 1 });
   const [hasMore, setHasMore] = useState(true);
+  const locale = useLocale();
+
+  const lang: Record<string, any> = {
+    "pt-BR": "pt",
+    en: "en",
+    "es-ES": "es",
+  };
 
   const newItems = async () => {
     setLoading(true);
 
-    const response = await fetch(`${endpoint}?${get}&page=1&limit=${limit}`);
+    const response = await fetch(
+      `${endpoint}?${get}&page=1&limit=${limit}&lang=${lang[locale]}`
+    );
 
     const { hits } = await response.json();
 
@@ -39,7 +49,7 @@ export function useInifiteScrollImage({
     setLoading(true);
 
     const response = await fetch(
-      `${endpoint}?${get}&page=${page}&limit=${limit}`
+      `${endpoint}?${get}&page=${page}&limit=${limit}&lang=${lang[locale]}`
     );
     const { hits } = await response.json();
 

@@ -9,6 +9,7 @@ import * as fabric from "fabric";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
+import { ImageOff } from "lucide-react";
 
 export function AddImage() {
   const { canvas } = useEditorContext();
@@ -19,7 +20,9 @@ export function AddImage() {
   const handleAddImage = async (src: string) => {
     if (!canvas) return;
 
-    const image = await fabric.FabricImage.fromURL(src,{crossOrigin:"anonymous"});
+    const image = await fabric.FabricImage.fromURL(src, {
+      crossOrigin: "anonymous",
+    });
     const canvasWidth = canvas.width || 0;
     const canvasHeight = canvas.height || 0;
     const scaleFactor = Math.min(
@@ -62,10 +65,8 @@ export function AddImage() {
   const { items, ref, loading } = useInifiteScrollImage({
     endpoint: "https://pixabay.com/api/",
     limit: 20,
-    get: `q=${value}&image_type=photo&key=391497-ce4d5e5bcc7e2531c2f8ebe17&lang=pt&per_page=20`,
+    get: `q=${value}&image_type=photo&key=${process.env.NEXT_PUBLIC_PIXABAY_KEY}&per_page=20`,
   });
-
-  // console.log("ITEMS", items);
 
   return (
     <div className="text-textForefround h-full flex flex-col gap-4">
@@ -126,7 +127,7 @@ export function AddImage() {
 
       <div className="overflow-y-auto h-[77vh] scrollBar pr-2">
         <div className="gap-2 grid grid-cols-2">
-          {items.map((image,k) => {
+          {items.map((image, k) => {
             return (
               <button
                 key={image.webformatURL}
@@ -149,9 +150,18 @@ export function AddImage() {
           })}
         </div>
 
-        <div className="flex justify-center items-center mt-2" ref={ref}>
-          {loading && <LoadingIcon />}
-        </div>
+        {items.length === 0 && (
+          <div className="flex flex-col justify-center items-center mt-6">
+            <ImageOff className="h-[30px] w-[30px]" />
+            <p className="mt-4">{t("noImage")}</p>
+          </div>
+        )}
+
+        {items.length > 0 && (
+          <div className="flex justify-center items-center mt-2" ref={ref}>
+            {loading && <LoadingIcon />}
+          </div>
+        )}
       </div>
     </div>
   );

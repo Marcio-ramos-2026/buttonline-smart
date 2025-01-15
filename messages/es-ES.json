@@ -203,7 +203,8 @@
           "image": {
             "label": "Imágenes",
             "load": "Haga clic para cargar imagen",
-            "drag": "o arrastre y suelte"
+            "drag": "o arrastre y suelte",
+            "noImage": "No se encontró ninguna imagen."
           },
           "text": { "label": "Texto" },
           "icon": { "label": "Íconos" },
