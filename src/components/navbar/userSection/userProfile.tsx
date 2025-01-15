@@ -19,6 +19,7 @@ import { editProfileAction } from "@/app/actions/editProfileAction";
 import { editProfileSchema, EditProfileSchema } from "@/lib/zod-schemas";
 import type { User } from "@prisma/client";
 import { toast } from "@/hooks/use-toast";
+import { Voucher } from "@/components/voucherUser";
 // import { useSession } from "next-auth/react";
 
 export function UserProfile({ user }: { user: User }) {
@@ -57,7 +58,7 @@ export function UserProfile({ user }: { user: User }) {
       toast({
         title: "Sucesso",
         description: result.message,
-        variant: 'success'
+        variant: "success",
       });
     }
 
@@ -70,7 +71,13 @@ export function UserProfile({ user }: { user: User }) {
   return (
     <>
       <div className="space-y-12">
-        <h2 className="font-semibold text-gray-900 text-2xl">Editar perfil</h2>
+        <div className="flex flex-col md:flex-row gap-4 justify-between">
+          <h2 className="font-semibold text-gray-900 text-2xl">
+            Editar perfil
+          </h2>
+
+          <Voucher validUntil={new Date("2025-09-02")} />
+        </div>
 
         <Form {...form}>
           <form

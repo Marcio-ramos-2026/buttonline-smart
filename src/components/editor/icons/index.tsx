@@ -67,7 +67,7 @@ export const TabIcons = ({ content }: { content: string }) => {
 
         <div className="flex-1 overflow-y-auto scrollBar">
           <div className="flex flex-wrap h-fit max-h-full">
-            {items.map((icon) => {
+            {items?.map((icon) => {
               const base64Svg = `data:image/svg+xml;base64,${btoa(icon.svg)}`;
 
               return (

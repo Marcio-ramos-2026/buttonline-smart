@@ -32,7 +32,7 @@ export function useInifiteScroll({
 
     setItems(data);
     setPage(2);
-    setHasMore(data.length >= limit);
+    setHasMore(data?.length >= limit);
     setLoading(false);
   };
 
