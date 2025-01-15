@@ -8,7 +8,13 @@
     "next": "Next",
     "previous": "Previous"
   },
+  "toast": {
+    "success": "Success",
+    "archived": "User archived successfully!",
+    "error": "An error occurred"
+  },
   "table": {
+    "noData": "There is no data to display.",
     "showing": "Showing",
     "results": "results"
   },
@@ -98,7 +104,16 @@
       "logOut": "Log Out"
     },
     "admin": {
+      "filter": {
+        "title": "Filters",
+        "search": "Search",
+        "placeholder": "Search",
+        "clean": "Clear filters",
+        "apply": "Apply filters"
+      },
       "sideBar": {
+        "title": "Administration",
+        "editBtn": "Editor",
         "tabs": {
           "users": "Users",
           "clients": "Clients"
@@ -129,10 +144,11 @@
           "submit": "Update"
         },
         "modalDeleteUser": {
-          "title": "Arquivar usuário {name}?",
-          "description": "O usuáro não será excluido, mas sim arquivado.",
-          "cancel": "Cancelar",
-          "confirm": "Sim, Desejo Arquivar"
+          "title": "Archive user {name}?",
+          "description": "The user will not be deleted but archived.",
+          "cancel": "Cancel",
+          "confirm": "Yes, I Want to Archive",
+          "archiving": "Archiving..."
         }
       },
       "clients": {
@@ -164,7 +180,7 @@
           "description": "The user will not be deleted but archived.",
           "cancel": "Cancel",
           "confirm": "Yes, I Want to Archive",
-          "arquiving": "Archiving..."
+          "archiving": "Archiving..."
         }
       }
     },

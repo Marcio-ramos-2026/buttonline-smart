@@ -8,7 +8,13 @@
     "next": "Próximo",
     "previous": "Anterior"
   },
+  "toast": {
+    "success": "Sucesso",
+    "archived": "Usuário arquivado com sucesso!",
+    "error": "Houve algum erro"
+  },
   "table": {
+    "noData": "Não há informações para exibir.",
     "showing": "Mostrando",
     "results": "resultados"
   },
@@ -100,7 +106,16 @@
       "logOut": "Sair"
     },
     "admin": {
+      "filter": {
+        "title": "Filtros",
+        "search": "Pesquisa",
+        "placeholder": "Pesquisa",
+        "clean": "Limpar filtros",
+        "apply": "Aplicar filtros"
+      },
       "sideBar": {
+        "title": "Administração",
+        "editBtn": "Editor",
         "tabs": {
           "users": "Usuários",
           "clients": "Clientes"
@@ -135,7 +150,7 @@
           "description": "O usuáro não será excluido, mas sim arquivado.",
           "cancel": "Cancelar",
           "confirm": "Sim, Desejo Arquivar",
-          "arquiving": "Arquivando..."
+          "archiving": "Arquivando..."
         }
       },
       "clients": {
@@ -182,7 +197,7 @@
         "line3": "Frente do button"
       },
       "sideBar": {
-        "clip":"Esconder conteúdo fora do Button",
+        "clip": "Esconder conteúdo fora do Button",
         "tabs": {
           "file": { "label": "Meus Arquivos" },
           "image": {

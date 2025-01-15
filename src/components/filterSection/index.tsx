@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useTranslations } from "next-intl";
 
 type FilterOption = {
   key: string;
@@ -30,6 +31,7 @@ export function FiltersSection({
   onApply,
 }: FiltersSectionProps) {
   const [filters, setFilters] = useState<Record<string, string>>({});
+  const t = useTranslations("pages.admin.filter");
 
   // Update a specific filter dynamically
   const handleFilterChange = (key: string, value: string) => {
@@ -52,7 +54,7 @@ export function FiltersSection({
 
   return (
     <div className="flex flex-col gap-4 p-4 bg-gray-50 rounded-lg shadow w-full max-w-full overflow-x-auto">
-      <p className="text-xl font-semibold">Filtros</p>
+      <p className="text-xl font-semibold">{t("title")}</p>
       <div className="flex flex-col md:flex-row gap-5 items-center justify-between flex-wrap">
         <div className="flex items-center gap-4 flex-wrap w-full">
           {filtersConfig.map((filter) => (
@@ -97,9 +99,9 @@ export function FiltersSection({
         {/* Buttons */}
         <div className="flex justify-end gap-4 self-end mt-4 md:mt-0 flex-1">
           <Button variant="outline" onClick={handleReset}>
-            Limpar filtros
+            {t("clean")}
           </Button>
-          <Button onClick={() => onApply(filters)}>Aplicar Filtros</Button>
+          <Button onClick={() => onApply(filters)}>{t("apply")}</Button>
         </div>
       </div>
     </div>

@@ -29,6 +29,7 @@ export const ChangePasswordForm = () => {
     resolver: zodResolver(formSchema),
   });
   const t = useTranslations("pages.recoverPassword.changePassword");
+  const tToast = useTranslations("toast");
 
   const { formState, setError } = form;
   const searchParams = useSearchParams();
@@ -58,7 +59,7 @@ export const ChangePasswordForm = () => {
 
     if (result?.success) {
       toast({
-        title: "Sucesso",
+        title: tToast("success"),
         description: result.message,
       });
     }

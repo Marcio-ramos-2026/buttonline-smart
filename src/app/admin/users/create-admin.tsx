@@ -35,6 +35,7 @@ export function ProfileForm() {
   const tDialog = useTranslations("pages.admin.users");
   const t = useTranslations("pages.admin.users.modalCreateAdmin");
   const tForm = useTranslations("pages.generalZodErrors");
+  const tToast = useTranslations("toast");
   const [openDialog, setOpenDialog] = useState(false);
 
   const schema = createAdminSchema(tForm);
@@ -77,7 +78,7 @@ export function ProfileForm() {
 
     if (result.success) {
       toast({
-        title: "Sucesso",
+        title: tToast("success"),
         description: result.message,
       });
       handleCloseDialog()

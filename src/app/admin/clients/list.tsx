@@ -35,10 +35,6 @@ import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { FiltersSection } from "@/components/filterSection";
 
-const filtersConfig = [
-  { key: "search", label: "Pesquisa", icon: <Search />, type: "input" as const }
-];
-
 export const ClientList = ({
   data,
   page,
@@ -51,7 +47,19 @@ export const ClientList = ({
   limit: number;
 }) => {
   const t = useTranslations("pages.admin.clients");
-  const columns = useMemo<ColumnDef<User>[]>(() => {
+  const tFilter = useTranslations("pages.admin.filter");
+
+  const filtersConfig = [
+    {
+      key: "search",
+      label: tFilter("search"),
+      icon: <Search />,
+      type: "input" as const,
+    },
+  ];
+
+
+  const columns = useMemo<ColumnDef<User>[]>((): ColumnDef<User>[] => {
     return [
       {
         accessorKey: "id",
@@ -140,7 +148,10 @@ export const ClientList = ({
         header: "",
         enableSorting: false,
         meta: {
-          permissions: [ALLOWED_PERMISSIONS.IS_ADMIN, ALLOWED_PERMISSIONS.ADMIN_CLIENTS_DELETE],
+          permissions: [
+            ALLOWED_PERMISSIONS.IS_ADMIN,
+            ALLOWED_PERMISSIONS.ADMIN_CLIENTS_DELETE,
+          ],
         },
         size: 20,
         cell: DeleteClient,
@@ -188,6 +199,7 @@ const DeleteClient = ({ row }: DeleteClientProsp) => {
   const [openDialog, setOpenDialog] = useState(false);
   const router = useRouter();
   const t = useTranslations("pages.admin.clients");
+  const tToast = useTranslations("toast");
   if (row.original.email === "cardenas@cardenas.com.br") return null;
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -199,7 +211,7 @@ const DeleteClient = ({ row }: DeleteClientProsp) => {
         if (response.message) {
           toast({
             variant: "default",
-            title: "Usuário arquivado com sucesso!",
+            title: tToast("archived"),
             description: response.message,
           });
           router.refresh();
@@ -208,14 +220,14 @@ const DeleteClient = ({ row }: DeleteClientProsp) => {
 
         toast({
           variant: "danger",
-          title: "Houve algum erro",
+          title: tToast("error"),
           description: response.error,
         });
       })
       .catch((e) => {
         toast({
           variant: "danger",
-          title: "Houve algum erro",
+          title: tToast("error"),
           description: e.message,
         });
       })
@@ -250,7 +262,7 @@ const DeleteClient = ({ row }: DeleteClientProsp) => {
           <AlertDialogAction onClick={handleDelete} asChild>
             <Button loading={pending}>
               {pending
-                ? t("modalDeleteClient.arquiving")
+                ? t("modalDeleteClient.archiving")
                 : t("modalDeleteClient.confirm")}
             </Button>
           </AlertDialogAction>

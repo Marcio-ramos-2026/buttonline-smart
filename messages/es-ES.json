@@ -8,7 +8,13 @@
     "next": "Siguiente",
     "previous": "Anterior"
   },
+  "toast": {
+    "success": "Éxito",
+    "archived": "¡Usuario archivado con éxito!",
+    "error": "Ocurrió un error"
+  },
   "table": {
+    "noData": "No hay información para mostrar.",
     "showing": "Mostrando",
     "results": "resultados"
   },
@@ -98,7 +104,16 @@
       "logOut": "Cerrar Sesión"
     },
     "admin": {
+      "filter": {
+        "title": "Filtros",
+        "search": "Búsqueda",
+        "placeholder": "Búsqueda",
+        "clean": "Limpiar filtros",
+        "apply": "Aplicar filtros"
+      },
       "sideBar": {
+        "title": "Administración",
+        "editBtn": "Editor",
         "tabs": {
           "users": "Usuarios",
           "clients": "Clientes"
@@ -127,6 +142,13 @@
           "labelName": "Nombre del Usuario:",
           "labelEmail": "Correo Electrónico del Usuario:",
           "submit": "Actualizar"
+        },
+        "modalDeleteUser": {
+          "title": "¿Archivar usuario {name}?",
+          "description": "El usuario no será eliminado, sino archivado.",
+          "cancel": "Cancelar",
+          "confirm": "Sí, Deseo Archivar",
+          "archiving": "Archivando..."
         }
       },
       "clients": {
@@ -158,7 +180,7 @@
           "description": "El usuario no será eliminado, sino archivado.",
           "cancel": "Cancelar",
           "confirm": "Sí, Deseo Archivar",
-          "arquiving": "Archivando..."
+          "archiving": "Archivando..."
         }
       }
     },

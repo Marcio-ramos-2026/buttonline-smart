@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 export const RegisterForm = () => {
   const t = useTranslations("pages.signUp");
   const tForm = useTranslations("pages.generalZodErrors");
+  const tToast = useTranslations("toast");
   const formSchema = signUpSchema(tForm);
   const { toast } = useToast()
   const router = useRouter();
@@ -59,7 +60,7 @@ export const RegisterForm = () => {
 
     if (result.success) {
       toast({
-        title: 'Sucesso',
+        title: tToast("success"),
         description: result.message
       })
       router.push(result.redirectUrl)

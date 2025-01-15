@@ -299,7 +299,7 @@ const Table = <T extends {}>(opt: TableOptions<T>) => {
               ) : (
                 <TableRow>
                   <TableCell className="h-24 w-full text-center bg-primary/15 rounded-xl text-primary">
-                    Não há informações para exibir.
+                    {t("noData")}
                   </TableCell>
                 </TableRow>
               )}

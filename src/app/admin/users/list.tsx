@@ -200,6 +200,7 @@ const DeleteUser = ({ row }: DeleteUserProsp) => {
   const [openDialog, setOpenDialog] = useState(false);
   const router = useRouter();
   const t = useTranslations("pages.admin.users");
+  const tToast = useTranslations("toast");
   if (row.original.email === "cardenas@cardenas.com.br") return null;
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -211,7 +212,7 @@ const DeleteUser = ({ row }: DeleteUserProsp) => {
         if (response.message) {
           toast({
             variant: "default",
-            title: "Usuário arquivado com sucesso!",
+            title: tToast("archived"),
             description: response.message,
           });
           router.refresh();
@@ -220,14 +221,14 @@ const DeleteUser = ({ row }: DeleteUserProsp) => {
 
         toast({
           variant: "danger",
-          title: "Houve algum erro",
+          title: tToast("error"),
           description: response.error,
         });
       })
       .catch((e) => {
         toast({
           variant: "danger",
-          title: "Houve algum erro",
+          title: tToast("error"),
           description: e.message,
         });
       })
@@ -262,7 +263,7 @@ const DeleteUser = ({ row }: DeleteUserProsp) => {
           <AlertDialogAction onClick={handleDelete} asChild>
             <Button loading={pending}>
               {pending
-                ? t("modalDeleteUser.arquiving")
+                ? t("modalDeleteUser.archiving")
                 : t("modalDeleteUser.confirm")}
             </Button>
           </AlertDialogAction>
