@@ -15,9 +15,9 @@
   "permissions": {
     "denied": "Você não possuí permissão para ver esta informação!"
   },
-  "cookieConsent":{
-    "text":"Este site usa cookies para garantir que você tenha a melhor experiência.",
-    "btn":"Aceitar"
+  "cookieConsent": {
+    "text": "Este site usa cookies para garantir que você tenha a melhor experiência.",
+    "btn": "Aceitar"
   },
   "pages": {
     "signIn": {
@@ -172,7 +172,17 @@
       }
     },
     "editor": {
+      "models": {
+        "selectTitle": "Selecione um modelo",
+        "select": "Selecionar este modelo"
+      },
+      "legend": {
+        "line1": "Limite de corte",
+        "line2": "Posição da marca",
+        "line3": "Frente do button"
+      },
       "sideBar": {
+        "clip":"Esconder conteúdo fora do Button",
         "tabs": {
           "file": { "label": "Meus Arquivos" },
           "image": {

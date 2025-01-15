@@ -24,6 +24,8 @@ import { ReactSVG } from "react-svg";
 import { Printer } from "lucide-react";
 import CanvasHistory from "@/lib/fabricHistory";
 import { PrintButton } from "@/components/editor/printButton";
+import { useTranslations } from "next-intl";
+import styles from "./styles.module.css"
 
 const { theme } = resolveConfig(tailwindConfig);
 
@@ -60,7 +62,7 @@ type IEditorContext = {
   models: editor_canvas[];
   setRealCanvas: React.Dispatch<fabric.FabricObject>;
   realCanvas: fabric.FabricObject;
-  history: (method: 'redo' | 'undo') => void;
+  history: (method: "redo" | "undo") => void;
 };
 
 const FabricContext = createContext<IEditorContext | null>(null);
@@ -81,7 +83,7 @@ export default function FabricContextProvider({
   const [realCanvas, setRealCanvas] = useState<fabric.FabricObject | null>(
     null
   );
-  const [historyCanvas, setHistoryCanvas] = useState<any>()
+  const [historyCanvas, setHistoryCanvas] = useState<any>();
 
   const [{ width: containerWidth, height: containerHeight }, setSize] =
     useState<Size>({
@@ -146,8 +148,8 @@ export default function FabricContextProvider({
     canvas.on("object:added", () => {
       // saveCanvasToLocalStorage(canvas);
     });
-    const canvasHistory = new CanvasHistory(canvas)
-    setHistoryCanvas(canvasHistory)
+    const canvasHistory = new CanvasHistory(canvas);
+    setHistoryCanvas(canvasHistory);
 
     return () => {
       if (canvas) canvas.dispose();
@@ -189,16 +191,16 @@ export default function FabricContextProvider({
     canvas.renderAll();
   };
 
-  const history = (method: 'redo' | 'undo') => {
-    if (method === 'redo') {
-      historyCanvas.redo()
-      return
-    } 
-    if (method === 'undo') {
-      historyCanvas.undo()
-      return
+  const history = (method: "redo" | "undo") => {
+    if (method === "redo") {
+      historyCanvas.redo();
+      return;
     }
-  }
+    if (method === "undo") {
+      historyCanvas.undo();
+      return;
+    }
+  };
 
   return (
     <FabricContext.Provider
@@ -211,7 +213,7 @@ export default function FabricContextProvider({
         models,
         setRealCanvas,
         realCanvas: realCanvas as fabric.FabricObject,
-        history
+        history,
       }}
     >
       {children}
@@ -236,6 +238,8 @@ export const RenderCanvas = () => {
     models,
     setRealCanvas,
   } = useEditorContext();
+
+  const t = useTranslations("pages.editor");
 
   useEffect(() => {
     if (!canvas) return;
@@ -283,21 +287,26 @@ export const RenderCanvas = () => {
   if (!currentModel) {
     return (
       <div className="flex items-center flex-col w-full p-8 gap-6">
-        <h1 className="text-4xl">selecione um modelo</h1>
-        <div className="grid grid-cols-4 w-full gap-6">
+        <h1 className="text-4xl">{t("models.selectTitle")}</h1>
+        <div className="grid xl:grid-cols-4 md:grid-cols-3 sm:grid-cols-1 w-full gap-6">
           {models.map((m) => {
             return (
-              <div key={m.id} className="overflow-hidden rounded-lg bg-white shadow-sm border">
+              <div
+                key={m.id}
+                className="flex flex-col rounded-lg bg-white shadow-sm border"
+              >
                 <div className="px-4 py-5 sm:px-6">
                   <h5 className="text-primary text-center">{m.name}</h5>
                 </div>
-                <div className="px-4 py-5 sm:p-6">
+                <div className={styles.templateSample}>
                   <ReactSVG
+                    className=" text-red-500"
                     src={`data:image/svg+xml;base64,${btoa(generateSVG(createModel(m)))}`}
                   />
                 </div>
-                <div className="p-4">
-                  <Button full>eu quero esse</Button>
+
+                <div className="mt-auto p-4">
+                  <Button full> {t("models.select")}</Button>
                 </div>
               </div>
             );
@@ -320,18 +329,18 @@ export const RenderCanvas = () => {
         <div className=" p-2 rounded-lg">
           <div className="flex flex-col md:flex-row justify-center items-start md:items-center gap-2">
             <div className="flex justify-center items-center gap-[2px] text-sm md:text-lg">
-              <span className="w-5 h-[3px] bg-black inline-block"></span> Limite
-              de corte
+              <span className="w-5 h-[3px] bg-black inline-block"></span>{" "}
+              {t("legend.line1")}
             </div>
 
             <div className="flex justify-center items-center gap-[2px] text-sm md:text-lg">
               <span className="w-5 border-t border-t-black border-dashed	inline-block"></span>
-              Posição da marca
+              {t("legend.line2")}
             </div>
 
             <div className="flex justify-center items-center gap-[2px] text-sm md:text-lg">
-              <span className="w-5 h-[1px] bg-black inline-block"></span> Frente
-              do button
+              <span className="w-5 h-[1px] bg-black inline-block"></span>
+              {t("legend.line3")}
             </div>
           </div>
         </div>

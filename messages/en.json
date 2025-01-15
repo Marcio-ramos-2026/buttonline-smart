@@ -169,7 +169,17 @@
       }
     },
     "editor": {
+      "models": {
+        "selectTitle": "Select a template",
+        "select": "Select this template"
+      },
+      "legend": {
+        "line1": "Cut Line",
+        "line2": "Mark Position",
+        "line3": "Button Front"
+      },
       "sideBar": {
+        "clip": "Hide content outside the Button",
         "tabs": {
           "file": { "label": "My Files" },
           "image": {

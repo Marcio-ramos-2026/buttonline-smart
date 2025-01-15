@@ -23,7 +23,7 @@ export default async function Page() {
     <>
       <EditorProvider
         allowed_models={allowed_models}
-        model={allowed_models[0]}
+       // model={allowed_models[0]}
         //@ts-ignore
         user={session?.user}
       />

@@ -163,7 +163,17 @@
       }
     },
     "editor": {
+      "models": {
+        "selectTitle": "Selecciona un modelo",
+        "select": "Seleccionar este modelo"
+      },
+      "legend": {
+        "line1": "Línea de Corte",
+        "line2": "Posición de la Marca",
+        "line3": "Frente del Botón"
+      },
       "sideBar": {
+        "clip": "Ocultar contenido fuera del Botón",
         "tabs": {
           "file": { "label": "Mis Archivos" },
           "image": {

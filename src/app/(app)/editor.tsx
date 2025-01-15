@@ -160,6 +160,7 @@ export function Editor({ user }: EditorProps) {
 const ClipButton = () => {
   const { clipMask } = useEditorContext();
   const [isClipActive, setIsClipActive] = useState(false);
+  const t = useTranslations("pages.editor.sideBar");
 
   const handleToggleClip = () => {
     const newClipState = !isClipActive;
@@ -168,7 +169,7 @@ const ClipButton = () => {
   };
 
   return (
-    <Tooltip content="Esconder conteúdo fora do Button">
+    <Tooltip content={t("clip")}>
       <Button
         variant={isClipActive ? "solid" : "outline"}
         onClick={handleToggleClip}
