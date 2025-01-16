@@ -6,15 +6,15 @@ import bcrypt from "bcrypt";
 
 export async function changePassword(
   data: ChangePasswordType,
-  user_id: number
+  token: string
 ) {
-  if (!user_id)
+  if (!token)
     return {
       error: "Ocorreu um erro, contate o suporte.",
     };
   const schema = changePasswordSchema();
-
   const validatedFields = schema.safeParse(data);
+  const now = new Date()
 
   if (!validatedFields.success) {
     return {
@@ -23,9 +23,27 @@ export async function changePassword(
   }
 
   try {
+    const validateToken = await prisma.passwordResetToken.findFirst({
+      where: {
+        token: token
+      }
+    })
+
+    if (!validateToken) {
+      return {
+        error: 'Ocorreu um erro, contate o suporte.'
+      }
+    }
+
+    if (new Date(validateToken?.expires as Date).getTime() < now.getTime()) {
+      return {
+        error: 'Token expirado, refaça a operação.'
+      }
+    }
+
     const user = await prisma.user.findFirst({
       where: {
-        id: user_id,
+        email: validateToken?.email,
       },
     });
 
@@ -43,6 +61,12 @@ export async function changePassword(
       },
     });
 
+    await prisma.passwordResetToken.delete({
+      where: {
+        token: token
+      }
+    })
+
     return {
       message: 'Senha trocada com sucesso!',
       success: true
@@ -53,8 +77,4 @@ export async function changePassword(
       error: "Ocorreu um erro, contate o suporte.",
     };
   }
-
-  return {
-    message: "",
-  };
 }

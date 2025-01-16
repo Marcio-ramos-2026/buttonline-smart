@@ -110,7 +110,7 @@ model editor_canvas {
   id       Int     @id @default(autoincrement())
   name     String
   shape    String
-  size     String?  @db.LongText
+  size     String? @db.LongText
   gabarito Json
   config   Json?
   active   Boolean @default(true)
@@ -129,4 +129,24 @@ model editor_icons {
 
   @@index([category, ptBR_name, enUS_name, esES_name])
   @@map("editor_icons")
+}
+
+model passwordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+  @@map("password_reset_token")
+}
+
+model Voucher {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now()) @map("created_at")
+  availableDays Int      @map("available_days")
+  orderId       String?  @map("order_id")
+  type          String
+
+  @@map("vouchers")
 }

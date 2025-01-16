@@ -21,6 +21,7 @@ import type { User } from "@prisma/client";
 interface NetlifyRecoverPasswordProps {
   locale?: ILocaleLang;
   user: User;
+  token: string
 }
 
 const baseUrl = process.env.VERCEL_URL ?? "http://localhost:3000";
@@ -73,9 +74,9 @@ const defaultUser: User = {
 const RecoverPassword = ({
   locale = "pt-BR",
   user = defaultUser,
+  token = '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
 }: NetlifyRecoverPasswordProps) => {
   const t = createTranslator({ messages: messages[locale], locale });
-  console.log('TEXTTTTTTTT', messages[locale].batata)
   return (
     <Html>
       <Head />
@@ -114,7 +115,7 @@ const RecoverPassword = ({
 
                 <Text className="text-base">
                   {t("subject", {
-                    link: `${baseUrl}/recuperarSenha/trocarSenha?user_id=${user.id}`,
+                    link: `${baseUrl}/recuperarSenha/trocarSenha?token=${token}`,
                   })}
                 </Text>
               </Row>

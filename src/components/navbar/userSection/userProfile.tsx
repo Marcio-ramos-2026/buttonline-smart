@@ -34,7 +34,6 @@ export function UserProfile({ user }: { user: User }) {
   });
   const tToast = useTranslations("toast");
   // const { update } = useSession()
-
   const { formState, setError } = form;
 
   const onSubmit = async (data: EditProfileSchema) => {
@@ -78,7 +77,8 @@ export function UserProfile({ user }: { user: User }) {
             Editar perfil
           </h2>
 
-          <Voucher validUntil={new Date("2025-09-02")} />
+          <Voucher validUntil={user.voucherTime} />
+          {/* <Voucher validUntil={new Date("2024-09-02")} /> */}
         </div>
 
         <Form {...form}>

@@ -4,6 +4,7 @@ import { renderRecoverPassword } from "@/emails/recoverPassword/recoverPassword"
 import { mailTransport } from "@/lib/email";
 import { recoverPasswordSchema, RecoverPasswordType } from "@/lib/zod-schemas";
 import { prisma } from "@/lib/prisma";
+import { v4 as uuidv4 } from 'uuid';
 
 export async function recoverPassword(data: RecoverPasswordType) {
   const schema = recoverPasswordSchema();
@@ -27,7 +28,21 @@ export async function recoverPassword(data: RecoverPasswordType) {
       error: 'Email não encontrado.'
     }
 
-    const htmlEmail = await renderRecoverPassword({ locale: "pt-BR", user: user });
+    const expiresDate = new Date()
+    expiresDate.setMinutes(expiresDate.getMinutes() + 5);
+    const createToken = await prisma.passwordResetToken.create({
+      data: {
+        email: user?.email as string,
+        expires: expiresDate,
+        token: uuidv4()
+      }
+    })
+
+    if (!createToken)  return {
+      error: 'Ocorreu um erro interno, contate o suporte.'
+    }
+
+    const htmlEmail = await renderRecoverPassword({ locale: "pt-BR", user: user, token: createToken.token });
     const transport = await mailTransport();
     if (transport) {
       await transport.sendMail({
@@ -47,8 +62,4 @@ export async function recoverPassword(data: RecoverPasswordType) {
       error: 'Ocorreu um erro, contate o suporte.'
     }
   }
-
-  return {
-    message: "",
-  };
 }

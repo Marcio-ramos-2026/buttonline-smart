@@ -1,15 +1,14 @@
 import React, { ReactNode } from "react";
 
 interface VoucherProps {
-  validUntil: Date;
-  voucherType?: "Promoção" | "Pacote";
+  validUntil: Date | null;
 }
 
-export const Voucher: React.FC<VoucherProps> = ({
-  validUntil,
-  voucherType = "Promoção",
-}) => {
-  const typeIcon = voucherType === "Promoção" ? "🎁" : "🛍️";
+export const Voucher: React.FC<VoucherProps> = ({ validUntil }) => {
+  const today = new Date();
+  const voucherType =
+    validUntil && validUntil?.getTime() > today.getTime() ? "Pacote" : "";
+  const typeIcon = voucherType ? "🛍️" : "🚫";
 
   return (
     <div className="bg-gray-50 shadow-lg rounded-lg overflow-hidden max-w-[500px] border border-solid border-primary/15">
@@ -21,12 +20,18 @@ export const Voucher: React.FC<VoucherProps> = ({
           </div>
         </div>
         <div className="p-3 md:w-3/4">
-          <div className="text-center mb-3">
-            <p className="text-lg text-gray-600">Válido até:</p>
-            <p className="text-xl font-bold text-primary">
-              {validUntil.toLocaleDateString()}
+          {!validUntil || validUntil?.getTime() < today.getTime() ? (
+            <p className="text-xl font-semibold text-center">
+              Você não possuí um voucher.
             </p>
-          </div>
+          ) : (
+            <div className="text-center mb-3">
+              <p className="text-lg text-gray-600">Válido até:</p>
+              <p className="text-xl font-bold text-primary">
+                {validUntil?.toLocaleDateString()}
+              </p>
+            </div>
+          )}
           <div className="mt-3">
             <h3 className="font-semibold mb-1">Termos e condições:</h3>
             <p className="text-sm text-gray-600">

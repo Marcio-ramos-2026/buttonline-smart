@@ -33,11 +33,10 @@ export const ChangePasswordForm = () => {
 
   const { formState, setError } = form;
   const searchParams = useSearchParams();
-  const userId = searchParams.get("user_id");
+  const token = searchParams.get("token");
 
   const onSubmit = async (data: ChangePasswordType) => {
-    const result = await changePassword(data, Number(userId));
-    console.log("RESULTTTTTTTTTTTT", result);
+    const result = await changePassword(data, token as string);
     if (result?.zod_errors) {
       Object.entries(result.zod_errors).forEach(([field, value]) => {
         setError(field as keyof ChangePasswordType, {
