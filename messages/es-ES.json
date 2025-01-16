@@ -401,6 +401,67 @@
           }
         }
       }
+    },
+    "cookiesPolicy": {
+      "goBack": "Volver",
+      "title": "Política de Cookies",
+      "lastUpdate": "Actualizada el 12 de abril de 2024.",
+      "introduction": "Nuestro sitio web utiliza cookies para mejorar el rendimiento y optimizar su experiencia de navegación. Algunas áreas de nuestro sitio también utilizan cookies para conocer más sobre usted y poder ofrecerle una experiencia de navegación más personalizada. Al continuar utilizando este sitio web, usted reconoce que podemos instalar cookies u otras tecnologías similares en su dispositivo, incluyendo dispositivos móviles.",
+      "whatAreCookies": {
+        "title": "¿Qué son las cookies?",
+        "content": {
+          "firstParagraph": "Las cookies son pequeños archivos que contienen información sobre su acceso y que se almacenan en su dispositivo cuando visita un sitio web. El término \"cookie\" puede usarse para describir una variedad de tecnologías, incluidas, entre otras, etiquetas de píxeles, web beacons e identificadores de dispositivos móviles.",
+          "secondParagraph": "Estos archivos permiten al sitio web reconocer su dispositivo y registrar su interacción en las páginas del sitio. Son ampliamente utilizados en la web para mejorar la experiencia del usuario, proporcionar información a los propietarios de los sitios web y ofrecer funcionalidades avanzadas.",
+          "thirdParagraph": "Estas cookies se envían de vuelta al sitio web de origen en cada visita posterior o a otros sitios web que reconocen esa cookie. Las cookies permiten que el sitio web reconozca su dispositivo y recuerde información importante como sus preferencias, artículos en el carrito de compras y datos de inicio de sesión."
+        }
+      },
+      "whyUseCookies": {
+        "title": "¿Por qué usamos cookies?",
+        "content": "Las cookies realizan muchas tareas diferentes, como optimizar su navegación por las páginas, recordar sus preferencias y personalizar su experiencia de navegación. También ayudan a garantizar que los anuncios y otros contenidos a los que accede en línea sean relevantes para usted. Además, se utilizan para recopilar datos estadísticos que se emplean para implementar mejoras en nuestro sitio web y garantizar la mejor experiencia de usuario."
+      },
+      "howAreUsed": {
+        "title": "¿Cómo se utilizan las cookies en Buttonline - Cardenas?",
+        "subtitle": "Buttonline - Cardenas utiliza los siguientes tipos de cookies:",
+        "content": {
+          "firstParagraph": {
+            "emphasis": "Cookies Esenciales",
+            "content": "- Las cookies esenciales son necesarias para el funcionamiento de los Sitios y la prestación de servicios para usted, basándonos en nuestro interés legítimo. Sin estas cookies, los Sitios no funcionarán tan bien como nos gustaría y es posible que no podamos proporcionar ciertos servicios o características asociadas a ellos."
+          },
+          "secondParagraph": "Dentro de esta categoría, las cookies pueden clasificarse como cookies \"de sesión\" o \"persistentes\". Las cookies \"de sesión\" son temporales y se eliminarán de su dispositivo una vez que cierre la ventana del navegador. Las cookies \"persistentes\", en cambio, permanecen en su dispositivo hasta su fecha de vencimiento o hasta que usted las elimine, y son utilizadas por el sitio para reconocer su dispositivo en visitas posteriores."
+        }
+      },
+      "thirdPartyCookies": {
+        "title": "¿Usamos cookies de terceros?",
+        "content": "Algunas de las cookies que utilizamos son de otras empresas que prestan servicios en nuestro sitio web, como herramientas de análisis o complementos de redes sociales, como Google Analytics. Estas empresas utilizan códigos de programación para recopilar información sobre su interacción con nuestros sitios web, como las páginas que visita, los enlaces en los que hace clic y cuánto tiempo permanece conectado en nuestros sitios web."
+      },
+      "trackingTechnologies": {
+        "title": "¿Qué otras tecnologías de seguimiento utilizamos?",
+        "content": "También podemos utilizar web beacons (incluidos píxeles de conversión) u otras tecnologías para fines similares, y podemos incluirlos en nuestros sitios web, en mensajes de correo electrónico de marketing o en nuestros boletines informativos y sitios web afiliados, para determinar si los mensajes se han abierto y si los enlaces se han hecho clic. Los web beacons no instalan información en su dispositivo, pero pueden trabajar junto con las cookies para monitorear la actividad del sitio. Los píxeles de conversión son pequeños códigos ubicados en una página web en particular que se activan cuando alguien visita la página, lo que resulta en un aumento del conteo de conversiones."
+      },
+      "dontWantCookies": {
+        "title": "¿Y si no quiero cookies?",
+        "content": "Al utilizar nuestro sitio web, usted acepta que podemos usar cookies en su dispositivo. En su primer acceso, aparecerá un 'banner de cookies' informándole sobre el uso de cookies en nuestro sitio. La configuración sobre el uso de cookies puede modificarse en su navegador. Consulte la sección de ayuda de su navegador para obtener información sobre cómo cambiar la configuración de las cookies. Recuerde que desactivar las cookies puede afectar negativamente la funcionalidad de ciertas características de nuestro sitio web."
+      },
+      "footer": {
+        "firstParagraph": {
+          "content": "Si tiene alguna pregunta sobre esta Política de Cookies, por favor contáctenos a través del correo electrónico:",
+          "link": "dpo@cardenas.com.br"
+        },
+        "table": {
+          "title": "Cookies que utilizamos en nuestro sitio web:",
+          "content": {
+            "headerTable": "Cookies esenciales",
+            "headerCol1": "Nombre",
+            "headerCol2": "Proveedor",
+            "headerCol3": "Función",
+            "headerCol4": "Duración",
+            "col1": "PHPSESSID",
+            "col2": "buttonline.com.br",
+            "col3": "Esta cookie es nativa de aplicaciones PHP. La cookie almacena e identifica el ID de sesión único de un usuario para gestionar las sesiones del usuario en el sitio web. La cookie es una cookie de sesión y será eliminada cuando se cierren todas las ventanas del navegador.",
+            "col4": "Sesión"
+          }
+        }
+      }
     }
   }
 }

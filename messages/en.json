@@ -401,6 +401,67 @@
           }
         }
       }
+    },
+    "cookiesPolicy": {
+      "goBack": "Go Back",
+      "title": "Cookies Policy",
+      "lastUpdate": "Updated on April 12, 2024.",
+      "introduction": "Our website uses cookies to improve performance and enhance your browsing experience. Certain areas of our website also use cookies to learn more about you so we can offer a more personalized browsing experience. By continuing to use this website, you acknowledge that we may install cookies or similar technologies on your device, including mobile devices.",
+      "whatAreCookies": {
+        "title": "What are cookies?",
+        "content": {
+          "firstParagraph": "Cookies are small files containing some information about your access and are stored on your device when you visit a website. The term \"cookie\" may be used to describe a variety of technologies, including but not limited to pixel tags, web beacons, and mobile device identifiers.",
+          "secondParagraph": "These files allow the website to recognize your device and record your interaction on the site's pages. They are widely used on the web to improve user experience, provide information to website owners, and offer advanced features.",
+          "thirdParagraph": "These cookies are sent back to the originating website on each subsequent visit or to other websites that recognize that cookie. Cookies allow the website to recognize your device and remember important information such as your preferences, items in your shopping cart, and login data."
+        }
+      },
+      "whyUseCookies": {
+        "title": "Why do we use cookies?",
+        "content": "Cookies perform many different tasks, such as optimizing your navigation through pages, remembering your preferences, and personalizing your browsing experience. They also help ensure that the ads and other content you access online are relevant to you. Additionally, they are used to collect statistical data that are used to implement improvements to our website and ensure the best user experience."
+      },
+      "howAreUsed": {
+        "title": "How are cookies used by Buttonline - Cardenas?",
+        "subtitle": "Buttonline - Cardenas uses the following types of cookies:",
+        "content": {
+          "firstParagraph": {
+            "emphasis": "Essential Cookies",
+            "content": "- Essential cookies are necessary for the functioning of the Sites and the provision of services to you, based on our legitimate interest. Without these cookies, the Sites will not perform as well as we would like, and we may not be able to provide certain services or features associated with them."
+          },
+          "secondParagraph": "Within this category, cookies can be classified as either \"session\" or \"persistent\" cookies. \"Session\" cookies are temporary and will be deleted from your device once you close the browser window. \"Persistent\" cookies, on the other hand, remain on your device until their expiration date or until you delete them and are used by the site to recognize your device on subsequent visits."
+        }
+      },
+      "thirdPartyCookies": {
+        "title": "Do we use third-party cookies?",
+        "content": "Some cookies we use are from other companies that provide services on our website, such as analytics tools or social media plugins like Google Analytics. These companies use programming codes to collect information about your interaction with our websites, such as the pages you visit, the links you click on, and how long you remain connected to our websites."
+      },
+      "trackingTechnologies": {
+        "title": "What other tracking technologies do we use?",
+        "content": "We may also use web beacons (including conversion pixels) or other technologies for similar purposes and may include them on our websites, in marketing email messages, or in our newsletters and affiliate websites to determine whether the messages have been opened and links clicked. Web beacons do not install information on your device but may work in conjunction with cookies to monitor site activity. Conversion pixels are small codes located on a particular webpage that are triggered when someone visits the page, resulting in an increase in the conversion count."
+      },
+      "dontWantCookies": {
+        "title": "What if I don't want cookies?",
+        "content": "By using our website, you agree that we may use cookies on your device. On your first access, a 'cookie banner' will appear informing you about the use of cookies on our site. The settings regarding the use of cookies can be changed in your browser. Consult your browser's help section for information on how to change cookie settings. Remember that disabling cookies may negatively affect the functionality of certain features on our website."
+      },
+      "footer": {
+        "firstParagraph": {
+          "content": "If you have any questions about this Cookies Policy, please contact us via email at:",
+          "link": "dpo@cardenas.com.br"
+        },
+        "table": {
+          "title": "Cookies we use on our website:",
+          "content": {
+            "headerTable": "Essential cookies",
+            "headerCol1": "Name",
+            "headerCol2": "Provider",
+            "headerCol3": "Function",
+            "headerCol4": "Duration",
+            "col1": "PHPSESSID",
+            "col2": "buttonline.com.br",
+            "col3": "This cookie is native to PHP applications. The cookie stores and identifies the unique session ID of a user to manage user sessions on the website. The cookie is a session cookie and will be deleted when all browser windows are closed.",
+            "col4": "Session"
+          }
+        }
+      }
     }
   }
 }
