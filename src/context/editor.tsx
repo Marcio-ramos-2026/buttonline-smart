@@ -60,8 +60,6 @@ type IEditorContext = {
   clipMask: (clip: boolean) => void;
   editable?: string;
   currentModel?: editor_canvas;
-  setCurrentModel?: any;
-  // setCurrentModel?: (object: SetStateAction<editor_canvas>) => void;
   models: editor_canvas[];
   setRealCanvas: React.Dispatch<fabric.FabricObject>;
   realCanvas: fabric.FabricObject;
@@ -213,7 +211,6 @@ export default function FabricContextProvider({
         containerRef,
         clipMask: clipMask,
         currentModel: currentModel,
-        setCurrentModel: setCurrentModel,
         models,
         setRealCanvas,
         realCanvas: realCanvas as fabric.FabricObject,
@@ -239,12 +236,12 @@ export const RenderCanvas = () => {
     containerRef,
     canvas,
     currentModel,
-    setCurrentModel,
     models,
     setRealCanvas,
   } = useEditorContext();
 
   const t = useTranslations("pages.editor");
+  const [loadingSelectedModel, setLoadingSelectedModel] = useState(false);
 
   useEffect(() => {
     if (!canvas) return;
@@ -289,6 +286,12 @@ export const RenderCanvas = () => {
     }
   }, [canvas, currentModel]);
 
+  const handleSelectModel = (model: editor_canvas) => {
+    setLoadingSelectedModel(true);
+
+    window.location.href = `?id=${model.id}`;
+  };
+
   if (!currentModel) {
     return (
       <div className="flex items-center flex-col w-full p-8 gap-6">
@@ -311,7 +314,11 @@ export const RenderCanvas = () => {
                 </div>
 
                 <div className="mt-auto p-4">
-                  <Button onClick={() => setCurrentModel(m)} full>
+                  <Button
+                    loading={loadingSelectedModel}
+                    onClick={() => handleSelectModel(m)}
+                    full
+                  >
                     {t("models.select")}
                   </Button>
                 </div>
