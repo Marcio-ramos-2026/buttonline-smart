@@ -8,6 +8,8 @@ import { createAdminSchema, CreateAdminType } from "@/lib/zod-schemas";
 import { getTranslations } from "next-intl/server";
 import { hasPermission } from "@/lib/permission-server";
 import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
+import { renderFirstAccess } from "@/emails/admin/firstAccess/firstAccessAdmin";
+import { mailTransport } from "@/lib/email";
 
 function generateTempPassword(length: number = 8): string {
   return randomBytes(length).toString("base64").slice(0, length); // Gera uma string base64 e corta no tamanho desejado
@@ -35,7 +37,7 @@ export async function createAdminAction(data: CreateAdminType) {
     const tempPassword = generateTempPassword();
     const pass = await bcrypt.hash(tempPassword, 10);
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         name: data.name,
         email: data.email,
@@ -47,6 +49,21 @@ export async function createAdminAction(data: CreateAdminType) {
         },
       },
     });
+    const htmlEmail = await renderFirstAccess({
+      locale: "pt-BR",
+      user: user,
+      tempPassword: tempPassword
+    });
+    const transport = await mailTransport();
+    if (transport) {
+      await transport.sendMail({
+        from: process.env.EMAIL_SENDER,
+        // to: user.email as string,
+        to: "fernando.bonin@hotmail.com.br",
+        subject: "Buttonline - Bem vindo novo administrador.",
+        html: htmlEmail,
+      });
+    }
     return {
       success: true,
       message: t("user.createdSuccess"),
