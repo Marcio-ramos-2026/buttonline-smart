@@ -162,7 +162,8 @@
           "name": "Nome",
           "email": "Email",
           "lastAccess": "Último Acesso",
-          "createdAt": "Criado em"
+          "createdAt": "Criado em",
+          "voucherTime": "Válido até"
         },
         "modalCreateClient": {
           "button": "Novo Cliente",

@@ -77,12 +77,12 @@ export const ClientList = ({
         enableSorting: true,
       },
       {
-        accessorKey: "lastAccess",
-        header: t("columns.lastAccess"),
+        accessorKey: "voucherTime",
+        header: t("columns.voucherTime"),
         enableSorting: true,
         cell: ({ row }) => {
           return (
-            <DateRelativeFormatter date={row.original.lastAccess as Date} />
+            <DateRelativeFormatter date={row.original.voucherTime as Date} />
           );
         },
       },
