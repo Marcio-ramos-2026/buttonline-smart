@@ -2,7 +2,7 @@ import { UserProfile } from "@/components/navbar/userSection/userProfile";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { validateVoucher } from "@/lib/validateVoucher";
+// import { validateVoucher } from "@/lib/validateVoucher";
 
 export default async function UserProfilePage({
   params,

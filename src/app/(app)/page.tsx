@@ -24,8 +24,6 @@ export default async function Page({
     (model) => model.id == parseInt(searchParams.id)
   );
 
-  console.log('aaaaaaaaaaa', selectedModel)
-
   const canvas = allowed_models[0];
   const t = await getTranslations("pages.editor.sideBar");
 

@@ -58,8 +58,7 @@ export async function createAdminAction(data: CreateAdminType) {
     if (transport) {
       await transport.sendMail({
         from: process.env.EMAIL_SENDER,
-        // to: user.email as string,
-        to: "fernando.bonin@hotmail.com.br",
+        to: user.email as string,
         subject: "Buttonline - Bem vindo novo administrador.",
         html: htmlEmail,
       });
