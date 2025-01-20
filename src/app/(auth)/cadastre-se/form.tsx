@@ -65,10 +65,6 @@ export const RegisterForm = () => {
       })
       router.push(result?.redirectUrl)
     }
-
-    // result.message - SUCESSO
-
-    // console.log("resultttttttttt", result);
   };
 
   return (

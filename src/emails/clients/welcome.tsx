@@ -15,7 +15,9 @@ import {
   render,
 } from "@react-email/components";
 import {  createTranslator } from "next-intl";
+import { userAgent } from "next/server";
 import * as React from "react";
+import type { User } from "@prisma/client";
 
 interface NetlifyWelcomeEmailProps {
   steps?: {
@@ -23,7 +25,8 @@ interface NetlifyWelcomeEmailProps {
     Description: React.ReactNode;
   }[];
   links?: string[],
-  locale?: ILocaleLang
+  locale?: ILocaleLang,
+  user: User
 }
 
 const baseUrl = process.env.VERCEL_URL ?? 'http://localhost:3000'
@@ -33,41 +36,56 @@ const messages: EmailMessageLang = {
       "welcome": "Bem vindo a nossa plataforma",
       "intro": "Olá {name}, agora você já pode usar a sua criatividade para criar buttons incríveis.",
       "get_started_title": "Veja quais são os primeiros passos",
-      "step_1": "Acesse sua conta e defina a sua nova senha.",
-      "step_2": "Escolhe o modelo de button e crie a sua arte pelo editor.",
-      "step_3": "Solicite o PDF para a impressão.",
+      "step_1": "Escolhe o modelo de button e crie a sua arte pelo editor.",
+      "step_2": "Solicite o PDF para a impressão.",
       "copyright": "© Cardenas. Todos os direitos reservados.",
-      "pass_tile": "Sua senha temporária"
+      "button": "Acessar a minha conta"
     },
     "en": {
       "welcome": "Welcome to our platform",
       "intro": "Olá {name}, agora você já pode usar a sua criatividade para criar buttons incríveis.",
       "get_started_title": "Veja quais são os primeiros passos",
-      "step_1": "Acesse sua conta e defina a sua nova senha.",
-      "step_2": "Escolhe o modelo de button e crie a sua arte pelo editor.",
-      "step_3": "Solicite o PDF para a impressão.",
-      "copyright": "© 2024 Sua Empresa. Todos os direitos reservados."
+      "step_1": "Escolhe o modelo de button e crie a sua arte pelo editor.",
+      "step_2": "Solicite o PDF para a impressão.",
+      "copyright": "© 2024 Sua Empresa. Todos os direitos reservados.",
+      "button": "Access my account"
     },
     "es-ES": {
       "welcome": "Bienvenido a nuestra plataforma",
       "intro": "Olá {name}, agora você já pode usar a sua criatividade para criar buttons incríveis.",
       "get_started_title": "Veja quais são os primeiros passos",
-      "step_1": "Acesse sua conta e defina a sua nova senha.",
-      "step_2": "Escolhe o modelo de button e crie a sua arte pelo editor.",
-      "step_3": "Solicite o PDF para a impressão.",
-      "copyright": "© 2024 Sua Empresa. Todos os direitos reservados."
+      "step_1": "Escolhe o modelo de button e crie a sua arte pelo editor.",
+      "step_2": "Solicite o PDF para a impressão.",
+      "copyright": "© 2024 Sua Empresa. Todos os direitos reservados.",
+      "button": "Acceder a mi cuenta"
     }
 }
 
+const defaultUser: User = {
+  id: 1,
+  email: "teste@teste.com",
+  name: "Teste da silva",
+  createdAt: new Date(),
+  deletedAt: null,
+  updatedAt: new Date(),
+  roleId: 1,
+  emailVerified: null,
+  image: null,
+  lastAccess: null,
+  password: null,
+  voucherTime: null,
+};
+
 const ClientWecomeEmail = ({
-  locale = 'pt-BR'
+  locale = 'pt-BR',
+  user = defaultUser
 }: NetlifyWelcomeEmailProps) => {
   
   const  t = createTranslator({messages: messages[locale],locale})
   return (
     <Html>
       <Head />
-      <Preview>Netlify</Preview>
+      <Preview>Buttonline</Preview>
       <Tailwind
         config={{
           theme: {
@@ -86,11 +104,6 @@ const ClientWecomeEmail = ({
         }}
       >
         <Body className="bg-offwhite text-base font-sans">
-          <Img
-            src={`/static/logo-inverse.png`}
-            alt="Netlify"
-            className="mx-auto my-20"
-          />
           <Container className="bg-white p-45">
             <Heading className="text-center my-0 leading-8">
               {t('welcome')}
@@ -99,7 +112,7 @@ const ClientWecomeEmail = ({
             <Section>
               <Row>
                 <Text className="text-base">
-                  {t('intro',{name:"wellingtom"})}
+                  {t('intro',{name: user.name})}
                 </Text>
 
                 <Text className="text-base">{t('get_started_title')}</Text>
@@ -113,21 +126,9 @@ const ClientWecomeEmail = ({
               <li className="mb-20">
                   {t("step_2")}
               </li>
-              <li className="mb-20">
-                  {t("step_3")}
-              </li>
             </ul>
 
-            <Section className="flex items-center justify-center bg-gray-100 rounded-sm">
-                <Text className="font-bold text-center text-sm text-gray-400">{t('pass_tile')}</Text>
-
-                <Text className="font-bold text-center text-lg text-primary">aduhauhduhas</Text>
-            </Section>
-
             <Section className="text-center">
-                <Text className="text-gray-900">
-                  Após o primeiro acesso essa senha não funcionará mais
-                </Text>
                 <Button className="bg-brand text-white rounded-lg py-3 px-[18px] cursor-pointer" href={baseUrl}>
                   Acessar a minha conta
                 </Button>

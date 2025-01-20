@@ -36,7 +36,7 @@ export async function registerAction(data: SignUpType) {
       },
     });
 
-    const htmlEmail = await renderClientWelcome({ locale: "pt-BR" });
+    const htmlEmail = await renderClientWelcome({ locale: "pt-BR", user: createdUser });
     const transport = await mailTransport();
     if (transport) {
       await transport.sendMail({
@@ -48,7 +48,7 @@ export async function registerAction(data: SignUpType) {
     }
 
     const voucher = await validateVoucher(createdUser)
-
+    
     return {
       message: "Usurário criado com sucesso",
       redirectUrl: '/',
