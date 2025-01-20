@@ -42,8 +42,8 @@ export const RegisterForm = () => {
 
   const onSubmit = async (data: SignUpType) => {
     const result = await registerAction(data);
-    if (result.zod_errors) {
-      Object.entries(result.zod_errors).forEach(([field, value]) => {
+    if (result?.zod_errors) {
+      Object.entries(result?.zod_errors).forEach(([field, value]) => {
         setError(field as keyof SignUpType, {
           type: "manual",
           message: value[0] ?? value,
@@ -51,19 +51,19 @@ export const RegisterForm = () => {
       });
     }
 
-    if (result.error) {
+    if (result?.error) {
       setError("root.global", {
         type: "manual",
-        message: result.error,
+        message: result?.error,
       });
     }
 
-    if (result.success) {
+    if (result?.success) {
       toast({
         title: tToast("success"),
-        description: result.message
+        description: result?.message
       })
-      router.push(result.redirectUrl)
+      router.push(result?.redirectUrl)
     }
 
     // result.message - SUCESSO
