@@ -13,6 +13,7 @@ import {
   Text,
   Tailwind,
   render,
+  Link,
 } from "@react-email/components";
 import { createTranslator } from "next-intl";
 import * as React from "react";
@@ -143,12 +144,12 @@ const FirstAccess = ({
             </Section>
 
             <Section className="text-center mt-20">
-              <Button
+              <Link
                 className="bg-brand text-white rounded-lg py-3 px-[18px] cursor-pointer"
                 href={`${baseUrl}/login`}
               >
                 Acessar a minha conta
-              </Button>
+              </Link>
             </Section>
           </Container>
 

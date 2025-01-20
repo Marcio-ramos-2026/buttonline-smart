@@ -13,6 +13,7 @@ import {
   Text,
   Tailwind,
   render,
+  Link,
 } from "@react-email/components";
 import {  createTranslator } from "next-intl";
 import { userAgent } from "next/server";
@@ -129,9 +130,9 @@ const ClientWecomeEmail = ({
             </ul>
 
             <Section className="text-center">
-                <Button className="bg-brand text-white rounded-lg py-3 px-[18px] cursor-pointer" href={baseUrl}>
+                <Link className="bg-brand text-white rounded-lg py-3 px-[18px] cursor-pointer" href={baseUrl}>
                   Acessar a minha conta
-                </Button>
+                </Link>
             </Section>
 
           </Container>
