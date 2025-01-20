@@ -70,8 +70,5 @@ export async function registerAction(data: SignUpType) {
           };
       }
     }
-    return {
-      error: "Erro ao criar usuário, por favor contate o suporte",
-    };
   }
 }
