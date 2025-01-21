@@ -18,7 +18,7 @@ export async function GET() {
   );
   const dataBnw = await res.json();
 
-  if (!dataBnw) return;
+  if (!dataBnw) return NextResponse.json({ message: 'Sem dados para validar.' });
 
   let lastUpdate = await prisma.config.findFirst({
     orderBy: {
@@ -44,7 +44,7 @@ export async function GET() {
 
   const keysCustomersToUpdate = Object.keys(customersToUpdate);
 
-  if (!keysCustomersToUpdate.length) return;
+  if (!keysCustomersToUpdate.length) return NextResponse.json({ message: 'Nenhum cliente para atualizar' });
 
   keysCustomersToUpdate.forEach(async (customer) => {
     const existingUser = await prisma.user.findFirst({
@@ -52,7 +52,7 @@ export async function GET() {
         email: customer,
       },
     });
-    if (!existingUser) return;
+    if (!existingUser) return NextResponse.json({ message: 'Usuário não encontrado.' });
     await prisma.user.update({
       where: {
         email: customer,
