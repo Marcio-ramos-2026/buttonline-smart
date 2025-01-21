@@ -46,6 +46,9 @@ export async function GET() {
 
   if (!keysCustomersToUpdate.length) return NextResponse.json({ message: 'Nenhum cliente para atualizar' });
 
+
+  
+
   keysCustomersToUpdate.forEach(async (customer) => {
     const existingUser = await prisma.user.findFirst({
       where: {
