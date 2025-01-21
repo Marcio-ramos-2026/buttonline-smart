@@ -23,6 +23,27 @@ export function AddText() {
     canvas.centerObject(textBox);
   };
 
+  const handleAddVerticalText = () => {
+    if (!canvas) return;
+
+    const textBox = new fabric.Textbox("Texto", {
+      width: 140,
+      fontSize: 60,
+      fill: "#a3c9a1",
+      lockSkewingX: true,
+      lockScalingFlip: true,
+      splitByGrapheme: true,
+      skewY: 90,
+      height: 200
+    });
+
+    textBox.controls.mt.visible = false;
+    textBox.controls.mb.visible = false;
+
+    canvas.add(textBox);
+    canvas.centerObject(textBox);
+  };
+
   //TODO arrumar o angulo (variable radians)
   //TODO inverter para cima e para baixo
   const handleAddCurvedText = () => {
@@ -132,6 +153,13 @@ export function AddText() {
         className="border border-gray-300 rounded-lg px-2 py-1"
       >
         Inisira um Texto curvo
+      </button>
+      <button
+        type="button"
+        onClick={handleAddVerticalText}
+        className="border border-gray-300 rounded-lg px-2 py-1"
+      >
+        Inisira um Texto vertical
       </button>
     </div>
   );

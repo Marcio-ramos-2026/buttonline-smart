@@ -6,8 +6,8 @@ export const VOUCHER_DAYS = 30
 export async function validateVoucher(user: UserType) {
   let voucher;
   const today = new Date();
-  today.setDate(today.getDate() - 1);
-  // today.setDate(today.getDate() - VOUCHER_DAYS);
+  // today.setDate(today.getDate() - 1);
+  today.setDate(today.getDate() - VOUCHER_DAYS);
   const month = today.getMonth() + 1;
 
   const res = await fetch(
@@ -38,7 +38,7 @@ export async function validateVoucher(user: UserType) {
     }
   }
 
-  if (!order) return;
+  if (!order) throw new Error('Ocorreu um erro interno, contate o suporte.');
   const voucherTime = new Date(order.created);
   voucherTime.setDate(voucherTime.getDate() + VOUCHER_DAYS);
 
