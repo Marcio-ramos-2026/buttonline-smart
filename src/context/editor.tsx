@@ -335,7 +335,7 @@ export const RenderCanvas = () => {
       <div className="absolute left-0 right-0 z-50  top-2  flex justify-center">
         <div className="bg-background inline-flex justify-center items-center gap-4 mx-auto  p-2 rounded-lg drop-shadow-md">
           <p>{currentModel.name}</p>
-          <PrintButton canvas={canvas} currentModel={currentModel} />
+          <PrintButton canvas={canvas as fabric.Canvas} currentModel={currentModel} />
         </div>
       </div>
 

@@ -10,6 +10,11 @@ export const pageSizes = {
   Letter: [612, 792], // Letter size in points
 };
 
+type Shape = {
+  background: string
+  cardenas_print: boolean
+}
+
 type shapeRectangle = {
   type: string;
   width: number;
@@ -17,7 +22,7 @@ type shapeRectangle = {
   strokeWidth?: number;
   strokeDashArray?: [number, number];
   radius?: number;
-};
+} & Shape ;
 
 type shapeEllipse = {
   type: string;
@@ -25,14 +30,14 @@ type shapeEllipse = {
   height: number;
   strokeWidth?: number;
   strokeDashArray?: [number, number];
-};
+} & Shape ;
 
 type shapeCircle = {
   type: string;
   radius: number;
   strokeWidth?: number;
   strokeDashArray?: [number, number];
-};
+} & Shape ;
 
 type Shapes = shapeCircle | shapeEllipse;
 
@@ -105,6 +110,7 @@ export const createModel = (model: editor_canvas): fabric.Object => {
       originX: "center",
       originY: "center",
       hoverCursor: "default",
+      cardenas_print: true,
       ...positions[position as keyof typeof positions],
     });
 
@@ -161,13 +167,14 @@ const ellipse = (config: shapeEllipse): fabric.FabricObject => {
     originX: "center",
     originY: "center",
     hoverCursor: "default",
+    cardenas_print: config.cardenas_print === undefined ? true: config.cardenas_print
   });
 };
 
 const circle = (config: shapeCircle) => {
   return new fabric.Circle({
     radius: fabric.util.parseUnit(`${config.radius}mm`),
-    fill: "white",
+    fill: config.background ?? "#fff",
     stroke: "#000",
     strokeWidth: config?.strokeWidth ?? 1,
     strokeDashArray: config?.strokeDashArray ?? [0, 0],
@@ -176,7 +183,7 @@ const circle = (config: shapeCircle) => {
     originX: "center",
     originY: "center",
     hoverCursor: "default",
-    cardenas_canvas: "true",
+    cardenas_print: true
   });
 };
 
@@ -195,6 +202,7 @@ const rectangle = (config: shapeRectangle) => {
     hoverCursor: "default",
     rx: config?.radius ?? 0,
     ry: config?.radius ?? 0,
+    cardenas_print: config.cardenas_print === undefined ? true: config.cardenas_print
   });
 };
 

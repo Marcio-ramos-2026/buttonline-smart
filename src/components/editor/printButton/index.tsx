@@ -8,88 +8,111 @@ import {
 } from "@/components/ui/dialog";
 import { Printer } from "lucide-react";
 import * as fabric from "fabric";
+import type { editor_canvas } from "@prisma/client";
 
 export const PrintButton = ({
   canvas,
   currentModel,
 }: {
-  canvas: any;
-  currentModel: any;
+  canvas: fabric.Canvas;
+  currentModel: editor_canvas;
 }) => {
   const handlePrint = async () => {
+    /*
+      STEPS TO PRINT
+      1 - clone canvas objects
+      2 - replace all images src url to base64
+      3 - group all elements to scale properly
+      4 - create a new canvas with the proper size
+      5 - 
+    */
+
     if (!canvas) return;
+    const canvasWidth = fabric.util.parseUnit("65mm")
+    const canvasHeight = fabric.util.parseUnit("65mm")
+
     const dpi = getScreenDPI();
 
-    let allObjects = canvas.getObjects();
-    allObjects = allObjects.map((obj: any) => {
-      if (obj.type === "image") {
-        const image = obj as fabric.FabricImage;
-        const imageElement = image.getElement() as HTMLImageElement;
+    const {cardenasCanvas, elements} = await canvas.getObjects().reduce(async (accPromise,obj)=>{
+      const acc = await accPromise;
 
-        const url = new URL(imageElement.src);
-        const pathname = url.pathname; // Get the file path
-        const extension = pathname.split(".").pop()?.toLowerCase(); // Extract the file extension (before query params)
-
-        // Check for file format based on the extension
-        const isJpeg = extension === "jpg" || extension === "jpeg";
-        // Convert the image to Base64
-        const base64 = image.toDataURL({
-          format: isJpeg ? "jpeg" : "png", // Use 'jpeg' if needed
-          quality: 1, // High quality for JPEG
-        });
-
-        // Replace the image source with the Base64 data
-        imageElement.src = base64;
-
-        image.set({
-          element: imageElement,
-        });
-        return image;
+      if(obj.cardenas_canvas) {
+        acc.cardenasCanvas = await obj.clone() as fabric.Group
       }
 
-      return obj;
-    });
+      if(!obj.cardenas_canvas){
+        if (obj.type === "image") {
+          const image = obj as fabric.FabricImage;
+          const imageElement = image.getElement() as HTMLImageElement;
 
-    const allObjectsGroup = new fabric.Group(allObjects, {
-      left: 0,
-      top: 0,
-    });
+          const url = new URL(imageElement.src);
+          const pathname = url.pathname; // Get the file path
+          const extension = pathname.split(".").pop()?.toLowerCase(); // Extract the file extension (before query params)
 
-    // Calculate the bounding dimensions of the group
-    const boundingRect = allObjectsGroup.getBoundingRect();
-    const groupWidth = boundingRect.width;
-    const groupHeight = boundingRect.height;
+           // Check for file format based on the extension
+          const isJpeg = extension === "jpg" || extension === "jpeg";
+          // Convert the image to Base64
+          const base64 = image.toDataURL({
+            format: isJpeg ? "jpeg" : "png", // Use 'jpeg' if needed
+            quality: 1, // High quality for JPEG
+          });
 
-    // Fixed canvas size
-    const canvasWidth = fabric.util.parseUnit("65mm"); // Canvas width in px
-    const canvasHeight = fabric.util.parseUnit("65mm"); // Canvas height in px
+          // imageElement.src = base64;
 
-    // Calculate the scale factor to fit content within canvas
-    const scaleFactor = Math.min(
-      canvasWidth / groupWidth,
-      canvasHeight / groupHeight
-    );
+          // image.set({
+          //   element: imageElement,
+          // });
 
-    // Scale the group proportionally
-    allObjectsGroup.scale(scaleFactor);
-    allObjectsGroup.setCoords(); // Update coordinates after scaling
+          obj = image
+        }
 
-    // const copyRealCanvas = await realCanvas.clone()
-    // copyRealCanvas.width = allObjectsGroup.getScaledWidth()
-    // copyRealCanvas.height = allObjectsGroup.getScaledHeight()
+        obj = await obj.clone()
 
-    // realCanvas.backgroundColor = 'blue'
+        acc.elements.push(obj)
+      }
 
-    // Create a new canvas with the fixed size
+      return acc
+    },
+    Promise.resolve({ cardenasCanvas: {} as fabric.Group, elements: [] as fabric.Object[] })
+  )
+
+  console.log('XXX',cardenasCanvas)
+
+    const groupElement = new fabric.Group(elements,{});
+    const scaleFactorGroup = canvasWidth / Math.max(groupElement.width, groupElement.height);
+    groupElement.scale(scaleFactorGroup)
+     
+    cardenasCanvas.getObjects().forEach(o => {
+      console.log('aaa',o.cardenas_print)
+      if (!o.cardenas_print) {
+        cardenasCanvas.remove(o);
+      }
+    })
+    const clip = new fabric.Group(cardenasCanvas.getObjects());
+    const scaleFactor = canvasWidth / Math.max(clip.width, clip.height);
+
+    clip.scale(scaleFactor)
+    // clip.left = (canvasWidth - clip.getScaledWidth()) / 2;
+    // clip.top = (canvasHeight - clip.getScaledHeight()) / 2;
+
+    // // Ensure changes are updated
+    // clip.setCoords();
+
+
     const printCanvas = new fabric.Canvas("c", {
       width: canvasWidth,
       height: canvasHeight,
-      // clipPath: realCanvas
+      // clipPath: clip
     });
 
-    printCanvas.add(allObjectsGroup);
-    printCanvas.centerObject(allObjectsGroup);
 
+    printCanvas.add(clip)
+    printCanvas.add(groupElement)
+    printCanvas.centerObject(groupElement)
+    printCanvas.centerObject(clip)
+    printCanvas.clipPath = clip
+
+    
     fetch("/api/print", {
       method: "POST",
       body: JSON.stringify({
@@ -112,7 +135,7 @@ export const PrintButton = ({
       .catch((error) => {
         console.error("Error fetching the PDF:", error);
       });
-  };
+  }
   return (
     <Dialog>
       <DialogTrigger asChild>
