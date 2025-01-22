@@ -17,7 +17,7 @@ export const Tooltip = ({
     <TooltipProvider delayDuration={300}>
       <TooltipBase>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent>
+        <TooltipContent className="z-[9999]">
           <p>{content}</p>
         </TooltipContent>
       </TooltipBase>
