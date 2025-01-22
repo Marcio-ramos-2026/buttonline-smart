@@ -150,3 +150,10 @@ model Voucher {
 
   @@map("vouchers")
 }
+
+model Config {
+  id String   @id
+  date DateTime?
+
+  @@map("config")
+}

@@ -1,0 +1,8 @@
+{
+    "crons": [
+      {
+        "path": "/api/cron/validateVouchers",
+        "schedule": "59 * * * *"
+      }
+    ]
+  }
