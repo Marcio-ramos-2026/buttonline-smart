@@ -241,7 +241,6 @@ export const RenderCanvas = () => {
   } = useEditorContext();
 
   const t = useTranslations("pages.editor");
-  const [loadingSelectedModel, setLoadingSelectedModel] = useState(false);
 
   useEffect(() => {
     if (!canvas) return;
@@ -286,44 +285,13 @@ export const RenderCanvas = () => {
     }
   }, [canvas, currentModel]);
 
-  const handleSelectModel = (model: editor_canvas) => {
-    setLoadingSelectedModel(true);
-
-    window.location.href = `?id=${model.id}`;
-  };
-
   if (!currentModel) {
     return (
       <div className="flex items-center flex-col w-full p-8 gap-6">
         <h1 className="text-4xl">{t("models.selectTitle")}</h1>
         <div className="grid xl:grid-cols-4 md:grid-cols-3 sm:grid-cols-1 w-full gap-6">
           {models.map((m) => {
-            return (
-              <div
-                key={m.id}
-                className="flex flex-col rounded-lg bg-white shadow-sm border"
-              >
-                <div className="px-4 py-5 sm:px-6">
-                  <h5 className="text-primary text-center">{m.name}</h5>
-                </div>
-                <div className={styles.templateSample}>
-                  <ReactSVG
-                    className=" text-red-500"
-                    src={`data:image/svg+xml;base64,${btoa(generateSVG(createModel(m)))}`}
-                  />
-                </div>
-
-                <div className="mt-auto p-4">
-                  <Button
-                    loading={loadingSelectedModel}
-                    onClick={() => handleSelectModel(m)}
-                    full
-                  >
-                    {t("models.select")}
-                  </Button>
-                </div>
-              </div>
-            );
+            return <ModelsExamples model={m} key={m.id} />;
           })}
         </div>
       </div>
@@ -335,7 +303,10 @@ export const RenderCanvas = () => {
       <div className="absolute left-0 right-0 z-50  top-2  flex justify-center">
         <div className="bg-background inline-flex justify-center items-center gap-4 mx-auto  p-2 rounded-lg drop-shadow-md">
           <p>{currentModel.name}</p>
-          <PrintButton canvas={canvas as fabric.Canvas} currentModel={currentModel} />
+          <PrintButton
+            canvas={canvas as fabric.Canvas}
+            currentModel={currentModel}
+          />
         </div>
       </div>
 
@@ -361,6 +332,41 @@ export const RenderCanvas = () => {
       </div>
 
       <canvas ref={canvasEl} />
+    </div>
+  );
+};
+
+const ModelsExamples = ({ model }: { model: editor_canvas }) => {
+  const [loadingSelectedModel, setLoadingSelectedModel] = useState(false);
+  const t = useTranslations("pages.editor");
+
+  const handleSelectModel = (model: editor_canvas) => {
+    setLoadingSelectedModel(true);
+
+    window.location.href = `?id=${model.id}`;
+  };
+
+  return (
+    <div className="flex flex-col rounded-lg bg-white shadow-sm border">
+      <div className="px-4 py-5 sm:px-6">
+        <h5 className="text-primary text-center">{model.name}</h5>
+      </div>
+      <div className={styles.templateSample}>
+        <ReactSVG
+          className=" text-red-500"
+          src={`data:image/svg+xml;base64,${btoa(generateSVG(createModel(model)))}`}
+        />
+      </div>
+
+      <div className="mt-auto p-4">
+        <Button
+          loading={loadingSelectedModel}
+          onClick={() => handleSelectModel(model)}
+          full
+        >
+          {t("models.select")}
+        </Button>
+      </div>
     </div>
   );
 };

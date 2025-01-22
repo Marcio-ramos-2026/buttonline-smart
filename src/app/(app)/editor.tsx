@@ -38,6 +38,36 @@ import { useState } from "react";
 import { Tooltip } from "@/components/tooltip/tooltip";
 import CanvasHistory from "@/lib/fabricHistory";
 import { NavUser } from "@/components/nav-user";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  AlertDialogPortal,
+  AlertDialogOverlay,
+} from "@/components/ui/alert-dialog";
 
 type EditorType = {
   model?: editor_canvas;
@@ -129,6 +159,7 @@ export function Editor({ user }: EditorProps) {
                 <Redo2 />
               </button>
               <ClipButton />
+              <ChangeModelDropdown />
               <EditableBar />
             </div>
             <div className="flex gap-1.5 md:gap-3 items-center">
@@ -176,5 +207,129 @@ const ClipButton = () => {
         icon={<Eclipse />}
       ></Button>
     </Tooltip>
+  );
+};
+
+const ChangeModelDropdown = () => {
+  const { models } = useEditorContext();
+  const t = useTranslations("pages.editor.sideBar");
+  const [pending, setPending] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+
+  function handleChangeModel(id: number): void {
+    //setOpenDialog(true);
+    // window.location.href = `?id=${model.id}`;
+  }
+
+  const handleDelete = () => {};
+
+  return (
+    <>
+      <AlertDialog>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="flex items-center gap-2">
+              {/* <ArrowDown className="h-4 w-4" /> */}
+
+              <span className="font-medium">
+                {"t(selectedLanguage?.locale)"}
+              </span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Selecione um modelo:</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              {models.map((model) => {
+                return (
+                  <DropdownMenuItem
+                    key={model.id}
+                    onClick={() => handleChangeModel(model.id)}
+                  >
+                    <AlertDialogTrigger>
+                      <div className="flex items-center gap-2">
+                        <span>{model.name}</span>
+                      </div>
+                    </AlertDialogTrigger>
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <AlertDialogContent
+          onEscapeKeyDown={(e) => (pending ? e.preventDefault() : null)}
+        >
+          <AlertDialogHeader>
+            <AlertDialogTitle>title</AlertDialogTitle>
+            <AlertDialogDescription>desc</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel asChild className={`${pending ? "hidden" : ""}`}>
+              <Button>cancel</Button>
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} asChild>
+              <Button>aaaaaaaaa</Button>
+              {/* <Button loading={pending}>
+              {pending
+                ? t("modalDeleteClient.archiving")
+                : t("modalDeleteClient.confirm")}
+            </Button> */}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* <Test
+       pending={pending}
+       setPending={setPending}
+       openDialog={openDialog}
+       setOpenDialog={setOpenDialog}
+      /> */}
+    </>
+  );
+};
+
+const Test = ({ pending, setPending, openDialog, setOpenDialog }) => {
+  // const [pending, setPending] = useState(false);
+  // const [openDialog, setOpenDialog] = useState(false);
+
+  const handleDelete = () => {};
+
+  return (
+    <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant={"link"}
+          className="cursor-pointer"
+          onClick={() => setOpenDialog(true)}
+        >
+          trigger
+        </Button>
+      </AlertDialogTrigger>
+
+      <AlertDialogContent
+        onEscapeKeyDown={(e) => (pending ? e.preventDefault() : null)}
+      >
+        <AlertDialogHeader>
+          <AlertDialogTitle>title</AlertDialogTitle>
+          <AlertDialogDescription>desc</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel asChild className={`${pending ? "hidden" : ""}`}>
+            <Button>cancel</Button>
+          </AlertDialogCancel>
+          <AlertDialogAction onClick={handleDelete} asChild>
+            <Button>aaaaaaaaa</Button>
+            {/* <Button loading={pending}>
+              {pending
+                ? t("modalDeleteClient.archiving")
+                : t("modalDeleteClient.confirm")}
+            </Button> */}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
