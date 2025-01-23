@@ -18,14 +18,6 @@ export const PrintButton = ({
   currentModel: editor_canvas;
 }) => {
   const handlePrint = async () => {
-    /*
-      STEPS TO PRINT
-      1 - clone canvas objects
-      2 - replace all images src url to base64
-      3 - group all elements to scale properly
-      4 - create a new canvas with the proper size
-      5 - 
-    */
 
     if (!canvas) return;
     const canvasWidth = fabric.util.parseUnit("65mm")
@@ -37,7 +29,7 @@ export const PrintButton = ({
       const acc = await accPromise;
 
       if(obj.cardenas_canvas) {
-        acc.cardenasCanvas = obj as fabric.Group
+        acc.cardenasCanvas = await obj.clone(["cardenas_print"]) as fabric.Group
       }
 
       if(!obj.cardenas_canvas){
@@ -76,38 +68,41 @@ export const PrintButton = ({
     Promise.resolve({ cardenasCanvas: {} as fabric.Group, elements: [] as fabric.Object[] })
   )
 
-    const groupElement = new fabric.Group(elements,{});
-    const scaleFactorGroup = canvasWidth / Math.max(groupElement.width, groupElement.height);
-    groupElement.scale(scaleFactorGroup)
+  const groupBoundingBox = fabric.util.makeBoundingBoxFromPoints(
+    elements.map(obj => ({
+      x: (obj.left || 0) + (obj.width || 0) * (obj.scaleX || 1) / 2,
+      y: (obj.top || 0) + (obj.height || 0) * (obj.scaleY || 1) / 2,
+    }))
+  );
+  
 
+  const groupElement = new fabric.Group(elements,{
+    left: groupBoundingBox.left,
+    top:groupBoundingBox.top,
+    width: groupBoundingBox.width,
+    height: groupBoundingBox.height
+  })
     
-    
+  const scaleFactorGroup = canvasWidth / Math.max(groupBoundingBox.width, groupBoundingBox.height);
+  groupElement.scale(scaleFactorGroup);
+  
+
     cardenasCanvas.getObjects().forEach(o => {
       if (!o.cardenas_print) {
-        console.log('REMOVENDO')
         cardenasCanvas.remove(o);
       }
     })
-    
     
     const clip = cardenasCanvas;
     const scaleFactor = canvasWidth / Math.max(clip.width, clip.height);
 
     clip.scale(scaleFactor)
 
-    
-    // clip.left = (canvasWidth - clip.getScaledWidth()) / 2;
-    // clip.top = (canvasHeight - clip.getScaledHeight()) / 2;
-
-    // // Ensure changes are updated
-    // clip.setCoords();
-
 
     const printCanvas = new fabric.Canvas("c", {
       width: canvasWidth,
-      height: canvasHeight,
-      // clipPath: clip
-    });
+      height: canvasHeight
+    })
 
 
     printCanvas.add(clip)
@@ -116,6 +111,8 @@ export const PrintButton = ({
     printCanvas.centerObject(clip)
     printCanvas.clipPath = clip
 
+  
+    console.log('xxx',printCanvas.toSVG())
     
     fetch("/api/print", {
       method: "POST",
