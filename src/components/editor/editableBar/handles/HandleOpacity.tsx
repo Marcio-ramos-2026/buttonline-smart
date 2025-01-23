@@ -5,18 +5,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Slider } from "@/components/ui/slider";
-import * as fabric from "fabric";
-import { Blend, PenLine, PaintBucket } from "lucide-react";
+import { Blend } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ColorPicker } from "@/components/colorPicker";
 import { useTranslations } from "next-intl";
+import { CanvasObjectType } from "./type";
 
-type EditShapedProps = {
-  object: fabric.FabricImage;
-  canvas: fabric.Canvas | null;
-};
-
-export const HandleOpacity = ({ object, canvas }: EditShapedProps) => {
+export const HandleOpacity = ({ object, canvas }: CanvasObjectType) => {
   const [opacity, setOpacity] = useState<number[]>([object?.opacity * 100]);
   const t = useTranslations("pages.editor.editableBar");
 
