@@ -13,13 +13,9 @@ import {
   ChevronsUp,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { CanvasObjectType } from "./type";
 
-type EditIconProps = {
-  object: fabric.FabricImage;
-  canvas: fabric.Canvas | null;
-};
-
-export const HandleLayer = ({ object, canvas }: EditIconProps) => {
+export const HandleLayer = ({ object, canvas }: CanvasObjectType) => {
   const t = useTranslations("pages.editor.editableBar");
 
   const handleChangeLayer = (type: string) => {

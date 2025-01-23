@@ -4,19 +4,14 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Slider } from "@/components/ui/slider";
 import * as fabric from "fabric";
-import { Blend, PenLine, PaintBucket } from "lucide-react";
+import { PaintBucket } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ColorPicker } from "@/components/colorPicker";
 import { useTranslations } from "next-intl";
+import { CanvasObjectType } from "./type";
 
-type EditShapedProps = {
-  object: fabric.FabricImage;
-  canvas: fabric.Canvas | null;
-};
-
-export const HandleFillColor = ({ object, canvas }: EditShapedProps) => {
+export const HandleFillColor = ({ object, canvas }: CanvasObjectType) => {
   const [color, setColor] = useState<string | fabric.TFiller | null>("#000");
   const t = useTranslations("pages.editor.editableBar")
 
