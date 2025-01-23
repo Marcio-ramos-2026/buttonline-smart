@@ -37,7 +37,7 @@ export const PrintButton = ({
       const acc = await accPromise;
 
       if(obj.cardenas_canvas) {
-        acc.cardenasCanvas = await obj.clone() as fabric.Group
+        acc.cardenasCanvas = obj as fabric.Group
       }
 
       if(!obj.cardenas_canvas){
@@ -76,22 +76,26 @@ export const PrintButton = ({
     Promise.resolve({ cardenasCanvas: {} as fabric.Group, elements: [] as fabric.Object[] })
   )
 
-  console.log('XXX',cardenasCanvas)
-
     const groupElement = new fabric.Group(elements,{});
     const scaleFactorGroup = canvasWidth / Math.max(groupElement.width, groupElement.height);
     groupElement.scale(scaleFactorGroup)
-     
+
+    
+    
     cardenasCanvas.getObjects().forEach(o => {
-      console.log('aaa',o.cardenas_print)
       if (!o.cardenas_print) {
+        console.log('REMOVENDO')
         cardenasCanvas.remove(o);
       }
     })
-    const clip = new fabric.Group(cardenasCanvas.getObjects());
+    
+    
+    const clip = cardenasCanvas;
     const scaleFactor = canvasWidth / Math.max(clip.width, clip.height);
 
     clip.scale(scaleFactor)
+
+    
     // clip.left = (canvasWidth - clip.getScaledWidth()) / 2;
     // clip.top = (canvasHeight - clip.getScaledHeight()) / 2;
 
