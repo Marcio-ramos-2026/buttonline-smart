@@ -64,6 +64,7 @@ type IEditorContext = {
   setRealCanvas: React.Dispatch<fabric.FabricObject>;
   realCanvas: fabric.FabricObject;
   history: (method: "redo" | "undo") => void;
+  changeButtonColor: (color: string) => void;
 };
 
 const FabricContext = createContext<IEditorContext | null>(null);
@@ -175,6 +176,22 @@ export default function FabricContextProvider({
     canvas.renderAll();
   };
 
+  const changeButtonColor = (color: string) => {
+    if (!realCanvas || !canvas) return;
+
+    const buttonGroup = canvas
+      .getObjects()
+      .filter((obj) => obj.cardenas_canvas)[0] as fabric.Group;
+
+    buttonGroup.getObjects().forEach((obj) => {
+      if (obj?.cardenas_mark) return;
+
+      obj.set("fill", color);
+    });
+
+    canvas.renderAll();
+  };
+
   const history = (method: "redo" | "undo") => {
     if (method === "redo") {
       historyCanvas.redo();
@@ -198,6 +215,7 @@ export default function FabricContextProvider({
         setRealCanvas,
         realCanvas: realCanvas as fabric.FabricObject,
         history,
+        changeButtonColor,
       }}
     >
       {children}

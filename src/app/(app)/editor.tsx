@@ -11,6 +11,7 @@ import {
   Pentagon,
   UserRoundCog,
   Eclipse,
+  PaintBucket,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -68,6 +69,7 @@ import {
   AlertDialogPortal,
   AlertDialogOverlay,
 } from "@/components/ui/alert-dialog";
+import { ColorPicker } from "@/components/colorPicker";
 
 type EditorType = {
   model?: editor_canvas;
@@ -159,6 +161,7 @@ export function Editor({ user }: EditorProps) {
                 <Redo2 />
               </button>
               <ClipButton />
+              <ChangeButtonCollor />
               <ChangeModelDropdown />
               <EditableBar />
             </div>
@@ -202,11 +205,47 @@ const ClipButton = () => {
   return (
     <Tooltip content={t("clip")}>
       <Button
+        className="w-[76px]"
         variant={isClipActive ? "solid" : "outline"}
         onClick={handleToggleClip}
         icon={<Eclipse />}
       ></Button>
     </Tooltip>
+  );
+};
+
+const ChangeButtonCollor = () => {
+  const { changeButtonColor } = useEditorContext();
+  const [color, setColor] = useState<string | null>("#fff");
+  const t = useTranslations("pages.editor.sideBar");
+
+  const handleChangeColor = (e: string) => {
+    setColor(e);
+    changeButtonColor(e);
+  };
+
+  return (
+    <DropdownMenu>
+      <Tooltip content={t("buttonBgColor")}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            className="w-[76px]"
+            variant={"outline"}
+            icon={<PaintBucket />}
+          ></Button>
+        </DropdownMenuTrigger>
+      </Tooltip>
+      <DropdownMenuContent className="h-auto w-64 px-4 py-3 rounded-md flex flex-col gap-1 items-center justify-center">
+        <div className="flex justify-between w-full">
+          <span className="text-xs">{t("buttonBgColor")}</span>
+        </div>
+        <ColorPicker
+          value={color as string}
+          onChange={handleChangeColor}
+          className="border-gray-300"
+        />
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
@@ -291,45 +330,45 @@ const ChangeModelDropdown = () => {
   );
 };
 
-const Test = ({ pending, setPending, openDialog, setOpenDialog }) => {
-  // const [pending, setPending] = useState(false);
-  // const [openDialog, setOpenDialog] = useState(false);
+// const Test = ({ pending, setPending, openDialog, setOpenDialog }) => {
+//   // const [pending, setPending] = useState(false);
+//   // const [openDialog, setOpenDialog] = useState(false);
 
-  const handleDelete = () => {};
+//   const handleDelete = () => {};
 
-  return (
-    <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
-      <AlertDialogTrigger asChild>
-        <Button
-          variant={"link"}
-          className="cursor-pointer"
-          onClick={() => setOpenDialog(true)}
-        >
-          trigger
-        </Button>
-      </AlertDialogTrigger>
+//   return (
+//     <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
+//       <AlertDialogTrigger asChild>
+//         <Button
+//           variant={"link"}
+//           className="cursor-pointer"
+//           onClick={() => setOpenDialog(true)}
+//         >
+//           trigger
+//         </Button>
+//       </AlertDialogTrigger>
 
-      <AlertDialogContent
-        onEscapeKeyDown={(e) => (pending ? e.preventDefault() : null)}
-      >
-        <AlertDialogHeader>
-          <AlertDialogTitle>title</AlertDialogTitle>
-          <AlertDialogDescription>desc</AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel asChild className={`${pending ? "hidden" : ""}`}>
-            <Button>cancel</Button>
-          </AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete} asChild>
-            <Button>aaaaaaaaa</Button>
-            {/* <Button loading={pending}>
-              {pending
-                ? t("modalDeleteClient.archiving")
-                : t("modalDeleteClient.confirm")}
-            </Button> */}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-};
+//       <AlertDialogContent
+//         onEscapeKeyDown={(e) => (pending ? e.preventDefault() : null)}
+//       >
+//         <AlertDialogHeader>
+//           <AlertDialogTitle>title</AlertDialogTitle>
+//           <AlertDialogDescription>desc</AlertDialogDescription>
+//         </AlertDialogHeader>
+//         <AlertDialogFooter>
+//           <AlertDialogCancel asChild className={`${pending ? "hidden" : ""}`}>
+//             <Button>cancel</Button>
+//           </AlertDialogCancel>
+//           <AlertDialogAction onClick={handleDelete} asChild>
+//             <Button>aaaaaaaaa</Button>
+//             {/* <Button loading={pending}>
+//               {pending
+//                 ? t("modalDeleteClient.archiving")
+//                 : t("modalDeleteClient.confirm")}
+//             </Button> */}
+//           </AlertDialogAction>
+//         </AlertDialogFooter>
+//       </AlertDialogContent>
+//     </AlertDialog>
+//   );
+// };

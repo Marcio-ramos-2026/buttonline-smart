@@ -200,6 +200,7 @@
         "line3": "Frente do button"
       },
       "sideBar": {
+        "buttonBgColor": "Cor de fundo do Button",
         "clip": "Esconder conteúdo fora do Button",
         "tabs": {
           "file": { "label": "Meus Arquivos" },
@@ -207,7 +208,7 @@
             "label": "Imagens",
             "load": "Clique para carregar imagem",
             "drag": "ou arraste e solte",
-            "noImage":"Nenhuma imagem encontrada."
+            "noImage": "Nenhuma imagem encontrada."
           },
           "text": { "label": "Texto" },
           "icon": { "label": "Icones" },

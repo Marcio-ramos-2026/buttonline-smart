@@ -11,9 +11,9 @@ export const pageSizes = {
 };
 
 type Shape = {
-  background: string
-  cardenas_print: boolean
-}
+  background: string;
+  cardenas_print: boolean;
+};
 
 type shapeRectangle = {
   type: string;
@@ -22,7 +22,7 @@ type shapeRectangle = {
   strokeWidth?: number;
   strokeDashArray?: [number, number];
   radius?: number;
-} & Shape ;
+} & Shape;
 
 type shapeEllipse = {
   type: string;
@@ -30,14 +30,14 @@ type shapeEllipse = {
   height: number;
   strokeWidth?: number;
   strokeDashArray?: [number, number];
-} & Shape ;
+} & Shape;
 
 type shapeCircle = {
   type: string;
   radius: number;
   strokeWidth?: number;
   strokeDashArray?: [number, number];
-} & Shape ;
+} & Shape;
 
 type Shapes = shapeCircle | shapeEllipse;
 
@@ -102,8 +102,8 @@ export const createModel = (model: editor_canvas): fabric.Object => {
     const mark = new fabric.Rect({
       width: markWidth,
       height: markHeight,
-      fill: "red",
-      stroke: "red",
+      fill: "black",
+      stroke: "black",
       strokeWidth: 0,
       selectable: false,
       moveCursor: "default",
@@ -111,6 +111,7 @@ export const createModel = (model: editor_canvas): fabric.Object => {
       originY: "center",
       hoverCursor: "default",
       cardenas_print: true,
+      cardenas_mark: true,
       ...positions[position as keyof typeof positions],
     });
 
@@ -167,7 +168,8 @@ const ellipse = (config: shapeEllipse): fabric.FabricObject => {
     originX: "center",
     originY: "center",
     hoverCursor: "default",
-    cardenas_print: config.cardenas_print === undefined ? true: config.cardenas_print
+    cardenas_print:
+      config.cardenas_print === undefined ? true : config.cardenas_print,
   });
 };
 
@@ -183,7 +185,7 @@ const circle = (config: shapeCircle) => {
     originX: "center",
     originY: "center",
     hoverCursor: "default",
-    cardenas_print: true
+    cardenas_print: true,
   });
 };
 
@@ -202,7 +204,8 @@ const rectangle = (config: shapeRectangle) => {
     hoverCursor: "default",
     rx: config?.radius ?? 0,
     ry: config?.radius ?? 0,
-    cardenas_print: config.cardenas_print === undefined ? true: config.cardenas_print
+    cardenas_print:
+      config.cardenas_print === undefined ? true : config.cardenas_print,
   });
 };
 
