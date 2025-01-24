@@ -183,7 +183,7 @@ const circle = (config: shapeCircle) => {
     originX: "center",
     originY: "center",
     hoverCursor: "default",
-    cardenas_print: true
+    cardenas_print: config.cardenas_print === undefined ? true: config.cardenas_print
   });
 };
 
