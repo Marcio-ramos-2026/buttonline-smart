@@ -162,7 +162,7 @@ export function Editor({ user }: EditorProps) {
               </button>
               <ClipButton />
               <ChangeButtonCollor />
-              <ChangeModelDropdown />
+              {/* <ChangeModelDropdown /> */}
               <EditableBar />
             </div>
             <div className="flex gap-1.5 md:gap-3 items-center">
