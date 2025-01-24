@@ -252,7 +252,7 @@ const ChangeButtonCollor = () => {
 const ChangeModelDropdown = () => {
   const { models } = useEditorContext();
   const t = useTranslations("pages.editor.sideBar.changeModel");
-  const [modelPicked, setModelPicked] = useState(false);
+  const [modelPicked, setModelPicked] = useState<editor_canvas | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
 
   const handleOnClose = () => {

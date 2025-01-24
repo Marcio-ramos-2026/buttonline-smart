@@ -45,6 +45,7 @@ export const HandleFontSize = ({
 
       useEffect(() => {
         if (!object) return;
+        //@ts-ignore
         setFontSize(object.fontSize?.toString());
       }, [object])
 
