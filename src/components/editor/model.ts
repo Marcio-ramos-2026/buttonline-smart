@@ -205,7 +205,7 @@ const rectangle = (config: shapeRectangle) => {
     rx: config?.radius ?? 0,
     ry: config?.radius ?? 0,
     cardenas_print:
-      config.cardenas_print === undefined ? true : config.cardenas_print,
+      config.cardenas_print === undefined ? true : config.cardenas_print, 
   });
 };
 
