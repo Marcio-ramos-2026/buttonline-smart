@@ -18,10 +18,17 @@ export const PrintButton = ({
   currentModel: editor_canvas;
 }) => {
   const handlePrint = async () => {
+    if(!currentModel || !currentModel.size){
+      alert('Configuração errada')
+      return
+    }
+
+    let [width,height] = currentModel.size.split(',') 
+    if(!height) height = width
 
     if (!canvas) return;
-    const canvasWidth = fabric.util.parseUnit("65mm")
-    const canvasHeight = fabric.util.parseUnit("65mm")
+    const canvasWidth = fabric.util.parseUnit(`${width}mm`)
+    const canvasHeight = fabric.util.parseUnit(`${height}mm`)
 
     const dpi = getScreenDPI();
 
@@ -120,6 +127,8 @@ export const PrintButton = ({
         svg: printCanvas.toSVG(),
         model_id: currentModel.id,
         dpi,
+        canvasWidth,
+        canvasHeight
       }), // Send any necessary data for PDF generation
       headers: {
         "Content-Type": "application/json",

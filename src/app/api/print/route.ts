@@ -9,6 +9,8 @@ interface printRequest  {
   model_id: number;
   svg: string;
   dpi: number;
+  canvasWidth: number;
+  canvasHeight: number;
 }
 
 const mmToPt = (mm: number) => mm * 2.83465
@@ -19,7 +21,7 @@ const pxToPt = (px: number, dpi: number) => px * (72/dpi)
 
 export async function POST(request: NextRequest) {
   const data: printRequest = await request.json()
-  const {model_id, svg, dpi} = data
+  const {model_id, svg, dpi, canvasHeight, canvasWidth} = data
 
     const model = await prisma.editor_canvas.findFirst(({
         where: {
@@ -36,13 +38,13 @@ export async function POST(request: NextRequest) {
     
     const gabarito = model?.gabarito as ModelConfig["gabarito"]
 
-    const element = createModel(model)
+    // const element = createModel(model)
 
-    const viewBox = `${-element.width / 2} ${-element.height / 2} ${element.width} ${element.height}`;
-    const modelSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="${element.width}" height="${element.height}" viewBox="${viewBox}">${element.toSVG()}</svg>`;
+    // const Elementwidth = model.shape == 'circle' ? element.width / 2 : element.width
+    // const Elementheight = model.shape == 'circle' ? element.height / 2 : element.height
 
-    const Elementwidth = model.shape == 'circle' ? element.width / 2 : element.width
-    const Elementheight = model.shape == 'circle' ? element.height / 2 : element.height
+    // const b =  sharp(Buffer.from(svg),{density:1000})
+    // console.log('xxx',svg)
 
   try {
     // Create a new PDF document
@@ -50,8 +52,7 @@ export async function POST(request: NextRequest) {
     const page = pdfDoc.addPage(pageSizes[gabarito.pdf] as [number,number]); // Define canvas size (width x height)
     const { width, height } = page.getSize();
 
-    const pngBuffer = await sharp(Buffer.from(svg ? svg : modelSVG),{density:1000})
-      // .resize(pxToMm(element.width,dpi),pxToMm(element.height,dpi))
+    const pngBuffer = await sharp(Buffer.from(svg),{density:1000})
       .png({quality:100})
       .toBuffer();
     const pngImage = await pdfDoc.embedPng(pngBuffer);    
@@ -59,9 +60,9 @@ export async function POST(request: NextRequest) {
     Object.values(gabarito.positions).forEach((p) => {
       page.drawImage(pngImage, {
         x: mmToPt(p.x),
-        y: height - pxToPt(Elementheight,dpi) - mmToPt(p.y),
-        width: pxToPt(Elementwidth,dpi,),
-        height: pxToPt(Elementheight,dpi)
+        y: height - pxToPt(canvasHeight,dpi) - mmToPt(p.y),
+        width: pxToPt(canvasWidth,dpi,),
+        height: pxToPt(canvasHeight,dpi)
       });
     })
 
