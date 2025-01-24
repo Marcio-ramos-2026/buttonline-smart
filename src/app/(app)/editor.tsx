@@ -162,7 +162,7 @@ export function Editor({ user }: EditorProps) {
               </button>
               <ClipButton />
               <ChangeButtonCollor />
-              {/* <ChangeModelDropdown /> */}
+              <ChangeModelDropdown />
               <EditableBar />
             </div>
             <div className="flex gap-1.5 md:gap-3 items-center">
@@ -251,124 +251,79 @@ const ChangeButtonCollor = () => {
 
 const ChangeModelDropdown = () => {
   const { models } = useEditorContext();
-  const t = useTranslations("pages.editor.sideBar");
-  const [pending, setPending] = useState(false);
+  const t = useTranslations("pages.editor.sideBar.changeModel");
+  const [modelPicked, setModelPicked] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
-  function handleChangeModel(id: number): void {
-    //setOpenDialog(true);
-    // window.location.href = `?id=${model.id}`;
-  }
+  const handleOnClose = () => {
+    console.log("onc", modelPicked);
 
-  const handleDelete = () => {};
+    setOpenDialog(true);
+  };
 
   return (
     <>
-      <AlertDialog>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2">
-              {/* <ArrowDown className="h-4 w-4" /> */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="flex items-center gap-2">
+            <span className="font-medium">{t("dropdownTitle")}</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" onCloseAutoFocus={handleOnClose}>
+          <DropdownMenuLabel>{t("dropdownTitle")}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            {models.map((model) => {
+              return (
+                <DropdownMenuItem
+                  key={model.id}
+                  onClick={() => setModelPicked(model)}
+                >
+                  <div className="flex items-center gap-2">
+                    <span>{model.name}</span>
+                  </div>
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-              <span className="font-medium">
-                {"t(selectedLanguage?.locale)"}
-              </span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Selecione um modelo:</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              {models.map((model) => {
-                return (
-                  <DropdownMenuItem
-                    key={model.id}
-                    onClick={() => handleChangeModel(model.id)}
-                  >
-                    <AlertDialogTrigger>
-                      <div className="flex items-center gap-2">
-                        <span>{model.name}</span>
-                      </div>
-                    </AlertDialogTrigger>
-                  </DropdownMenuItem>
-                );
-              })}
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        <AlertDialogContent
-          onEscapeKeyDown={(e) => (pending ? e.preventDefault() : null)}
-        >
-          <AlertDialogHeader>
-            <AlertDialogTitle>title</AlertDialogTitle>
-            <AlertDialogDescription>desc</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel asChild className={`${pending ? "hidden" : ""}`}>
-              <Button>cancel</Button>
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} asChild>
-              <Button>aaaaaaaaa</Button>
-              {/* <Button loading={pending}>
-              {pending
-                ? t("modalDeleteClient.archiving")
-                : t("modalDeleteClient.confirm")}
-            </Button> */}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* <Test
-       pending={pending}
-       setPending={setPending}
-       openDialog={openDialog}
-       setOpenDialog={setOpenDialog}
-      /> */}
+      <ChangeModelModal
+        modelPicked={modelPicked}
+        setOpenDialog={setOpenDialog}
+        openDialog={openDialog}
+      />
     </>
   );
 };
 
-// const Test = ({ pending, setPending, openDialog, setOpenDialog }) => {
-//   // const [pending, setPending] = useState(false);
-//   // const [openDialog, setOpenDialog] = useState(false);
+const ChangeModelModal = ({ modelPicked, setOpenDialog, openDialog }: any) => {
+  const t = useTranslations("pages.editor.sideBar.changeModel.modal");
 
-//   const handleDelete = () => {};
+  const handleConfirm = () => {
+    window.location.href = `?id=${modelPicked.id}`;
+  };
 
-//   return (
-//     <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
-//       <AlertDialogTrigger asChild>
-//         <Button
-//           variant={"link"}
-//           className="cursor-pointer"
-//           onClick={() => setOpenDialog(true)}
-//         >
-//           trigger
-//         </Button>
-//       </AlertDialogTrigger>
-
-//       <AlertDialogContent
-//         onEscapeKeyDown={(e) => (pending ? e.preventDefault() : null)}
-//       >
-//         <AlertDialogHeader>
-//           <AlertDialogTitle>title</AlertDialogTitle>
-//           <AlertDialogDescription>desc</AlertDialogDescription>
-//         </AlertDialogHeader>
-//         <AlertDialogFooter>
-//           <AlertDialogCancel asChild className={`${pending ? "hidden" : ""}`}>
-//             <Button>cancel</Button>
-//           </AlertDialogCancel>
-//           <AlertDialogAction onClick={handleDelete} asChild>
-//             <Button>aaaaaaaaa</Button>
-//             {/* <Button loading={pending}>
-//               {pending
-//                 ? t("modalDeleteClient.archiving")
-//                 : t("modalDeleteClient.confirm")}
-//             </Button> */}
-//           </AlertDialogAction>
-//         </AlertDialogFooter>
-//       </AlertDialogContent>
-//     </AlertDialog>
-//   );
-// };
+  return (
+    <AlertDialog open={openDialog}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>
+            {t("title")}
+            <strong className="ml-1">{modelPicked.name} ?</strong>
+          </AlertDialogTitle>
+          <AlertDialogDescription>{t("desc")}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={() => setOpenDialog(false)} asChild>
+            <Button>{t("cancel")}</Button>
+          </AlertDialogCancel>
+          <AlertDialogAction asChild>
+            <Button onClick={handleConfirm}>{t("confirm")}</Button>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};

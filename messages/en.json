@@ -200,6 +200,15 @@
       "sideBar": {
         "buttonBgColor": "Button Background Color",
         "clip": "Hide content outside the Button",
+        "changeModel": {
+          "dropdownTitle": "Select a template",
+          "modal": {
+            "title": "Do you want to change the selected template to:",
+            "desc": "By confirming, all your modifications will be lost!",
+            "cancel": "Cancel",
+            "confirm": "Confirm"
+          }
+        },
         "tabs": {
           "file": { "label": "My Files" },
           "image": {

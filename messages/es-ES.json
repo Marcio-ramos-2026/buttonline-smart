@@ -200,6 +200,16 @@
       "sideBar": {
         "buttonBgColor": "Color de fondo del Botón",
         "clip": "Ocultar contenido fuera del Botón",
+        "changeModel": {
+          "dropdownTitle": "Selecciona un modelo",
+          "modal": {
+            "title": "¿Deseas cambiar el modelo seleccionado a:",
+            "desc": "¡Al confirmar, todas tus modificaciones se perderán!",
+            "cancel": "Cancelar",
+            "confirm": "Confirmar"
+          }
+        },
+
         "tabs": {
           "file": { "label": "Mis Archivos" },
           "image": {
