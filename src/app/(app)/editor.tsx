@@ -311,7 +311,7 @@ const ChangeModelModal = ({ modelPicked, setOpenDialog, openDialog }: any) => {
         <AlertDialogHeader>
           <AlertDialogTitle>
             {t("title")}
-            <strong className="ml-1">{modelPicked.name} ?</strong>
+            <strong className="ml-1">{modelPicked?.name} ?</strong>
           </AlertDialogTitle>
           <AlertDialogDescription>{t("desc")}</AlertDialogDescription>
         </AlertDialogHeader>

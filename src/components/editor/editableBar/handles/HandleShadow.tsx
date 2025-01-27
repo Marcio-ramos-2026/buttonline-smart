@@ -44,7 +44,7 @@ export const HandleShadow = ({
           shadow ? "bg-gray-900/20" : "bg-transparent hover:bg-gray-900/20"
         )}
       >
-        <Image src={shadowsvg} width={20} height={20} alt='icone shadow' />
+        <Image src={shadowsvg} width={20} height={20} alt='icone shadow' className="min-w-5 min-h-5" />
       </button>
     </Tooltip>
   );

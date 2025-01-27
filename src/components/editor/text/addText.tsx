@@ -1,5 +1,7 @@
 import { useEditorContext } from "@/context/editor";
 import * as fabric from "fabric";
+import { VerticalTextBox } from "./text";
+import { fontSize } from "pdfkit";
 
 export function AddText() {
   const { canvas } = useEditorContext();
@@ -26,22 +28,24 @@ export function AddText() {
   const handleAddVerticalText = () => {
     if (!canvas) return;
 
-    const textBox = new fabric.Textbox("Texto", {
-      width: 140,
-      fontSize: 60,
-      fill: "#a3c9a1",
-      lockSkewingX: true,
-      lockScalingFlip: true,
-      splitByGrapheme: true,
-      skewY: 90,
-      height: 200
+    //@ts-ignore
+    // fabric.VerticalTextBox = VerticalTextBox;
+
+    //@ts-ignore
+    const verticalText = new VerticalTextBox("Texto", {
+      left: 50,
+      top: 50,
+      fontSize: 20,
+      fill: "black",
+      originX: 'center',
+      originY: "start"
     });
 
-    textBox.controls.mt.visible = false;
-    textBox.controls.mb.visible = false;
+    // verticalText.controls.mt.visible = false;
+    // verticalText.controls.mb.visible = false;
 
-    canvas.add(textBox);
-    canvas.centerObject(textBox);
+    canvas.add(verticalText);
+    canvas.centerObject(verticalText);
   };
 
   //TODO arrumar o angulo (variable radians)
@@ -154,13 +158,13 @@ export function AddText() {
       >
         Inisira um Texto curvo
       </button>
-      <button
+      {/* <button
         type="button"
         onClick={handleAddVerticalText}
         className="border border-gray-300 rounded-lg px-2 py-1"
       >
         Inisira um Texto vertical
-      </button>
+      </button> */}
     </div>
   );
 }
