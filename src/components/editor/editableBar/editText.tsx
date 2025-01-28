@@ -117,6 +117,18 @@ export const EditText = ({
           <HandleShadow canvas={canvas} object={object} />
         </>
       )}
+      {object.type === "verticalText" && (
+        <>
+          <HandleCenterCanvasY object={object} canvas={canvas} />
+          <HandleCenterCanvasX object={object} canvas={canvas} />
+          <HandleFontFamily />
+          <HandleFontSize canvas={canvas} object={object} />
+          <HandleTextColor canvas={canvas} object={object} />
+          <HandleTextBold canvas={canvas} object={object} />
+          <HandleTextItalico canvas={canvas} object={object} />
+          <HandleShadow canvas={canvas} object={object} />
+        </>
+      )}
       {object.type === "group" && (
         <>
           <Tooltip content="Orientação da curva">

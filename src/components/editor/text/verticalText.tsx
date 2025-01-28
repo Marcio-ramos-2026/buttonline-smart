@@ -4,11 +4,19 @@ export class VerticalTextBox extends fabric.Textbox {
   //@ts-ignore
   constructor(text, options) {
     super(text, options);
+    const lines = this.text.split("\n"); // Split the text into lines
+    const lineHeight = this.fontSize * this.lineHeight; // Calculate line height
+    const maxLineLength = Math.max(...lines.map((line) => line.length)); // Longest line length
+    this.height = maxLineLength * this.fontSize;
+    this.width = lines.length * lineHeight;
     //@ts-ignore
     this.isEditingMode = false; // Track editing mode
   }
 
-  // Override enterEditing to switch to horizontal rendering
+  get type(): string {
+    return 'verticalText';
+  }
+
   enterEditing() {
     super.enterEditing(); // Call parent method
     //@ts-ignore
@@ -18,7 +26,6 @@ export class VerticalTextBox extends fabric.Textbox {
     this._switchToHorizontal();
   }
 
-  // Override exitEditing to switch back to vertical rendering
   //@ts-ignore
   exitEditing() {
     super.exitEditing(); // Call parent method
@@ -29,7 +36,6 @@ export class VerticalTextBox extends fabric.Textbox {
     this._switchToVertical(this.text);
   }
 
-  // Switch to horizontal rendering
   _switchToHorizontal() {
     //@ts-ignore
     this._originalText = this.text; // Save current text
@@ -40,7 +46,6 @@ export class VerticalTextBox extends fabric.Textbox {
     this.dirty = true; // Mark object for re-render
   }
 
-  // Switch to vertical rendering
   _switchToVertical(text: string) {
     this.text = text; // Restore original text with newlines
     //@ts-ignore
@@ -53,7 +58,6 @@ export class VerticalTextBox extends fabric.Textbox {
     this.dirty = true; // Mark object for re-render
   }
 
-  // Override render to handle both modes
   //@ts-ignore
   _render(ctx) {
     //@ts-ignore

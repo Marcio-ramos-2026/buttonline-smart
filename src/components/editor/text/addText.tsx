@@ -10,12 +10,8 @@ export function AddText() {
     if (!canvas) return;
 
     const textBox = new fabric.Textbox("Texto", {
-      width: 140,
       fontSize: 60,
       fill: "#a3c9a1",
-      lockSkewingX: true,
-      lockScalingFlip: true,
-      splitByGrapheme: true,
     });
 
     textBox.controls.mt.visible = false;

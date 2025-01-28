@@ -25,7 +25,7 @@ export const HandleTextItalico = ({ object, canvas }: CanvasObjectType) => {
     });
   };
   return (
-    <Tooltip content="Negrito">
+    <Tooltip content="Itálico">
       <button
         type="button"
         onClick={handleTextItalic}

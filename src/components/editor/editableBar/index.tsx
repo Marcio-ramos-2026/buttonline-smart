@@ -53,7 +53,7 @@ export const EditableBar = () => {
 
   return (
     <div className="flex items-center w-fit h-full">
-      {(object.type === "textbox" || object.type === "group") && (
+      {(object.type === "textbox" || object.type === "group" || object.type === "verticalText") && (
         <>
           <EditText
             object={object as fabric.Textbox}
