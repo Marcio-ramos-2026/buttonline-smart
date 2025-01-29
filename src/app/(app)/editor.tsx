@@ -3,7 +3,6 @@
 import * as React from "react";
 import {
   Baseline,
-  Folder,
   ImageIcon,
   Redo2,
   Undo2,
@@ -13,11 +12,9 @@ import {
   Eclipse,
   PaintBucket,
 } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
+  SidebarProvider
 } from "@/components/ui/sidebar";
 import FabricContextProvider, { RenderCanvas } from "@/context/editor";
 import { TabIcons } from "@/components/editor/icons";
@@ -37,7 +34,6 @@ import type { User as UserType } from "@prisma/client";
 import { useEditorContext } from "@/context/editor";
 import { useState } from "react";
 import { Tooltip } from "@/components/tooltip/tooltip";
-import CanvasHistory from "@/lib/fabricHistory";
 import { NavUser } from "@/components/nav-user";
 import {
   DropdownMenu,
@@ -49,14 +45,6 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -64,10 +52,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-  AlertDialogPortal,
-  AlertDialogOverlay,
+  AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import { ColorPicker } from "@/components/colorPicker";
 

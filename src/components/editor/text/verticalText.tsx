@@ -14,7 +14,7 @@ export class VerticalTextBox extends fabric.Textbox {
   }
 
   get type(): string {
-    return 'verticalText';
+    return "verticalText";
   }
 
   enterEditing() {
@@ -96,5 +96,17 @@ export class VerticalTextBox extends fabric.Textbox {
 
       ctx.restore(); // Restore canvas state
     }
+  }
+
+  setFontStyle(style: string) {
+    this.set({ fontStyle: style }); // Update font style
+    this._switchToVertical(this.text); // Reapply vertical layout
+    this.canvas?.requestRenderAll(); // Force re-render
+  }
+
+  setTextBold(fontWeight: number) {
+    this.set({ fontWeight: fontWeight }); // Update font style
+    this._switchToVertical(this.text); // Reapply vertical layout
+    this.canvas?.requestRenderAll(); // Force re-render
   }
 }

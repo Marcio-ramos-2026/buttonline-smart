@@ -14,9 +14,19 @@ export const HandleTextBold = ({ object, canvas }: CanvasObjectType) => {
     setTextBold((prev) => {
       prev = !prev;
       if (prev) {
-        object.set({ fontWeight: 900 });
+        if (object.type === "verticalText") {
+          //@ts-ignore
+          object.setTextBold(900);
+        } else {
+          object.set({ fontWeight: 900 });
+        }
       } else {
-        object.set({ fontWeight: 400 });
+        if (object.type === "verticalText") {
+          //@ts-ignore
+          object.setTextBold(400);
+        } else {
+          object.set({ fontWeight: 400 });
+        }
       }
       //@ts-ignore
       canvas.fire("modified", { target: object });

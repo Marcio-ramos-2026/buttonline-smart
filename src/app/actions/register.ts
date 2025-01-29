@@ -42,16 +42,16 @@ export async function registerAction(data: SignUpType) {
       await transport.sendMail({
         from: process.env.EMAIL_SENDER,
         to: data.email,
-        subject: "preview test",
+        subject: "Cadastro na plataforma Buttonline",
         html: htmlEmail,
       });
     }
 
-    const voucher = await validateVoucher(createdUser)
-    
+    const voucher = await validateVoucher(createdUser);
+
     return {
       message: "Usurário criado com sucesso",
-      redirectUrl: '/',
+      redirectUrl: "/login",
       success: true,
     };
   } catch (e) {

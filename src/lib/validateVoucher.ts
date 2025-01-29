@@ -38,7 +38,9 @@ export async function validateVoucher(user: UserType) {
     }
   }
 
-  if (!order) throw new Error('Ocorreu um erro interno, contate o suporte.');
+  if (!order) return {
+    message: 'Customer without order.'
+  };
   const voucherTime = new Date(order.created);
   voucherTime.setDate(voucherTime.getDate() + VOUCHER_DAYS);
 

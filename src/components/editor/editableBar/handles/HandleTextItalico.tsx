@@ -7,16 +7,26 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 export const HandleTextItalico = ({ object, canvas }: CanvasObjectType) => {
-    const [textItalic, setItalic] = useState(false);
+  const [textItalic, setItalic] = useState(false);
 
   const handleTextItalic = () => {
     if (!object || !canvas) return;
     setItalic((prev) => {
       prev = !prev;
       if (prev) {
-        object.set({ fontStyle: "italic" });
+        if (object.type === "verticalText") {
+          //@ts-ignore
+          object.setFontStyle("italic");
+        } else {
+          object.set({ fontStyle: "italic" });
+        }
       } else {
-        object.set({ fontStyle: "normal" });
+        if (object.type === "verticalText") {
+          //@ts-ignore
+          object.setFontStyle("normal");
+        } else {
+          object.set({ fontStyle: "normal" });
+        }
       }
       //@ts-ignore
       canvas.fire("modified", { target: object });
