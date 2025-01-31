@@ -27,6 +27,8 @@ import CanvasHistory from "@/lib/fabricHistory";
 import { PrintButton } from "@/components/editor/printButton";
 import { useTranslations } from "next-intl";
 import styles from "./styles.module.css";
+import { EditableBar } from "@/components/editor/editableBar";
+import clsx from "clsx";
 
 const { theme } = resolveConfig(tailwindConfig);
 
@@ -242,6 +244,42 @@ export const RenderCanvas = () => {
   } = useEditorContext();
 
   const t = useTranslations("pages.editor");
+  const [object, setObject] = useState<fabric.Object | null>(null);
+
+  useEffect(() => {
+    if (!canvas) return;
+    canvas.on("selection:created", (canva) => {
+      if (canva.selected.length > 1) {
+        //@ts-ignore
+        setObject(canva.selected);
+        return;
+      }
+      //@ts-ignore
+      setObject(canva.selected[0]);
+    });
+
+    canvas.on("selection:updated", (canva) => {
+      if (canva.selected.length > 1) {
+        //@ts-ignore
+        setObject(canva.selected);
+        return;
+      }
+      //@ts-ignore
+      setObject(canva.selected[0]);
+    });
+
+    //@ts-ignore
+    canvas.on("modified", (canva) => {
+      //@ts-ignore
+      setObject(canva.target);
+    });
+
+    return () => {
+      canvas.off("selection:created");
+      canvas.off("selection:cleared");
+    };
+  }, [canvas]);
+
 
   useEffect(() => {
     if (!canvas) return;
@@ -301,8 +339,12 @@ export const RenderCanvas = () => {
 
   return (
     <div ref={containerRef} className="bg-gray-100 h-full w-full relative">
-      <div className="absolute left-0 right-0 z-50  top-2  flex justify-center">
-        <div className="bg-background inline-flex justify-center items-center gap-4 mx-auto  p-2 rounded-lg drop-shadow-md">
+      <div className={clsx(
+        "absolute left-3 right-3 z-50 top-2 flex flex-col md:flex-row gap-2 md:gap-10 max-h-14",
+        !!object?.type ? 'justify-between' : 'items-center md:justify-center'
+      )}>
+        {!!object?.type && <div className="bg-white rounded-lg drop-shadow-md px-4 py-2 w-full md:w-fit md:max-w-[50%] min-h-14 overflow-x-auto scrollBar"><EditableBar object={object} setObject={setObject} /></div>}
+        <div className="bg-background inline-flex justify-center items-center gap-4 w-fit p-2 rounded-lg drop-shadow-md">
           <p>{currentModel.name}</p>
           <PrintButton
             canvas={canvas as fabric.Canvas}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEditorContext } from "@/context/editor";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import * as fabric from "fabric";
 import { EditText } from "./editText";
 import { EditImage } from "./editImage";
@@ -11,43 +11,10 @@ import { EditShapes } from "./editableShapes";
 
 const shapesType = ["triangle", "circle", "rect", "polygon"];
 
-export const EditableBar = () => {
+export const EditableBar = ({ object, setObject }: { object: fabric.Object, setObject: (object: SetStateAction<fabric.Object | null>) => void; }) => {
   const { canvas } = useEditorContext();
-  const [object, setObject] = useState<fabric.Object | null>(null);
 
-  useEffect(() => {
-    if (!canvas) return;
-    canvas.on("selection:created", (canva) => {
-      if (canva.selected.length > 1) {
-        //@ts-ignore
-        setObject(canva.selected);
-        return;
-      }
-      //@ts-ignore
-      setObject(canva.selected[0]);
-    });
-
-    canvas.on("selection:updated", (canva) => {
-      if (canva.selected.length > 1) {
-        //@ts-ignore
-        setObject(canva.selected);
-        return;
-      }
-      //@ts-ignore
-      setObject(canva.selected[0]);
-    });
-
-    //@ts-ignore
-    canvas.on("modified", (canva) => {
-      //@ts-ignore
-      setObject(canva.target);
-    });
-
-    return () => {
-      canvas.off("selection:created");
-      canvas.off("selection:cleared");
-    };
-  }, [canvas]);
+  console.log('OBJECT TYPEEEEEEE', object)
 
   if (!object?.type) return;
 

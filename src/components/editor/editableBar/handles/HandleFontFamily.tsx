@@ -15,7 +15,7 @@ export const HandleFontFamily = () => {
         setFontFamily(e);
       }}
     >
-      <SelectTrigger className="w-fit h-full py-1 md:py-2 focus:ring-0 focus:ring-offset-0 border border-solid border-gray-300">
+      <SelectTrigger className="w-fit py-1 md:py-2 focus:ring-0 focus:ring-offset-0 border border-solid border-gray-300 h-auto">
         <SelectValue placeholder={fontFamilys[0]} />
       </SelectTrigger>
       <SelectContent>

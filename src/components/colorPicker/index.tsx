@@ -39,7 +39,7 @@ const ColorPicker = forwardRef<
         <PopoverTrigger asChild disabled={disabled ?? undefined} onBlur={onBlur}>
           <Button
             {...props}
-            className={cn('block', className)}
+            className={cn('block !h-auto', className)}
             name={name}
             onClick={() => {
               setOpen(true);

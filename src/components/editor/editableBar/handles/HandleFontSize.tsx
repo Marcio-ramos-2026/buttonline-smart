@@ -52,7 +52,7 @@ export const HandleFontSize = ({
     return (
         <Input
             type="number"
-            className="[&_input]:max-w-20 [&_input]:min-w-12 [&_input]:py-1 md:[&_input]:py-2 [&_input]:h-full [&_input]:border-gray-300 h-full"
+            className="[&_input]:max-w-20 [&_input]:min-w-16 [&_input]:py-1 md:[&_input]:py-2 [&_input]:h-full [&_input]:border-gray-300 h-full"
             value={fontSize}
             onChange={handleChangeSize}
           />

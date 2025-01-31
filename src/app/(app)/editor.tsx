@@ -148,7 +148,7 @@ export function Editor({ user }: EditorProps) {
               <ClipButton />
               <ChangeButtonCollor />
               <ChangeModelDropdown />
-              <EditableBar />
+              {/* <EditableBar /> */}
             </div>
             <div className="flex gap-1.5 md:gap-3 items-center">
               <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN]}>

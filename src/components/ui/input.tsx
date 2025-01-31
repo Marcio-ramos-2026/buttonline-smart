@@ -182,7 +182,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <label
         className={cn(
           full ? "w-full" : "w-fit",
-          "flex flex-col gap-1.5 text-text"
+          "flex flex-col gap-1.5 text-text !h-auto"
         )}
       >
         {label && <span>{label}</span>}
