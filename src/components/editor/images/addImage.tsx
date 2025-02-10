@@ -3,7 +3,6 @@
 import { LoadingIcon } from "@/components/loading";
 import { SearchInput } from "@/components/searchInput";
 import { useEditorContext } from "@/context/editor";
-import { useInifiteScroll } from "@/hooks/useInifiteScroll";
 import { useInifiteScrollImage } from "@/hooks/useInifiteScrollImage";
 import * as fabric from "fabric";
 import { useTranslations } from "next-intl";
@@ -13,7 +12,7 @@ import { ImageOff } from "lucide-react";
 
 export function AddImage() {
   const { canvas } = useEditorContext();
-  const [images, setImages] = useState<string[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<{ preview: string; webFormat: string }[]>([]);
   const t = useTranslations("pages.editor.sideBar.tabs.image");
   const [value, setValue] = useState("");
 
@@ -42,8 +41,11 @@ export function AddImage() {
     const imgObj = e.target.files?.[0];
     if (!imgObj) return;
     const imageUrl = URL.createObjectURL(imgObj);
-    setImages((prev) => {
-      const updatedImages = [imageUrl as string, ...prev];
+    setUploadedImages((prev) => {
+      const updatedImages = [
+        { preview: imageUrl, webFormat: imageUrl },
+        ...(prev as Array<{ preview: string; webFormat: string }>),
+      ];
       return updatedImages;
     });
   };
@@ -56,8 +58,11 @@ export function AddImage() {
     const imgObj = e.dataTransfer.files?.[0];
     if (!imgObj) return;
     const imageUrl = URL.createObjectURL(imgObj);
-    setImages((prev) => {
-      const updatedImages = [imageUrl as string, ...prev];
+    setUploadedImages((prev) => {
+      const updatedImages = [
+        { preview: imageUrl, webFormat: imageUrl },
+        ...(prev as Array<{ preview: string; webFormat: string }>),
+      ];
       return updatedImages;
     });
   };
@@ -127,19 +132,36 @@ export function AddImage() {
 
       <div className="overflow-y-auto h-[77vh] scrollBar pr-2">
         <div className="gap-2 grid grid-cols-2">
-          {items.map((image, k) => {
+          {uploadedImages?.map((image, k) => {
             return (
               <button
-                key={image.webformatURL}
+                key={`${image.preview}_${k}`}
                 type="button"
-                //@ts-ignore
-                onClick={() => handleAddImage(image.webformatURL)}
+                onClick={() => handleAddImage(image.webFormat)}
                 className="rounded-md inline-block last:mb-0 h-24"
-                data-id={image.id}
+                data-id={`${image.preview}_${k}`}
               >
                 <Image
                   alt="imagem teste"
-                  //@ts-ignore
+                  src={image.preview}
+                  width={150}
+                  height={200}
+                  className="w-full h-24 block rounded-md object-cover"
+                />
+              </button>
+            );
+          })}
+          {items?.map((image, k) => {
+            return (
+              <button
+                key={`${image.previewURL}_${k}`}
+                type="button"
+                onClick={() => handleAddImage(image.webformatURL)}
+                className="rounded-md inline-block last:mb-0 h-24"
+                data-id={`${image.previewURL}_${k}`}
+              >
+                <Image
+                  alt="imagem teste"
                   src={image.previewURL}
                   width={150}
                   height={200}
@@ -150,14 +172,14 @@ export function AddImage() {
           })}
         </div>
 
-        {items.length === 0 && (
+        {items?.length === 0 && (
           <div className="flex flex-col justify-center items-center mt-6">
             <ImageOff className="h-[30px] w-[30px]" />
             <p className="mt-4">{t("noImage")}</p>
           </div>
         )}
 
-        {items.length > 0 && (
+        {(items?.length as number) > 0 && (
           <div className="flex justify-center items-center mt-2" ref={ref}>
             {loading && <LoadingIcon />}
           </div>

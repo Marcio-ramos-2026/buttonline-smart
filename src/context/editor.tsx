@@ -340,8 +340,8 @@ export const RenderCanvas = () => {
   return (
     <div ref={containerRef} className="bg-gray-100 h-full w-full relative">
       <div className={clsx(
-        "absolute left-3 right-3 z-50 top-2 flex flex-col md:flex-row gap-2 md:gap-10 max-h-14",
-        !!object?.type ? 'justify-between' : 'items-center md:justify-center'
+        "absolute left-3 right-3 z-50 top-2 flex flex-col md:flex-row gap-2 md:gap-10 max-h-14 items-center",
+        !!object?.type ? 'justify-between' : 'items-end md:justify-end'
       )}>
         {!!object?.type && <div className="bg-white rounded-lg drop-shadow-md px-4 py-2 w-full md:w-fit md:max-w-[50%] min-h-14 overflow-x-auto scrollBar"><EditableBar object={object} setObject={setObject} /></div>}
         <div className="bg-background inline-flex justify-center items-center gap-4 w-fit p-2 rounded-lg drop-shadow-md">

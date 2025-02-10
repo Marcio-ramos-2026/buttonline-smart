@@ -2,6 +2,7 @@ import { useEditorContext } from "@/context/editor";
 import * as fabric from "fabric";
 import { VerticalTextBox } from "./verticalText";
 import { CurvedText } from "./curvedText";
+import { ArchedTextBox } from "./teste";
 
 export function AddText() {
   const { canvas } = useEditorContext();
@@ -53,6 +54,24 @@ export function AddText() {
     canvas.centerObject(curvedText);
   };
 
+  const testeCurved = () => {
+    if (!canvas) return;
+
+
+    const archedText = new ArchedTextBox("Texto curvo", {
+      left: 100,
+      top: 100,
+      fontSize: 24,
+      fill: "black",
+      radius: 100,
+      startAngle: -180,
+      endAngle: 0,
+    });
+
+    canvas.add(archedText);
+    canvas.centerObject(archedText);
+  }
+
   return (
     <div className="flex gap-3 flex-col text-textForefround">
       <button
@@ -64,10 +83,18 @@ export function AddText() {
       </button>
       <button
         type="button"
-        onClick={handleAddCurvedText}
+        // onClick={handleAddCurvedText}
+        onClick={testeCurved}
         className="border border-gray-300 rounded-lg px-2 py-1"
       >
         Inisira um Texto curvo
+      </button>
+      <button
+        type="button"
+        onClick={handleAddCurvedText}
+        className="border border-gray-300 rounded-lg px-2 py-1"
+      >
+        Inisira um Texto batata
       </button>
       <button
         type="button"
