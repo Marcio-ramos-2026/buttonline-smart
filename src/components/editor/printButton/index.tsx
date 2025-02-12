@@ -32,75 +32,94 @@ export const PrintButton = ({
 
     const dpi = getScreenDPI();
 
-    const {cardenasCanvas, elements} = await canvas.getObjects().reduce(async (accPromise,obj)=>{
-      const acc = await accPromise;
+  //   const {cardenasCanvas, elements} = await canvas.getObjects().reduce(async (accPromise,obj)=>{
 
-      if(obj.cardenas_canvas) {
-        acc.cardenasCanvas = await obj.clone(["cardenas_print"]) as fabric.Group
-      }
+  //     const acc = await accPromise;
 
-      if(!obj.cardenas_canvas){
-        if (obj.type === "image") {
-          const image = obj as fabric.FabricImage;
-          const imageElement = image.getElement() as HTMLImageElement;
+  //     if(obj.cardenas_canvas) {
+  //       acc.cardenasCanvas = await obj.clone(["cardenas_print"]) as fabric.Group
+  //     }
 
-          const url = new URL(imageElement.src);
-          const pathname = url.pathname; // Get the file path
-          const extension = pathname.split(".").pop()?.toLowerCase(); // Extract the file extension (before query params)
+  //     if(!obj.cardenas_canvas){
+  //       obj = await obj.clone()
+  //       if (obj.type === "image") {
+  //         const image = obj as fabric.FabricImage;
+  //         const imageElement = image.getElement() as HTMLImageElement;
 
-           // Check for file format based on the extension
-          const isJpeg = extension === "jpg" || extension === "jpeg";
-          // Convert the image to Base64
-          const base64 = image.toDataURL({
-            format: isJpeg ? "jpeg" : "png", // Use 'jpeg' if needed
-            quality: 1, // High quality for JPEG
-          });
+  //         const url = new URL(imageElement.src);
+  //         const pathname = url.pathname; // Get the file path
+  //         const extension = pathname.split(".").pop()?.toLowerCase(); // Extract the file extension (before query params)
 
-          // imageElement.src = base64;
+  //          // Check for file format based on the extension
+  //         const isJpeg = extension === "jpg" || extension === "jpeg";
+  //         // Convert the image to Base64
+  //         const base64 = image.toDataURL({
+  //           format: isJpeg ? "jpeg" : "png", // Use 'jpeg' if needed
+  //           quality: 1, // High quality for JPEG
+  //         });
 
-          // image.set({
-          //   element: imageElement,
-          // });
+  //         imageElement.src = base64;
 
-          obj = image
-        }
+  //         image.set({
+  //           element: imageElement,
+  //         });
 
-        obj = await obj.clone()
+  //         obj = image
+  //       }
 
-        acc.elements.push(obj)
-      }
+  //       obj.set({
+  //         interactive: true,
+  //         scalable: true,
+  //         lockScalingX: false,
+  //         lockScalingY: false,
+  //         lockMovementX: false,
+  //         lockMovementY: false,
+  //         lockRotation: false,
+  //         objectCaching: false,
+  //       });
 
-      return acc
-    },
-    Promise.resolve({ cardenasCanvas: {} as fabric.Group, elements: [] as fabric.Object[] })
-  )
+        
 
-  const groupBoundingBox = fabric.util.makeBoundingBoxFromPoints(
-    elements.map(obj => ({
-      x: (obj.left || 0) + (obj.width || 0) * (obj.scaleX || 1) / 2,
-      y: (obj.top || 0) + (obj.height || 0) * (obj.scaleY || 1) / 2,
-    }))
-  );
-  
+  //       acc.elements.push(obj)
+  //     }
 
-  const groupElement = new fabric.Group(elements,{
-    left: groupBoundingBox.left,
-    top:groupBoundingBox.top,
-    width: groupBoundingBox.width,
-    height: groupBoundingBox.height
-  })
+  //     return acc
+  //   },
+  //   Promise.resolve({ cardenasCanvas: {} as fabric.Group, elements: [] as fabric.Object[],f : {} as fabric.FabricObject })
+  // )
+
+   
+    // Calculate the scale factor
     
-  const scaleFactorGroup = canvasWidth / Math.max(groupBoundingBox.width, groupBoundingBox.height);
-  groupElement.scale(scaleFactorGroup);
-  
-
-    cardenasCanvas.getObjects().forEach(o => {
-      if (!o.cardenas_print) {
-        cardenasCanvas.remove(o);
-      }
-    })
     
-    const clip = cardenasCanvas;
+    // const scaleFactorGroup = canvasWidth / Math.max(groupBoundingBox.width, groupBoundingBox.height);
+    
+    // groupElement.scale(scaleFactorGroup);
+
+    const cardenasCanvas = await canvas.clone(["cardenas_print","cardenas_canvas"])
+    // cardenasCanvas.getObjects().forEach(o => {
+    //   if (!o.cardenas_print) {
+    //     cardenasCanvas.remove(o);
+    //   }
+    // })
+
+    cardenasCanvas.getObjects().forEach((obj) => {
+      // Check if the object has the 'cardenas_canvas' property and is a group
+      if (!obj.cardenas_canvas) return;
+    
+      const canvas = obj as fabric.Group 
+      // Use forEachObject to iterate through the objects inside the group
+
+      canvas.getObjects().forEach((groupObj) => {
+        if(groupObj.cardenas_print) return
+
+        canvas.remove(groupObj)
+      });
+    });
+    
+    const clip = new fabric.Group(cardenasCanvas.getObjects(),{
+
+    });
     const scaleFactor = canvasWidth / Math.max(clip.width, clip.height);
 
     clip.scale(scaleFactor)
@@ -113,13 +132,10 @@ export const PrintButton = ({
 
 
     printCanvas.add(clip)
-    printCanvas.add(groupElement)
-    printCanvas.centerObject(groupElement)
+    // printCanvas.add(groupElement)
+    // printCanvas.centerObject(groupElement)
     printCanvas.centerObject(clip)
     printCanvas.clipPath = clip
-
-  
-    console.log('xxx',printCanvas.toSVG())
     
     fetch("/api/print", {
       method: "POST",

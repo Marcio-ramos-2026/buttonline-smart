@@ -7,7 +7,7 @@ import React, {
   useRef,
   useEffect,
   RefObject,
-  SetStateAction,
+
 } from "react";
 import * as fabric from "fabric";
 
@@ -17,18 +17,17 @@ import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../tailwind.config";
 import type { editor_canvas } from "@prisma/client";
 import { createModel, generateSVG, ModelType } from "@/components/editor/model";
-import { LoadingIcon } from "@/components/loading";
 import { useDebounceCallback } from "@/hooks/useDebounceCallback";
 import { Button } from "@/components/ui/button";
 import { ReactSVG } from "react-svg";
-// import { height, width } from "pdfkit/js/page";
-import { Printer } from "lucide-react";
+import { CopyPlus } from "lucide-react";
 import CanvasHistory from "@/lib/fabricHistory";
 import { PrintButton } from "@/components/editor/printButton";
 import { useTranslations } from "next-intl";
 import styles from "./styles.module.css";
 import { EditableBar } from "@/components/editor/editableBar";
 import clsx from "clsx";
+import { MultipleButton } from "@/components/editor/multiple/multiple";
 
 const { theme } = resolveConfig(tailwindConfig);
 
@@ -350,6 +349,7 @@ export const RenderCanvas = () => {
             canvas={canvas as fabric.Canvas}
             currentModel={currentModel}
           />
+          <MultipleButton />
         </div>
       </div>
 

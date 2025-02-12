@@ -6,7 +6,8 @@ export type ModelType = {
 };
 
 export const pageSizes = {
-  A4: [595.44, 841.68], // A4 size in points
+  A4: [842, 595], // A4 size in points
+  A5: [595, 842], // A4 size in points
   Letter: [612, 792], // Letter size in points
 };
 

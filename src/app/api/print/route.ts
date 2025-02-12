@@ -17,11 +17,17 @@ const mmToPt = (mm: number) => mm * 2.83465
 const mmToPx = (mm: number, dpi: number) => Math.round(mm * (dpi / 25.4))
 const pxToMm = (px: number, dpi: number) => px * 25.4 / dpi
 const pxToPt = (px: number, dpi: number) => px * (72/dpi)
+function pxToPt2(px:number) {
+  const pt = px * 0.75;
+  return pt;
+}
 
 
 export async function POST(request: NextRequest) {
   const data: printRequest = await request.json()
   const {model_id, svg, dpi, canvasHeight, canvasWidth} = data
+
+  console.log('svg',svg)
 
     const model = await prisma.editor_canvas.findFirst(({
         where: {
@@ -55,14 +61,15 @@ export async function POST(request: NextRequest) {
     const pngBuffer = await sharp(Buffer.from(svg),{density:1000})
       .png({quality:100})
       .toBuffer();
-    const pngImage = await pdfDoc.embedPng(pngBuffer);    
+    const pngImage = await pdfDoc.embedPng(pngBuffer);     
 
     Object.values(gabarito.positions).forEach((p) => {
+      
       page.drawImage(pngImage, {
         x: mmToPt(p.x),
-        y: height - pxToPt(canvasHeight,dpi) - mmToPt(p.y),
-        width: pxToPt(canvasWidth,dpi,),
-        height: pxToPt(canvasHeight,dpi)
+        y: height - pxToPt2(canvasHeight) - mmToPt(p.y),
+        width: pxToPt2(canvasWidth),
+        height: pxToPt2(canvasHeight)
       });
     })
 
