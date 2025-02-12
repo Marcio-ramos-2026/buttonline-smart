@@ -14,13 +14,13 @@ const shapesType = ["triangle", "circle", "rect", "polygon"];
 export const EditableBar = ({ object, setObject }: { object: fabric.Object, setObject: (object: SetStateAction<fabric.Object | null>) => void; }) => {
   const { canvas } = useEditorContext();
 
-  console.log('OBJECT TYPEEEEEEE', object)
+  // console.log('OBJECT TYPEEEEEEE', object)
 
   if (!object?.type) return;
 
   return (
     <div className="flex items-center w-fit h-full">
-      {(object.type === "textbox" || object.type === "group" || object.type === "verticalText") && (
+      {(object.type === "textbox" || object.type === "curvedText" || object.type === "verticalText") && (
         <>
           <EditText
             object={object as fabric.Textbox}

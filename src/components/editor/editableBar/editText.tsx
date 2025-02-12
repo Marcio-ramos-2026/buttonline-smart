@@ -129,7 +129,7 @@ export const EditText = ({
           <HandleShadow canvas={canvas} object={object} />
         </>
       )}
-      {object.type === "group" && (
+      {object.type === "curvedText" && (
         <>
           <Tooltip content="Orientação da curva">
             <button
