@@ -120,7 +120,7 @@ model editor_canvas {
 
 model editor_icons {
   id        Int      @id @default(autoincrement())
-  svg       String   @db.Text
+  svg       String   @db.LongText
   category  String
   ptBR_name String?  @map("ptbr_name")
   enUS_name String?  @map("enus_name")

@@ -56,37 +56,37 @@ export const TabIcons = ({ content }: { content: string }) => {
   // console.log('ITEMS', items)
 
   return (
-    <>
-      <div className="flex flex-col px-4 h-full space-y-4">
-        <SearchInput
-          onValueChange={(val) => {
-            setValue(val);
-          }}
-          debounceTime={300}
-        />
+    <div className="text-textForefround h-full flex flex-col gap-4">
+      <SearchInput
+        onValueChange={(val) => {
+          setValue(val);
+        }}
+        debounceTime={300}
+      />
 
-        <div className="flex-1 overflow-y-auto scrollBar">
-          <div className="flex flex-wrap h-fit max-h-full">
-            {items?.map((icon) => {
-              const base64Svg = `data:image/svg+xml;base64,${btoa(icon.svg)}`;
+      <div className="overflow-y-auto h-[87vh] scrollBar pr-2">
+        <div className="gap-2 grid grid-cols-3">
+          {items?.map((icon) => {
+            const base64Svg = `data:image/svg+xml;base64,${btoa(icon.svg)}`;
 
-              return (
-                <div
-                  onClick={() => handleAddIcon(icon.svg)}
-                  className="h-[75px] w-[75px] text-white"
-                  key={icon.id}
-                >
-                  <ReactSVG src={base64Svg} />
-                </div>
-              );
-            })}
-          </div>
+            return (
+              <div
+                onClick={() => handleAddIcon(icon.svg)}
+                className="h-[75px] w-[75px] text-white svgIconsEditor"
+                key={icon.id}
+              >
+                <ReactSVG src={base64Svg} />
+              </div>
+            );
+          })}
+        </div>
 
-          <div className="flex justify-center items-center mt-8" ref={ref}>
+        {(items?.length as number) > 0 && (
+          <div className="flex justify-center items-center mt-2" ref={ref}>
             {loading && <LoadingIcon />}
           </div>
-        </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
