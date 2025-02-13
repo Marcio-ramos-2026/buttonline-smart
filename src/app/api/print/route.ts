@@ -27,8 +27,6 @@ export async function POST(request: NextRequest) {
   const data: printRequest = await request.json()
   const {model_id, svg, dpi, canvasHeight, canvasWidth} = data
 
-  console.log('svg',svg)
-
     const model = await prisma.editor_canvas.findFirst(({
         where: {
             id:model_id
@@ -73,15 +71,20 @@ export async function POST(request: NextRequest) {
       });
     })
 
+    pdfDoc.setTitle(model.name)
+    pdfDoc.setAuthor("Cardenas - Buttonline")
+    pdfDoc.setCreationDate(new Date())
+    
 
     // Serialize the PDF to bytes
     const pdfBytes = await pdfDoc.save();
+
 
     // Return the PDF as a response
     return new NextResponse(pdfBytes, {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": "inline; filename='document.pdf'", // Open the PDF in the browser
+        "Content-Disposition": `attachment; filename='${model.name}.pdf'`,
       },
     });
   } catch (error) {

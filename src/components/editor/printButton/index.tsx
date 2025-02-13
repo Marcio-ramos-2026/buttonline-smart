@@ -9,6 +9,7 @@ import {
 import { Printer } from "lucide-react";
 import * as fabric from "fabric";
 import type { editor_canvas } from "@prisma/client";
+import { useState } from "react";
 
 export const PrintButton = ({
   canvas,
@@ -17,11 +18,16 @@ export const PrintButton = ({
   canvas: fabric.Canvas;
   currentModel: editor_canvas;
 }) => {
+  const [printing, setPrinting] = useState(false)
+
+
   const handlePrint = async () => {
     if(!currentModel || !currentModel.size){
       alert('Configuração errada')
       return
     }
+
+    setPrinting(true)
 
     let [width,height] = currentModel.size.split(',') 
     if(!height) height = width
@@ -160,7 +166,7 @@ export const PrintButton = ({
       })
       .catch((error) => {
         console.error("Error fetching the PDF:", error);
-      });
+      }).finally(()=> setPrinting(false));
   }
   return (
     <Dialog>
@@ -191,6 +197,8 @@ export const PrintButton = ({
               icon={<Printer />}
               variant="outline"
               onClick={handlePrint}
+              disabled={printing}
+              loading={printing}
             >
               Imprimir usando gabarito
             </Button>
