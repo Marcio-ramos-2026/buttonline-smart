@@ -162,7 +162,24 @@ export const PrintButton = ({
         const url = window.URL.createObjectURL(blob);
 
         // Open the PDF in a new tab
-        window.open(url, "_blank");
+        const printTAB = window.open(url, "_blank");
+        if(!printTAB?.document) return
+
+        const style = printTAB.document.createElement("style");
+
+        style.textContent = `
+              @page {
+                size: A3 landscape;
+                margin: 0;
+                size: landscape;
+              }
+        `;
+        
+        printTAB.document.head.appendChild(style);
+        setTimeout(() => {
+          printTAB.print();
+        }, 200);
+        
       })
       .catch((error) => {
         console.error("Error fetching the PDF:", error);

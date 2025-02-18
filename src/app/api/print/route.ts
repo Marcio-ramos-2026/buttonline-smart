@@ -13,7 +13,8 @@ interface printRequest  {
   canvasHeight: number;
 }
 
-const mmToPt = (mm: number) => mm * 2.83465
+const mmToPt2 = (mm: number) => mm * 2.83465
+const mmToPt = (mm: number) => parseFloat((mm * 2.83465).toFixed(5));
 const mmToPx = (mm: number, dpi: number) => Math.round(mm * (dpi / 25.4))
 const pxToMm = (px: number, dpi: number) => px * 25.4 / dpi
 const pxToPt = (px: number, dpi: number) => px * (72/dpi)
@@ -41,6 +42,10 @@ export async function POST(request: NextRequest) {
     }
     
     const gabarito = model?.gabarito as ModelConfig["gabarito"]
+    const sizes = model.size?.split(",")
+    let [modelWidth, modelHeight] = sizes as string[]
+    if(!modelHeight) modelHeight = modelWidth
+
 
     // const element = createModel(model)
 
@@ -61,13 +66,14 @@ export async function POST(request: NextRequest) {
       .toBuffer();
     const pngImage = await pdfDoc.embedPng(pngBuffer);     
 
+
     Object.values(gabarito.positions).forEach((p) => {
       
       page.drawImage(pngImage, {
         x: mmToPt(p.x),
-        y: height - pxToPt2(canvasHeight) - mmToPt(p.y),
-        width: pxToPt2(canvasWidth),
-        height: pxToPt2(canvasHeight)
+        y: height - mmToPt(parseFloat(modelHeight)) - mmToPt(p.y),
+        width: mmToPt(parseFloat(modelWidth)),
+        height: mmToPt(parseFloat(modelHeight))
       });
     })
 
