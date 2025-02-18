@@ -11,7 +11,8 @@ const inputVariants = cva(
     variants: {
       color: {
         primary: "border-primary focus-visible:ring-primary text-text",
-        primaryForeground: "border-gray-200 focus-visible:ring-gray-200 text-textForefround",
+        primaryForeground:
+          "border-gray-200 focus-visible:ring-gray-200 text-textForefround",
         danger: "border-danger focus-visible:ring-danger",
         secondary: "border-secondary focus-visible:ring-secondary",
       },
@@ -150,6 +151,7 @@ export interface InputProps
   addonFilled?: boolean;
   disabled?: boolean;
   full?: boolean;
+  centerText?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -166,6 +168,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       addonFilled = false,
       color = "primary",
       full = true,
+      centerText = false,
       ...props
     },
     ref
@@ -210,14 +213,15 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               !!addonBefore
                 ? "pl-14"
                 : icon && iconPlacement === "start"
-                ? "pl-10"
-                : "pl-3",
+                  ? "pl-10"
+                  : "pl-3",
               !!addonAfter
                 ? "pr-14"
                 : icon && iconPlacement === "end"
-                ? "pr-10"
-                : "pr-3",
-              props?.readOnly ? "text-gray-400" : ""
+                  ? "pr-10"
+                  : "pr-3",
+              props?.readOnly ? "text-gray-400" : "",
+              centerText ? "text-center" : ""
             )}
             disabled={disabled}
             ref={ref}
