@@ -390,7 +390,7 @@ const ModelsExamples = ({ model }: { model: editor_canvas }) => {
   };
 
   return (
-    <div className="flex flex-col rounded-lg bg-white shadow-sm border">
+    <div className="flex flex-col rounded-lg bg-white shadow-sm border justify-between">
       <div className="px-4 py-5 sm:px-6">
         <h5 className="text-primary text-center">{model.name}</h5>
       </div>
@@ -401,7 +401,7 @@ const ModelsExamples = ({ model }: { model: editor_canvas }) => {
         />
       </div>
 
-      <div className="mt-auto p-4">
+      <div className="">
         <Button
           loading={loadingSelectedModel}
           onClick={() => handleSelectModel(model)}
