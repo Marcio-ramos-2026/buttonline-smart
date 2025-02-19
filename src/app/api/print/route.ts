@@ -1,7 +1,7 @@
 import { createModel, pageSizes } from "@/components/editor/model";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { PDFDocument } from "pdf-lib";
+import { PDFDocument, Degrees, degrees } from "pdf-lib";
 import sharp from 'sharp'
 import { ModelConfig } from "@/components/editor/model";
 
@@ -43,17 +43,15 @@ export async function POST(request: NextRequest) {
     
     const gabarito = model?.gabarito as ModelConfig["gabarito"]
     const sizes = model.size?.split(",")
+    const orientation = gabarito.orientation ?? 'vertical'
+
     let [modelWidth, modelHeight] = sizes as string[]
     if(!modelHeight) modelHeight = modelWidth
 
-
-    // const element = createModel(model)
-
-    // const Elementwidth = model.shape == 'circle' ? element.width / 2 : element.width
-    // const Elementheight = model.shape == 'circle' ? element.height / 2 : element.height
-
-    // const b =  sharp(Buffer.from(svg),{density:1000})
-    // console.log('xxx',svg)
+    const pageSize = pageSizes[gabarito.pdf] as [number,number]
+    if(orientation === 'horizontal'){
+      pageSize.reverse()
+    }
 
   try {
     // Create a new PDF document
@@ -73,8 +71,15 @@ export async function POST(request: NextRequest) {
         x: mmToPt(p.x),
         y: height - mmToPt(parseFloat(modelHeight)) - mmToPt(p.y),
         width: mmToPt(parseFloat(modelWidth)),
-        height: mmToPt(parseFloat(modelHeight))
+        height: mmToPt(parseFloat(modelHeight)),
+        // rotate: degrees(p.rotate ?? 0)
       });
+    })
+
+    page.drawLine({
+      thickness: 2,
+      end:{x:0,y:20},
+      start: {x: 20, y:20}
     })
 
     pdfDoc.setTitle(model.name)

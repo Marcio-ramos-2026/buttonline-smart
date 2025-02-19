@@ -6,7 +6,7 @@ export type ModelType = {
 };
 
 export const pageSizes = {
-  A4: [842, 595], // A4 size in points
+  A4: [595, 842], // A4 size in points
   A5: [595, 842], // A4 size in points
   Letter: [612, 792], // Letter size in points
 };
@@ -44,8 +44,9 @@ type Shapes = shapeCircle | shapeEllipse;
 
 type ShapeCollection = Record<string, Shapes>;
 type gabarito = {
+  orientation?: 'vertical' | 'horizontal'
   pdf: keyof typeof pageSizes;
-  positions: Record<string, { x: number; y: number }>;
+  positions: Record<string, { x: number; y: number, rotate?:number }>;
 };
 
 type mark = {
