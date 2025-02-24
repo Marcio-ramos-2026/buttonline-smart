@@ -1,11 +1,11 @@
 import { createModel, pageSizes } from "@/components/editor/model";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { PDFDocument, Degrees, degrees } from "pdf-lib";
+import { PDFDocument, Degrees, degrees, PDFImage } from "pdf-lib";
 import sharp from 'sharp'
 import { ModelConfig } from "@/components/editor/model";
 
-interface printRequest  {
+interface printRequest {
   model_id: number;
   svg: string;
   dpi: number;
@@ -23,50 +23,82 @@ function pxToPt2(px:number) {
   return pt;
 }
 
-
 export async function POST(request: NextRequest) {
   const data: printRequest = await request.json()
-  const {model_id, svg, dpi, canvasHeight, canvasWidth} = data
+  const { model_id, svg, dpi, canvasHeight, canvasWidth } = data
 
-    const model = await prisma.editor_canvas.findFirst(({
-        where: {
-            id:model_id
-        }
-    }))
-
-    if(!model){
-      return NextResponse.json(
-        { success: false, message: "Modelo não encontrando" },
-        { status: 400 }
-      );
+  const model = await prisma.editor_canvas.findFirst({
+    where: {
+      id: model_id
     }
-    
-    const gabarito = model?.gabarito as ModelConfig["gabarito"]
-    const sizes = model.size?.split(",")
-    const orientation = gabarito.orientation ?? 'vertical'
+  })
 
-    let [modelWidth, modelHeight] = sizes as string[]
-    if(!modelHeight) modelHeight = modelWidth
+  if (!model) {
+    return NextResponse.json(
+      { success: false, message: "Modelo não encontrando" },
+      { status: 400 }
+    );
+  }
 
-    const pageSize = pageSizes[gabarito.pdf] as [number,number]
-    if(orientation === 'horizontal'){
-      pageSize.reverse()
-    }
+  const gabarito = model?.gabarito as ModelConfig["gabarito"]
+  const sizes = model.size?.split(",")
+  const orientation = gabarito.orientation ?? 'vertical'
+
+  let [modelWidth, modelHeight] = sizes as string[]
+  if (!modelHeight) modelHeight = modelWidth
+
+  const pageSize = pageSizes[gabarito.pdf] as [number, number]
+  if (orientation === 'horizontal' && pageSize[1] > pageSize[0] ) {
+    pageSize.reverse()
+  }
 
   try {
     // Create a new PDF document
     const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage(pageSizes[gabarito.pdf] as [number,number]); // Define canvas size (width x height)
+    const page = pdfDoc.addPage(pageSize); // Define canvas size (width x height)
     const { width, height } = page.getSize();
 
-    const pngBuffer = await sharp(Buffer.from(svg),{density:1000})
-      .png({quality:100})
+    const pngBuffer = await sharp(Buffer.from(svg), { density: 1000 })
+      .png({ quality: 100 })
       .toBuffer();
-    const pngImage = await pdfDoc.embedPng(pngBuffer);     
+    let pngImage = await pdfDoc.embedPng(pngBuffer);
 
+    
+    Object.values(gabarito.positions).forEach(async (p) => {
+      // let imgWidth = mmToPt(parseFloat(modelWidth));
+      // let imgHeight = mmToPt(parseFloat(modelHeight));
+    
+      // let x = mmToPt(p.x);
+      // let y = height - imgHeight - mmToPt(p.y);
+    
+      // if (!p.rotate) p.rotate = 0;
+    
+      // if ([90, 180, 270].includes(p.rotate)) {
+      //   switch (p.rotate) {
+      //     case 90:
+      //       x = mmToPt(p.y); // Keep x aligned as expected
+      //       y = height - mmToPt(p.x) - imgWidth; // Ensure 50mm from top
+      //       break;
+        
 
-    Object.values(gabarito.positions).forEach((p) => {
-      
+      //     case 180:
+      //       x = width - mmToPt(p.x) - imgWidth;
+      //       y = height - mmToPt(p.y) - imgHeight;
+      //       break;
+      //     case 270:
+      //       x = width - mmToPt(p.y) - imgHeight; // Adjust X for 270°
+      //       y = mmToPt(p.x);
+      //       break;
+      //   }
+      // }
+    
+      // page.drawImage(pngImage, {
+      //   x,
+      //   y,
+      //   width: imgWidth,
+      //   height: imgHeight,
+      //   rotate: degrees(p.rotate),
+      // });
       page.drawImage(pngImage, {
         x: mmToPt(p.x),
         y: height - mmToPt(parseFloat(modelHeight)) - mmToPt(p.y),
@@ -74,22 +106,17 @@ export async function POST(request: NextRequest) {
         height: mmToPt(parseFloat(modelHeight)),
         // rotate: degrees(p.rotate ?? 0)
       });
-    })
+    });
+    
+    
 
-    page.drawLine({
-      thickness: 2,
-      end:{x:0,y:20},
-      start: {x: 20, y:20}
-    })
-
+    // Set PDF metadata
     pdfDoc.setTitle(model.name)
     pdfDoc.setAuthor("Cardenas - Buttonline")
     pdfDoc.setCreationDate(new Date())
-    
 
     // Serialize the PDF to bytes
     const pdfBytes = await pdfDoc.save();
-
 
     // Return the PDF as a response
     return new NextResponse(pdfBytes, {
