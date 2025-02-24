@@ -1,20 +1,35 @@
-import * as React from "react";
-
 import { cn } from "@/lib/utils";
 
 import { PlusCircle, MinusCircle } from "lucide-react";
 import { Input } from "./input";
+import {
+  useEffect,
+  useImperativeHandle,
+  forwardRef,
+  useState,
+  useRef,
+} from "react";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-const IncrementorInput = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, ...props }, ref) => {
-    const [hitMax, setHitMax] = React.useState(false);
-    const [hitMin, setHitMin] = React.useState(false);
-    const incrementInput = React.useRef<HTMLInputElement>(null);
+const IncrementorInput = forwardRef<HTMLInputElement, InputProps>(
+  ({ min = 0, defaultValue = 0, onChange = () => {} }, ref) => {
+    const [hitMax, setHitMax] = useState(false);
+    const [hitMin, setHitMin] = useState(false);
+    const incrementInput = useRef<HTMLInputElement>(null);
 
-    React.useImperativeHandle(ref, () => incrementInput.current!, []);
+    useImperativeHandle(ref, () => incrementInput.current!, []);
+
+    useEffect(() => {
+      if (incrementInput.current) {
+        incrementInput.current.value = String(defaultValue);
+        setHitMin(defaultValue <= min);
+        setHitMax(
+          incrementInput.current?.value === incrementInput.current?.max
+        );
+      }
+    }, [defaultValue, min]);
 
     const increment = () => {
       incrementInput.current?.stepUp();
@@ -44,21 +59,25 @@ const IncrementorInput = React.forwardRef<HTMLInputElement, InputProps>(
           type="button"
           disabled={hitMin}
           onClick={decrement}
-          aria-label="decrease"
           className="group text-gray-500 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <MinusCircle className="h-4 w-4 group-hover:text-gray-800" />
         </button>
 
         <div className="relative">
-          <Input type="number" ref={incrementInput} centerText={true} />
+          <Input
+            min={min}
+            type="number"
+            ref={incrementInput}
+            centerText={true}
+            onChange={onChange}
+          />
         </div>
 
         <button
           type="button"
           disabled={hitMax}
           onClick={increment}
-          aria-label="increase"
           className="group text-gray-500 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <PlusCircle className="h-4 w-4 group-hover:text-gray-900" />
