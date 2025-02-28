@@ -65,46 +65,25 @@ export async function POST(request: NextRequest) {
 
     
     Object.values(gabarito.positions).forEach(async (p) => {
-      // let imgWidth = mmToPt(parseFloat(modelWidth));
-      // let imgHeight = mmToPt(parseFloat(modelHeight));
-    
-      // let x = mmToPt(p.x);
-      // let y = height - imgHeight - mmToPt(p.y);
-    
-      // if (!p.rotate) p.rotate = 0;
-    
-      // if ([90, 180, 270].includes(p.rotate)) {
-      //   switch (p.rotate) {
-      //     case 90:
-      //       x = mmToPt(p.y); // Keep x aligned as expected
-      //       y = height - mmToPt(p.x) - imgWidth; // Ensure 50mm from top
-      //       break;
-        
+      let imgWidth = mmToPt(parseFloat(modelWidth))
+      let imgHeight = mmToPt(parseFloat(modelHeight))
 
-      //     case 180:
-      //       x = width - mmToPt(p.x) - imgWidth;
-      //       y = height - mmToPt(p.y) - imgHeight;
-      //       break;
-      //     case 270:
-      //       x = width - mmToPt(p.y) - imgHeight; // Adjust X for 270°
-      //       y = mmToPt(p.x);
-      //       break;
-      //   }
-      // }
+      let x = mmToPt(p.x)
+      let y = height - mmToPt(parseFloat(modelHeight)) - mmToPt(p.y)
+
+      const rotate = p.rotate ?? 0
+
+      if (rotate == -90) {
+        y += imgHeight
+      }
     
-      // page.drawImage(pngImage, {
-      //   x,
-      //   y,
-      //   width: imgWidth,
-      //   height: imgHeight,
-      //   rotate: degrees(p.rotate),
-      // });
+
       page.drawImage(pngImage, {
-        x: mmToPt(p.x),
-        y: height - mmToPt(parseFloat(modelHeight)) - mmToPt(p.y),
-        width: mmToPt(parseFloat(modelWidth)),
-        height: mmToPt(parseFloat(modelHeight)),
-        // rotate: degrees(p.rotate ?? 0)
+        x: x,
+        y: y,
+        width: imgWidth,
+        height: imgHeight,
+        rotate: degrees(rotate)
       });
     });
     

@@ -110,6 +110,32 @@ export const PrintButton = ({
     // })
 
     cardenasCanvas.getObjects().forEach((obj) => {
+
+      
+        if (obj.type === "image") {
+          const image = obj as fabric.FabricImage;
+          const imageElement = image.getElement() as HTMLImageElement;
+
+          const url = new URL(imageElement.src);
+          const pathname = url.pathname; // Get the file path
+          const extension = pathname.split(".").pop()?.toLowerCase(); // Extract the file extension (before query params)
+
+           // Check for file format based on the extension
+          const isJpeg = extension === "jpg" || extension === "jpeg";
+          // Convert the image to Base64
+          const base64 = image.toDataURL({
+            format: isJpeg ? "jpeg" : "png", // Use 'jpeg' if needed
+            quality: 1, // High quality for JPEG
+          });
+
+          imageElement.src = base64;
+
+          image.set({
+            element: imageElement,
+          });
+
+          obj = image
+        }
       // Check if the object has the 'cardenas_canvas' property and is a group
       if (!obj.cardenas_canvas) return;
     
