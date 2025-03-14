@@ -18,13 +18,13 @@ type ButtonItem = {
   canvas: fabric.Canvas; // Se souber o tipo exato, substitua `any` pelo tipo correto
   qty: number;
   name?: string;
-  size: [string,string]
-  svg: string
+  size: [string, string];
+  svg: string;
 };
 
 export const MultipleButton = () => {
   const { canvas, currentModel } = useEditorContext();
-  
+
   const [buttons, setButtons] = useState<ButtonItem[]>([]);
 
   const [printing, setPrinting] = useState(false);
@@ -38,12 +38,11 @@ export const MultipleButton = () => {
     }
   }, []);
 
-  
   useEffect(() => {
     if (buttons?.length) {
       saveButtonsToLocalStorage(buttons);
-    }else{
-      localStorage.removeItem("cardenas_multiple_buttons")
+    } else {
+      localStorage.removeItem("cardenas_multiple_buttons");
     }
   }, [buttons]);
 
@@ -52,18 +51,21 @@ export const MultipleButton = () => {
       ...btn,
       canvasJSON: btn.canvas.toJSON(), // Convert canvas to JSON
     }));
-    localStorage.setItem("cardenas_multiple_buttons", JSON.stringify(serializedButtons));
+    localStorage.setItem(
+      "cardenas_multiple_buttons",
+      JSON.stringify(serializedButtons)
+    );
   };
 
   const loadButtons = (storedButtons: any[]) => {
     const loadedButtons: ButtonItem[] = storedButtons.map((btn) => {
       const canvasElement = document.createElement("canvas"); // Create an actual canvas element
       const newCanvas = new fabric.Canvas(canvasElement); // Attach it to fabric.Canvas
-  
+
       newCanvas.loadFromJSON(btn.canvasJSON, () => {
         newCanvas.renderAll();
       });
-  
+
       return {
         ...btn,
         canvas: newCanvas,
@@ -106,8 +108,8 @@ export const MultipleButton = () => {
     //     }
     //   // Check if the object has the 'cardenas_canvas' property and is a group
     //   if (!obj.cardenas_canvas) return;
-    
-    //   const canvas = obj as fabric.Group 
+
+    //   const canvas = obj as fabric.Group
     //   // Use forEachObject to iterate through the objects inside the group
 
     //   canvas.getObjects().forEach((groupObj) => {
@@ -123,22 +125,28 @@ export const MultipleButton = () => {
     const canvasWidth = fabric.util.parseUnit(`${sizes[0]}mm`);
     const canvasHeight = fabric.util.parseUnit(`${sizes[1]}mm`);
 
-    const clip = new fabric.Group(canvasCopy.getObjects(),{});
-    const scaleFactor = parseFloat(sizes[0]) / Math.max(clip.width, clip.height);
-    clip.scale(scaleFactor)
+    const clip = new fabric.Group(canvasCopy.getObjects(), {});
+    const scaleFactor = canvasWidth / Math.max(clip.width, clip.height);
+    clip.scale(scaleFactor);
 
     const printCanvas = new fabric.Canvas("c", {
       width: canvasWidth,
       height: canvasHeight,
     });
 
-    printCanvas.add(clip)
-    printCanvas.centerObject(clip)
-    printCanvas.clipPath = clip
+    printCanvas.add(clip);
+    printCanvas.centerObject(clip);
+    printCanvas.clipPath = clip;
 
     setButtons((current) => [
       ...current,
-      { canvas: printCanvas, qty: 1, name: currentModel?.name, size: [sizes[0], sizes[1]], svg: "" },
+      {
+        canvas: printCanvas,
+        qty: 1,
+        name: currentModel?.name,
+        size: [sizes[0], sizes[1]],
+        svg: "",
+      },
     ]);
   };
 
@@ -185,18 +193,14 @@ export const MultipleButton = () => {
                   <p className="text-xs">{item?.name}</p>
                   <div className="flex items-center justify-center">
                     <ReactSVG
-                      className="text-red-500 "
+                      className="svgMultipleDropdown"
                       src={`data:image/svg+xml;base64,${btoa(item.canvas.toSVG({ suppressPreamble: true }))}`}
-
-
                     />
                     <div className="flex flex-col">
                       <IncrementorInput
                         min={1}
                         defaultValue={item.qty}
-                        onChange={(e) =>
-                          changeQty(key, e.currentTarget.value)
-                        }
+                        onChange={(e) => changeQty(key, e.currentTarget.value)}
                       />
                     </div>
 

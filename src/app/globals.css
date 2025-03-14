@@ -99,6 +99,11 @@
   height: 75px;
 }
 
+.svgMultipleDropdown svg {
+  width: 40px;
+  height: 40px;
+}
+
 /* ESCONDE AS ARROWS NO IMPUT NUMBER */
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
@@ -111,4 +116,5 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
 /* ////////////////////////////////////// */
