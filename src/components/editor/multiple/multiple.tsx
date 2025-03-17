@@ -14,7 +14,7 @@ import {
 import { IncrementorInput } from "@/components/ui/inputNumber";
 import DividerHorizontal from "@/components/divider";
 
-type ButtonItem = {
+export type ButtonItemMultiple = {
   canvas: fabric.Canvas; // Se souber o tipo exato, substitua `any` pelo tipo correto
   qty: number;
   name?: string;
@@ -25,7 +25,7 @@ type ButtonItem = {
 export const MultipleButton = () => {
   const { canvas, currentModel } = useEditorContext();
 
-  const [buttons, setButtons] = useState<ButtonItem[]>([]);
+  const [buttons, setButtons] = useState<ButtonItemMultiple[]>([]);
 
   const [printing, setPrinting] = useState(false);
 
@@ -46,10 +46,10 @@ export const MultipleButton = () => {
     }
   }, [buttons]);
 
-  const saveButtonsToLocalStorage = (buttons: ButtonItem[]) => {
+  const saveButtonsToLocalStorage = (buttons: ButtonItemMultiple[]) => {
     const serializedButtons = buttons.map((btn) => ({
       ...btn,
-      canvasJSON: btn.canvas.toJSON(), // Convert canvas to JSON
+      canvas: btn.canvas.toJSON(), // Convert canvas to JSON
     }));
     localStorage.setItem(
       "cardenas_multiple_buttons",
@@ -57,12 +57,12 @@ export const MultipleButton = () => {
     );
   };
 
-  const loadButtons = (storedButtons: any[]) => {
-    const loadedButtons: ButtonItem[] = storedButtons.map((btn) => {
+  const loadButtons = async (storedButtons: any[]) => {
+    const loadedButtons: ButtonItemMultiple[] = await Promise.all(storedButtons.map(async (btn) => {
       const canvasElement = document.createElement("canvas"); // Create an actual canvas element
       const newCanvas = new fabric.Canvas(canvasElement); // Attach it to fabric.Canvas
 
-      newCanvas.loadFromJSON(btn.canvasJSON, () => {
+      await newCanvas.loadFromJSON(btn.canvas, () => {
         newCanvas.renderAll();
       });
 
@@ -70,7 +70,7 @@ export const MultipleButton = () => {
         ...btn,
         canvas: newCanvas,
       };
-    });
+    }))
     setButtons(loadedButtons);
   };
 
@@ -80,44 +80,6 @@ export const MultipleButton = () => {
       "cardenas_print",
       "cardenas_canvas",
     ]);
-
-    // canvasCopy.getObjects().forEach((obj) => {
-    //     if (obj.type === "image") {
-    //       const image = obj as fabric.FabricImage;
-    //       const imageElement = image.getElement() as HTMLImageElement;
-
-    //       const url = new URL(imageElement.src);
-    //       const pathname = url.pathname; // Get the file path
-    //       const extension = pathname.split(".").pop()?.toLowerCase(); // Extract the file extension (before query params)
-
-    //         // Check for file format based on the extension
-    //       const isJpeg = extension === "jpg" || extension === "jpeg";
-    //       // Convert the image to Base64
-    //       const base64 = image.toDataURL({
-    //         format: isJpeg ? "jpeg" : "png", // Use 'jpeg' if needed
-    //         quality: 1, // High quality for JPEG
-    //       });
-
-    //       imageElement.src = base64;
-
-    //       image.set({
-    //         element: imageElement,
-    //       });
-
-    //       obj = image
-    //     }
-    //   // Check if the object has the 'cardenas_canvas' property and is a group
-    //   if (!obj.cardenas_canvas) return;
-
-    //   const canvas = obj as fabric.Group
-    //   // Use forEachObject to iterate through the objects inside the group
-
-    //   canvas.getObjects().forEach((groupObj) => {
-    //     if(groupObj.cardenas_print) return
-
-    //     canvas.remove(groupObj)
-    //   });
-    // });
 
     let sizes = currentModel?.size?.split(",") as [string, ...string[]];
     if (!sizes[1]) sizes[1] = sizes[0];
@@ -145,7 +107,7 @@ export const MultipleButton = () => {
         qty: 1,
         name: currentModel?.name,
         size: [sizes[0], sizes[1]],
-        svg: "",
+        svg: printCanvas.toSVG({ }),
       },
     ]);
   };
@@ -194,7 +156,7 @@ export const MultipleButton = () => {
                   <div className="flex items-center justify-center">
                     <ReactSVG
                       className="svgMultipleDropdown"
-                      src={`data:image/svg+xml;base64,${btoa(item.canvas.toSVG({ suppressPreamble: true }))}`}
+                      src={`data:image/svg+xml;base64,${btoa(item.svg)}`}
                     />
                     <div className="flex flex-col">
                       <IncrementorInput

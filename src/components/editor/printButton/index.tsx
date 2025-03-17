@@ -10,6 +10,9 @@ import { Printer } from "lucide-react";
 import * as fabric from "fabric";
 import type { editor_canvas } from "@prisma/client";
 import { useState } from "react";
+import { ButtonItemMultiple } from "../multiple/multiple";
+import { sign } from "crypto";
+
 
 export const PrintButton = ({
   canvas,
@@ -211,6 +214,57 @@ export const PrintButton = ({
         console.error("Error fetching the PDF:", error);
       }).finally(()=> setPrinting(false));
   }
+
+  const handlePrintMultiple = async () => {
+    const storedButtons = localStorage.getItem("cardenas_multiple_buttons");
+    if (!storedButtons){
+      alert('Nenhum múltiplo salvo')
+      return
+    }
+
+    setPrinting(true)
+
+    const parsedButtons = JSON.parse(storedButtons) as ButtonItemMultiple[];
+
+    let bodyButtons = await Promise.all(parsedButtons.map(async (button) => {
+
+      let [width,height] = button.size
+      if(!height) height = width
+
+      return {
+        size: button.size,
+        name: button.name,
+        qty: button.qty,
+        svg: button.svg
+      }
+    }))
+
+
+    fetch("/api/print_multiple", {
+      method: "POST",
+      body: JSON.stringify(bodyButtons), // Send any necessary data for PDF generation
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.blob()) // Get the response as a Blob (binary data)
+      .then((blob) => {
+        // Create a URL for the Blob
+        const url = window.URL.createObjectURL(blob);
+
+        // Open the PDF in a new tab
+        const printTAB = window.open(url, "_blank");
+        if(!printTAB?.document) return
+
+
+        printTAB.print();
+        
+      })
+      .catch((error) => {
+        console.error("Error fetching the PDF:", error);
+      }).finally(()=> setPrinting(false))
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -249,7 +303,9 @@ export const PrintButton = ({
               size="default"
               iconPlacement="start"
               icon={<Printer />}
-              onClick={handlePrint}
+              onClick={handlePrintMultiple}
+              disabled={printing}
+              loading={printing}
             >
               Usar &quot;Múltiplos Buttons&quot;
             </Button>
