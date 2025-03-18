@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       const pngBuffer = await sharp(Buffer.from(obj.svg), { density: 1000 })
         .png({ quality: 100 })
         .toBuffer();
-        console.log('png buffer',pngBuffer)
+
       let pngImage = await pdfDoc.embedPng(pngBuffer);
 
       // Image dimensions in points
