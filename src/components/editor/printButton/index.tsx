@@ -41,8 +41,6 @@ export const PrintButton = ({
 
     const dpi = getScreenDPI();
 
-  //   const {cardenasCanvas, elements} = await canvas.getObjects().reduce(async (accPromise,obj)=>{
-
   //     const acc = await accPromise;
 
   //     if(obj.cardenas_canvas) {
@@ -106,49 +104,42 @@ export const PrintButton = ({
     // groupElement.scale(scaleFactorGroup);
 
     const cardenasCanvas = await canvas.clone(["cardenas_print","cardenas_canvas"])
-    // cardenasCanvas.getObjects().forEach(o => {
-    //   if (!o.cardenas_print) {
-    //     cardenasCanvas.remove(o);
-    //   }
-    // })
 
     cardenasCanvas.getObjects().forEach((obj) => {
+      if (obj.type === "image") {
+        const image = obj as fabric.FabricImage;
+        const imageElement = image.getElement() as HTMLImageElement;
 
-      
-        if (obj.type === "image") {
-          const image = obj as fabric.FabricImage;
-          const imageElement = image.getElement() as HTMLImageElement;
+        const url = new URL(imageElement.src);
+        const pathname = url.pathname; // Get the file path
+        const extension = pathname.split(".").pop()?.toLowerCase(); // Extract the file extension (before query params)
 
-          const url = new URL(imageElement.src);
-          const pathname = url.pathname; // Get the file path
-          const extension = pathname.split(".").pop()?.toLowerCase(); // Extract the file extension (before query params)
+          // Check for file format based on the extension
+        const isJpeg = extension === "jpg" || extension === "jpeg";
+        // Convert the image to Base64
+        const base64 = image.toDataURL({
+          format: isJpeg ? "jpeg" : "png", // Use 'jpeg' if needed
+          quality: 1, // High quality for JPEG
+        });
 
-           // Check for file format based on the extension
-          const isJpeg = extension === "jpg" || extension === "jpeg";
-          // Convert the image to Base64
-          const base64 = image.toDataURL({
-            format: isJpeg ? "jpeg" : "png", // Use 'jpeg' if needed
-            quality: 1, // High quality for JPEG
-          });
+        imageElement.src = base64;
 
-          imageElement.src = base64;
+        image.set({
+          element: imageElement,
+        });
 
-          image.set({
-            element: imageElement,
-          });
-
-          obj = image
-        }
+        obj = image
+      }
       // Check if the object has the 'cardenas_canvas' property and is a group
       if (!obj.cardenas_canvas) return;
     
-      const canvas = obj as fabric.Group 
+      const canvasGroup = obj as fabric.Group 
       // Use forEachObject to iterate through the objects inside the group
 
-      canvas.getObjects().forEach((groupObj) => {
+      canvasGroup.getObjects().forEach((groupObj) => {
         if(groupObj.cardenas_print) return
 
-        canvas.remove(groupObj)
+        cardenasCanvas.remove(groupObj)
       });
     });
     
@@ -171,6 +162,9 @@ export const PrintButton = ({
     // printCanvas.centerObject(groupElement)
     printCanvas.centerObject(clip)
     printCanvas.clipPath = clip
+
+
+    console.log('SVG',printCanvas.toSVG())
     
     fetch("/api/print", {
       method: "POST",
