@@ -1,7 +1,7 @@
-import { createModel, pageSizes } from "@/components/editor/model";
+import { pageSizes } from "@/components/editor/model";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { PDFDocument, Degrees, degrees, PDFImage } from "pdf-lib";
+import { PDFDocument, degrees } from "pdf-lib";
 import sharp from 'sharp'
 import { ModelConfig } from "@/components/editor/model";
 
@@ -13,15 +13,7 @@ interface printRequest {
   canvasHeight: number;
 }
 
-const mmToPt2 = (mm: number) => mm * 2.83465
 const mmToPt = (mm: number) => parseFloat((mm * 2.83465).toFixed(5));
-const mmToPx = (mm: number, dpi: number) => Math.round(mm * (dpi / 25.4))
-const pxToMm = (px: number, dpi: number) => px * 25.4 / dpi
-const pxToPt = (px: number, dpi: number) => px * (72/dpi)
-function pxToPt2(px:number) {
-  const pt = px * 0.75;
-  return pt;
-}
 
 export async function POST(request: NextRequest) {
   const data: printRequest = await request.json()
