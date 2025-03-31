@@ -106,29 +106,32 @@ export const PrintButton = ({
       
     });
     
-    const clip = new fabric.Group(cardenasCanvas.getObjects(),{
-      
-    });
-    
+    const canvasElement = cardenasCanvas.getObjects().filter(obj => obj.cardenas_canvas)
+    const clip = new fabric.Group(canvasElement);
     const scaleFactor = canvasWidth / Math.max(clip.width, clip.height);
-
     clip.scale(scaleFactor)
 
+    const editorElements = cardenasCanvas.getObjects().filter(obj => !obj.cardenas_canvas)
+    const elementsGroup = new fabric.Group(editorElements)
+    const originalCanvasSize = Math.max(clip.width, clip.height);
 
+    const editorScaleFactor = canvasWidth / originalCanvasSize;
+
+    elementsGroup.scale(editorScaleFactor);
+
+    // clip.absolutePositioned = true;
     const printCanvas = new fabric.Canvas("c", {
       width: canvasWidth,
       height: canvasHeight,
     })
 
-
+    printCanvas.add(elementsGroup)
     printCanvas.add(clip)
-    // printCanvas.add(groupElement)
-    // printCanvas.centerObject(groupElement)
     printCanvas.centerObject(clip)
     printCanvas.clipPath = clip
 
 
-    // console.log('SVG',printCanvas.toSVG({suppressPreamble: true}))
+    console.log('SVG',printCanvas.toSVG())
     
     fetch("/api/print", {
       method: "POST",
