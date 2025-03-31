@@ -28,7 +28,7 @@ export function AddImage() {
       (canvasWidth - 700) / image.width!,
       (canvasHeight - 700) / image.height!
     );
-    image.angle = 180;
+    // image.angle = 180;
 
     image.scale(scaleFactor);
 
