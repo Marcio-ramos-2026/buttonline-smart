@@ -126,6 +126,7 @@ export const PrintButton = ({
     })
 
     printCanvas.add(elementsGroup)
+    printCanvas.centerObject(elementsGroup)
     printCanvas.add(clip)
     printCanvas.centerObject(clip)
     printCanvas.clipPath = clip
