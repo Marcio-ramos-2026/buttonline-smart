@@ -12,6 +12,7 @@ import type { editor_canvas } from "@prisma/client";
 import { useState } from "react";
 import { ButtonItemMultiple } from "../multiple/multiple";
 import { sign } from "crypto";
+import { extractCardenasCanvas } from "./test";
 
 
 export const PrintButton = ({
@@ -24,158 +25,64 @@ export const PrintButton = ({
   const [printing, setPrinting] = useState(false)
 
   const handlePrint = async () => {
-    if(!currentModel || !currentModel.size){
-      alert('Configuração errada')
-      return
+    if (!currentModel || !currentModel.size) {
+      alert("Configuração errada");
+      return;
     }
-
-    setPrinting(true)
-
-    let [width,height] = currentModel.size.split(',') 
-    if(!height) height = width
-
+  
+    setPrinting(true);
+  
+    let [width, height] = currentModel.size.split(",");
+    if (!height) height = width;
+  
     if (!canvas) return;
-    const canvasWidth = fabric.util.parseUnit(`${width}mm`)
-    const canvasHeight = fabric.util.parseUnit(`${height}mm`)
+  
+    const canvasWidth = fabric.util.parseUnit(`${width}mm`);
+    const canvasHeight = fabric.util.parseUnit(`${height}mm`);
+  
+    const originalCanvas = await canvas.clone(["cardenas_print", "cardenas_canvas"]);
+    const svg = await extractCardenasCanvas(originalCanvas,Number(width),Number(height))
+    // Step 4: Clone and offset each relevant object into the new canvas
 
-    const dpi = getScreenDPI();
-
-    const cardenasCanvas = await canvas.clone(["cardenas_print","cardenas_canvas"])
-
-    cardenasCanvas.getObjects().forEach((obj) => {
-      if (obj.type === "image") {
-        const image = obj as fabric.Image;
-        const imageElement = image.getElement() as HTMLImageElement;
-    
-        // Get the file extension from the image src (for determining format)
-        const url = new URL(imageElement.src);
-        const pathname = url.pathname;
-        const extension = pathname.split(".").pop()?.toLowerCase();
-    
-        // Determine the format based on the extension (JPEG or PNG)
-        const isJpeg = extension === "jpg" || extension === "jpeg";
-    
-        // Create an offscreen canvas
-        const offscreenCanvas = document.createElement("canvas");
-        const ctx = offscreenCanvas.getContext("2d");
-    
-        if (ctx) {
-          // Use the image's natural width and height
-          offscreenCanvas.width = imageElement.naturalWidth;
-          offscreenCanvas.height = imageElement.naturalHeight;
-    
-          // Draw the image on the offscreen canvas
-          ctx.drawImage(imageElement, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
-    
-          // Convert the canvas to base64 with the chosen format (JPEG or PNG)
-          const base64 = offscreenCanvas.toDataURL(
-            isJpeg ? "image/jpeg" : "image/png",
-            1 // Maximum quality for JPEG
-          );
-    
-          // Set the base64 as the image's src
-          imageElement.src = base64;
-    
-          // Update the fabric image object
-          image.set({
-            element: imageElement,
-          });
-    
-          // Optionally, replace the image object in the canvas (if necessary)
-          obj = image;
-        }
-      }
-      // Check if the object has the 'cardenas_canvas' property and is a group
-      if (!obj.cardenas_canvas) return;
-    
-      const canvasGroup = obj as fabric.Group 
-
-      cardenasCanvas.bringObjectToFront(canvasGroup);
-
-      // Use forEachObject to iterate through the objects inside the group
-
-      canvasGroup.getObjects().forEach((groupObj) => {
-        groupObj.fill = 'transparent'
-        groupObj.backgroundColor = 'transparent'
-
-        if(groupObj.cardenas_print) return
-        
-        canvasGroup.remove(groupObj);
-        cardenasCanvas.remove(groupObj)
-      });      
-      
-    });
-    
-    const canvasElement = cardenasCanvas.getObjects().filter(obj => obj.cardenas_canvas)
-    const clip = new fabric.Group(canvasElement);
-    const scaleFactor = canvasWidth / Math.max(clip.width, clip.height);
-    clip.scale(scaleFactor)
-
-    const editorElements = cardenasCanvas.getObjects().filter(obj => !obj.cardenas_canvas)
-    const elementsGroup = new fabric.Group(editorElements)
-    const originalCanvasSize = Math.max(clip.width, clip.height);
-
-    const editorScaleFactor = canvasWidth / originalCanvasSize;
-
-    elementsGroup.scale(editorScaleFactor);
-
-    // clip.absolutePositioned = true;
-    const printCanvas = new fabric.Canvas("c", {
-      width: canvasWidth,
-      height: canvasHeight,
-    })
-
-    printCanvas.add(elementsGroup)
-    printCanvas.centerObject(elementsGroup)
-    printCanvas.add(clip)
-    printCanvas.centerObject(clip)
-    printCanvas.clipPath = clip
-
-
-    console.log('SVG',printCanvas.toSVG())
-    
+  
+    // Step 8: Send to server
     fetch("/api/print", {
       method: "POST",
       body: JSON.stringify({
-        svg: printCanvas.toSVG(),
+        svg,
         model_id: currentModel.id,
-        dpi,
         canvasWidth,
-        canvasHeight
-      }), // Send any necessary data for PDF generation
+        canvasHeight,
+      }),
       headers: {
         "Content-Type": "application/json",
       },
     })
-      .then((response) => response.blob()) // Get the response as a Blob (binary data)
+      .then((response) => response.blob())
       .then((blob) => {
-        // Create a URL for the Blob
         const url = window.URL.createObjectURL(blob);
-
-        // Open the PDF in a new tab
         const printTAB = window.open(url, "_blank");
-        if(!printTAB?.document) return
-
+        if (!printTAB?.document) return;
+  
         const style = printTAB.document.createElement("style");
-
         style.textContent = `
-              @page {
-                size: A3 landscape;
-                margin: 0;
-                size: landscape;
-              }
+          @page {
+            size: A3 landscape;
+            margin: 0;
+          }
         `;
-        
         printTAB.document.head.appendChild(style);
+  
         setTimeout(() => {
           printTAB.print();
         }, 200);
-        
       })
       .catch((error) => {
         console.error("Error fetching the PDF:", error);
-      }).finally(()=> setPrinting(false));
-  }
+      })
+      .finally(() => setPrinting(false));
+  };
+  
 
   const handlePrintMultiple = async () => {
     const storedButtons = localStorage.getItem("cardenas_multiple_buttons");
