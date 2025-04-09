@@ -45,6 +45,7 @@ export const PrintButton = ({
     // Step 4: Clone and offset each relevant object into the new canvas
 
   
+    console.log('svg',svg)
     // Step 8: Send to server
     fetch("/api/print", {
       method: "POST",

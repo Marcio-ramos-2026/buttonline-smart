@@ -22,62 +22,65 @@ export async function extractCardenasCanvas(
     backgroundColor: 'transparent',
   });
 
-  // Step 3: Add all intersecting non-canvas objects
-  const relevantObjects = originalCanvas.getObjects().filter((obj) => {
-    return obj !== cardenasCanvasObject &&
-      rectsIntersect(bounds, obj.getBoundingRect());
+  // ✅ Step 3: Clone the entire `cardenasCanvasObject` to use as a clipPath
+  const clipPath = await cardenasCanvasObject.clone();
+  clipPath.set({
+    left: 0,
+    top: 0,
+    originX: 'left',
+    originY: 'top',
+    absolutePositioned: true,
   });
+
+  // ✅ Step 4: Set the clipPath on the canvas itself
+  croppedCanvas.clipPath = clipPath;
+
+  // Step 5: Add relevant intersecting objects (excluding the canvas group)
+  const relevantObjects = originalCanvas.getObjects().filter(obj =>
+    obj !== cardenasCanvasObject && rectsIntersect(bounds, obj.getBoundingRect())
+  );
 
   for (const obj of relevantObjects) {
     const clone = await obj.clone();
+
     clone.set({
       left: (clone.left ?? 0) - bounds.left,
       top: (clone.top ?? 0) - bounds.top,
     });
 
-    // Convert images to base64
     if (clone.type === 'image') {
       await convertImageToBase64(clone as fabric.Image);
     }
 
-    const clipPath = await cardenasCanvasObject.clone();
-
-    clipPath.left = 0;
-    clipPath.top = 0;
-    clipPath.originX = 'left';
-    clipPath.originY = 'top';
-    clipPath.absolutePositioned = true;
-
-    clone.clipPath = clipPath;
     croppedCanvas.add(clone);
   }
 
-  // Step 4: Add only `cardenas_print` children of cardenas_canvas
+  // Step 6: Add only the `cardenas_print` children of cardenas_canvas
   const cardenasPrintObjects: fabric.Object[] = [];
 
-  for (const groupObj of cardenasCanvasObject.getObjects()) {
-    if (groupObj.cardenas_print) {
-      if (groupObj.type === 'image') {
-        await convertImageToBase64(groupObj as fabric.Image);
+  for (const child of cardenasCanvasObject.getObjects()) {
+    if (child.cardenas_print) {
+      if (child.type === 'image') {
+        await convertImageToBase64(child as fabric.Image);
       }
 
-      groupObj.set({
+      child.set({
         fill: 'transparent',
         backgroundColor: 'transparent',
       });
 
-      cardenasPrintObjects.push(groupObj);
+      cardenasPrintObjects.push(child);
     }
   }
 
-  const cleanedGroup = new fabric.Group(cardenasPrintObjects, {
+  const printGroup = new fabric.Group(cardenasPrintObjects, {
     left: 0,
     top: 0,
   });
 
-  croppedCanvas.add(cleanedGroup); // Add on top
+  croppedCanvas.add(printGroup);
 
-  // Step 5: Scale everything
+  // Step 7: Scale everything to target dimensions
   const targetWidth = fabric.util.parseUnit(`${width}mm`);
   const targetHeight = fabric.util.parseUnit(`${height}mm`);
   const scaleX = targetWidth / bounds.width;
@@ -85,7 +88,7 @@ export async function extractCardenasCanvas(
 
   croppedCanvas.setDimensions({ width: targetWidth, height: targetHeight });
 
-  croppedCanvas.getObjects().forEach((obj) => {
+  croppedCanvas.getObjects().forEach(obj => {
     obj.scaleX = (obj.scaleX ?? 1) * scaleX;
     obj.scaleY = (obj.scaleY ?? 1) * scaleY;
     obj.left = (obj.left ?? 0) * scaleX;
@@ -93,7 +96,12 @@ export async function extractCardenasCanvas(
     obj.setCoords();
   });
 
-  console.log('aaa',croppedCanvas.toSVG())
+  if (croppedCanvas.clipPath) {
+    croppedCanvas.clipPath.scaleX = (croppedCanvas.clipPath.scaleX ?? 1) * scaleX;
+    croppedCanvas.clipPath.scaleY = (croppedCanvas.clipPath.scaleY ?? 1) * scaleY;
+    croppedCanvas.clipPath.setCoords();
+  }
+
   return croppedCanvas.toSVG();
 }
 
@@ -111,7 +119,6 @@ function rectsIntersect(a: TBBox, b: TBBox): boolean {
 async function convertImageToBase64(image: fabric.Image): Promise<void> {
   const imageElement = image.getElement() as HTMLImageElement;
 
-  // If already base64, skip
   if (imageElement.src.startsWith('data:')) return;
 
   const url = new URL(imageElement.src);
