@@ -1,7 +1,7 @@
 import { pageSizes } from "@/components/editor/model";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { PDFDocument, degrees } from "pdf-lib";
+import { PDFDocument, degrees, rgb } from "pdf-lib";
 import sharp from 'sharp'
 import { ModelConfig } from "@/components/editor/model";
 
@@ -17,7 +17,7 @@ const mmToPt = (mm: number) => parseFloat((mm * 2.83465).toFixed(5));
 
 export async function POST(request: NextRequest) {
   const data: printRequest = await request.json()
-  const { model_id, svg, dpi, canvasHeight, canvasWidth } = data
+  const { model_id, svg } = data
 
   const model = await prisma.editor_canvas.findFirst({
     where: {
@@ -69,7 +69,6 @@ export async function POST(request: NextRequest) {
         y += imgHeight
       }
     
-
       page.drawImage(pngImage, {
         x: x,
         y: y,
@@ -78,6 +77,34 @@ export async function POST(request: NextRequest) {
         rotate: degrees(rotate)
       });
     });
+    
+
+    if (true) {
+      const centerX = width / 2;
+      const centerY = height / 2;
+    
+      const lineLength = (orientation === 'horizontal' ? height : width) * 0.9;
+      const halfLine = lineLength / 2;
+    
+      if (orientation === 'vertical') {
+        // Horizontal line centered on page
+        page.drawLine({
+          start: { x: centerX - halfLine, y: centerY },
+          end: { x: centerX + halfLine, y: centerY },
+          thickness: 1,
+          color: rgb(0, 0, 0),
+        });
+      } else {
+        // Vertical line centered on page
+        page.drawLine({
+          start: { x: centerX, y: centerY - halfLine },
+          end: { x: centerX, y: centerY + halfLine },
+          thickness: 1,
+          color: rgb(0, 0, 0),
+        });
+      }
+    }
+    
     
     
 

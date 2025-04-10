@@ -197,7 +197,7 @@ const rectangle = (config: shapeRectangle) => {
     height: config.height,
     fill: "white",
     stroke: "#000",
-    strokeWidth: config?.strokeWidth ?? 1,
+    strokeWidth: config?.strokeWidth ?? 0.3,
     strokeDashArray: config?.strokeDashArray ?? [0, 0],
     selectable: false,
     moveCursor: "default",
