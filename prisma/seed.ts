@@ -71,6 +71,23 @@ async function main() {
             password: admin_pass,
         },
     })
+
+    await prisma.user.upsert({
+        where: {
+            id: 1001
+        },
+        update: {
+            password: admin_pass
+        },
+        create: {
+            id: 1001,
+            email: "teste@cardenas.com.br",
+            roleId: 1, //admin,
+            emailVerified: new Date(),
+            name: "Administrador Cardenas",
+            password: admin_pass,
+        },
+    })
 }
 
 main()

@@ -4,6 +4,9 @@
     "en": "Inglés",
     "es-ES": "Español"
   },
+  "print": {
+    "middle_line": "Atención: para un corte perfecto, doble exactamente en esta línea."
+  },
   "pagination": {
     "next": "Siguiente",
     "previous": "Anterior"

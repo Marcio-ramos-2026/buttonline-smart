@@ -4,6 +4,9 @@
     "en": "Inglês",
     "es-ES": "Espanhol"
   },
+  "print": {
+    "middle_line": "Atenção: para um perfeito corte dobre exatamente nessa linha."
+  },
   "pagination": {
     "next": "Próximo",
     "previous": "Anterior"

@@ -4,6 +4,9 @@
     "en": "English",
     "es-ES": "Spanish"
   },
+  "print": {
+    "middle_line": "Attention: for a perfect cut, fold exactly on this line."
+  },
   "pagination": {
     "next": "Next",
     "previous": "Previous"

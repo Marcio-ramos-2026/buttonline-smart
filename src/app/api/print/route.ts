@@ -1,9 +1,10 @@
 import { pageSizes } from "@/components/editor/model";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { PDFDocument, degrees, rgb } from "pdf-lib";
+import { PDFDocument, degrees, rgb, StandardFonts } from "pdf-lib";
 import sharp from 'sharp'
 import { ModelConfig } from "@/components/editor/model";
+import { getTranslations } from "next-intl/server";
 
 interface printRequest {
   model_id: number;
@@ -18,6 +19,8 @@ const mmToPt = (mm: number) => parseFloat((mm * 2.83465).toFixed(5));
 export async function POST(request: NextRequest) {
   const data: printRequest = await request.json()
   const { model_id, svg } = data
+
+  const tForm = await getTranslations("print");
 
   const model = await prisma.editor_canvas.findFirst({
     where: {
@@ -85,6 +88,11 @@ export async function POST(request: NextRequest) {
     
       const lineLength = (orientation === 'horizontal' ? height : width) * 0.9;
       const halfLine = lineLength / 2;
+
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      const fontSize = 10
+      const warningText = tForm('middle_line')
+      const warningTextWidth = font.widthOfTextAtSize(warningText,fontSize)
     
       if (orientation === 'vertical') {
         // Horizontal line centered on page
@@ -92,6 +100,14 @@ export async function POST(request: NextRequest) {
           start: { x: centerX - halfLine, y: centerY },
           end: { x: centerX + halfLine, y: centerY },
           thickness: 1,
+          color: rgb(0, 0, 0),
+        });
+
+        page.drawText(warningText, {
+          x: centerX - warningTextWidth / 2,
+          y: centerY + 5, 
+          size: fontSize,
+          font,
           color: rgb(0, 0, 0),
         });
       } else {
@@ -102,6 +118,17 @@ export async function POST(request: NextRequest) {
           thickness: 1,
           color: rgb(0, 0, 0),
         });
+
+        
+        page.drawText(warningText, {
+          x: centerX + 8,
+          y: centerY - warningTextWidth / 2,
+          size: fontSize,
+          font,
+          rotate: degrees(90),
+          color: rgb(0, 0, 0),
+        });
+
       }
     }
     
