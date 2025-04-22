@@ -381,6 +381,7 @@ export const RenderCanvas = () => {
 
 const ModelsExamples = ({ model }: { model: editor_canvas }) => {
   const [loadingSelectedModel, setLoadingSelectedModel] = useState(false);
+  const [svg,setSvg] = useState('')
   const t = useTranslations("pages.editor");
 
   const handleSelectModel = (model: editor_canvas) => {
@@ -389,16 +390,26 @@ const ModelsExamples = ({ model }: { model: editor_canvas }) => {
     window.location.href = `?id=${model.id}`;
   };
 
+  useEffect(()=> {
+
+    createModel(model).then((modelResponse)=>{
+      setSvg(btoa(generateSVG(modelResponse)))
+    })
+    
+  },[model])
+
+  console.log('svg',svg)
+
   return (
     <div className="flex flex-col rounded-lg bg-white shadow-sm border justify-between">
       <div className="px-4 py-5 sm:px-6">
         <h5 className="text-primary text-center">{model.name}</h5>
       </div>
       <div className={styles.templateSample}>
-        <ReactSVG
+        {svg && <ReactSVG
           className=" text-red-500"
-          src={`data:image/svg+xml;base64,${btoa(generateSVG(createModel(model)))}`}
-        />
+          src={`data:image/svg+xml;base64,${svg}`}
+        />}
       </div>
 
       <div className="">
