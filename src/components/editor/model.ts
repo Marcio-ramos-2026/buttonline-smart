@@ -16,6 +16,15 @@ type Shape = {
   cardenas_print: boolean;
 };
 
+type shapeCustom =  {
+  type: string;
+  width: number;
+  height: number;
+  svg: string;  
+  top: number;
+  left: number;
+} & Shape
+
 type shapeRectangle = {
   type: string;
   width: number;
@@ -61,7 +70,7 @@ export type ModelConfig = {
   gabarito: gabarito;
 };
 
-export const createModel = (model: editor_canvas): fabric.Object => {
+export const createModel = async (model: editor_canvas): Promise<fabric.Object> => {
   const objConfig = model?.config as ModelConfig;
 
   const createMark = (element: fabric.FabricObject) => {
@@ -122,32 +131,31 @@ export const createModel = (model: editor_canvas): fabric.Object => {
 
   ////////////////////////////////////////////////////////
 
-  const elements = Object.values(objConfig?.objects)
-    .map((obj, k) => {
+  const elements: fabric.FabricObject[] = await Promise.all(
+    Object.values(objConfig?.objects).map(async (obj, k) => {
       switch (obj.type) {
         case "ellipse":
           const typeEllipse = obj as shapeEllipse;
-
-          const fabricObjectEllipse = ellipse(typeEllipse);
-          return fabricObjectEllipse;
-          break;
+          return ellipse(typeEllipse);
         case "circle":
           const typeCircle = obj as shapeCircle;
-
-          const fabricObjectCircle = circle(typeCircle);
-          return fabricObjectCircle;
-          break;
+          return circle(typeCircle);
         case "rectangle":
           const typeRectangle = obj as shapeRectangle;
-
-          const fabricObjectRectangle = rectangle(typeRectangle);
-          return fabricObjectRectangle;
-          break;
+          return rectangle(typeRectangle);
+        case 'custom':
+          const typeCustom = obj as shapeCustom;
+          const x = await svgShape(typeCustom);
+          x.set({left:0})
+          console.log('x',x)
+          return x
       }
     })
-    .filter((el): el is NonNullable<typeof el> => el !== null);
-
-  elements.push(createMark(elements[0]));
+  ).then(results => results.filter((el): el is fabric.FabricObject => el !== null));
+    
+  if (elements.length > 0) {
+    elements.push(createMark(elements[0])); 
+  }
 
   return new fabric.Group(elements, {
     selectable: false,
@@ -159,8 +167,8 @@ export const createModel = (model: editor_canvas): fabric.Object => {
 
 const ellipse = (config: shapeEllipse): fabric.FabricObject => {
   return new fabric.Ellipse({
-    rx: config.width,
-    ry: config.height,
+    rx: fabric.util.parseUnit(`${config.width}mm`),
+    ry: fabric.util.parseUnit(`${config.height}mm`),
     fill: "white",
     stroke: "#000",
     strokeWidth: config?.strokeWidth ?? 1,
@@ -177,7 +185,7 @@ const ellipse = (config: shapeEllipse): fabric.FabricObject => {
 
 const circle = (config: shapeCircle) => {
   return new fabric.Circle({
-    radius: fabric.util.parseUnit(`${config.radius}mm`),
+    radius: fabric.util.parseUnit(`${config.radius/2}mm`),
     fill: config.background ?? "#fff",
     stroke: "#000",
     strokeWidth: config?.strokeWidth ?? 1,
@@ -189,12 +197,12 @@ const circle = (config: shapeCircle) => {
     hoverCursor: "default",
     cardenas_print: config.cardenas_print === undefined ? true: config.cardenas_print
   });
-};
+}
 
 const rectangle = (config: shapeRectangle) => {
   return new fabric.Rect({
-    width: config.width,
-    height: config.height,
+    width: fabric.util.parseUnit(`${config.width}mm`),
+    height: fabric.util.parseUnit(`${config.height}mm`),
     fill: "white",
     stroke: "#000",
     strokeWidth: config?.strokeWidth ?? 0.3,
@@ -211,7 +219,91 @@ const rectangle = (config: shapeRectangle) => {
   });
 };
 
+export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject> => {
+  const svgText = config.svg.replace(/\\+/g, '');
+  const loaded = await fabric.loadSVGFromString(svgText);
+
+  if (!loaded || !loaded.objects?.length) {
+    return new fabric.Group([]);
+  }
+
+  const objects = loaded.objects.filter(Boolean) as fabric.Object[];
+  const group = new fabric.Group(objects);
+
+  // Convert mm to px for accurate scaling
+  const targetWidthPx = fabric.util.parseUnit(`${config.width}mm`);
+  const targetHeightPx = fabric.util.parseUnit(`${config.height}mm`);
+
+  const scaleX = targetWidthPx / group.width!;
+  const scaleY = targetHeightPx / group.height!;
+  const scale = Math.min(scaleX, scaleY); // use both if you want to stretch
+
+  group.set({
+    scaleX: scale,
+    scaleY: scale,
+    fill:'black',
+    originX: 'center',
+    originY: 'center',
+    top: config?.top ?? 0,
+    left: config?.left ?? 0,
+    stroke: "#000",
+    strokeWidth: 1,
+    cardenas_print:
+      config.cardenas_print === undefined ? true : config.cardenas_print, 
+  });
+
+  return group as fabric.FabricObject;
+};
+
+
 export const generateSVG = (element: fabric.FabricObject) => {
   const viewBox = `${-element.width / 2} ${-element.height / 2} ${element.width} ${element.height}`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${element.width}" height="${element.height}" viewBox="${viewBox}">${element.toSVG()}</svg>`;
+};
+
+const cleanSVGViewBox = (svgText: string): string => {
+  // Create a temporary DOM element to parse the SVG
+  const parser = new DOMParser();
+  const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
+  const svgElement = svgDoc.documentElement;
+
+  // Find all elements inside the SVG (use only relevant elements like paths, groups, etc.)
+  const elements = svgElement.querySelectorAll<SVGGraphicsElement>('*');
+
+  // Get the bounding box for all elements inside the SVG
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+
+  // Loop through each element to calculate the bounding box
+  elements.forEach((el) => {
+    // Ensure the element is of type that supports getBBox()
+    if (el instanceof SVGGraphicsElement) {
+      const bbox = el.getBBox();
+      minX = Math.min(minX, bbox.x);
+      minY = Math.min(minY, bbox.y);
+      maxX = Math.max(maxX, bbox.x + bbox.width);
+      maxY = Math.max(maxY, bbox.y + bbox.height);
+    }
+  });
+
+  // If we didn't find any elements (invalid SVG), return the original SVG text
+  if (minX === Infinity || minY === Infinity || maxX === -Infinity || maxY === -Infinity) {
+    return svgText;
+  }
+
+  // Adjust the viewBox to fit the bounding box
+  const width = maxX - minX;
+  const height = maxY - minY;
+  const viewBox = `${minX} ${minY} ${width} ${height}`;
+
+  // Update the SVG's viewBox attribute to the new bounds
+  svgElement.setAttribute('viewBox', viewBox);
+
+  // Serialize the cleaned SVG back to a string
+  const serializer = new XMLSerializer();
+  const cleanedSVG = serializer.serializeToString(svgDoc);
+
+  return cleanedSVG;
 };

@@ -308,8 +308,7 @@ export const RenderCanvas = () => {
     //   return;
     // }
 
-    let canvasModel = createModel(currentModel);
-    if (canvasModel) {
+    createModel(currentModel).then((canvasModel)=>{
       canvas.remove(...canvas.getObjects());
 
       const scale = canvasConfig.maxScale / canvasModel.width;
@@ -319,8 +318,9 @@ export const RenderCanvas = () => {
       canvas.add(canvasModel);
       canvas.centerObject(canvasModel);
       canvas.renderAll();
+
       setRealCanvas(canvasModel);
-    }
+    })    
   }, [canvas, currentModel]);
 
   if (!currentModel) {
