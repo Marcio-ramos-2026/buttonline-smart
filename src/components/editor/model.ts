@@ -241,13 +241,13 @@ export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject
   group.set({
     scaleX: scale,
     scaleY: scale,
-    fill:'black',
+    fill:'transparent',
     originX: 'center',
     originY: 'center',
     top: config?.top ?? 0,
     left: config?.left ?? 0,
-    stroke: "#000",
-    strokeWidth: 1,
+    stroke: "none",
+    strokeWidth: 0,
     cardenas_print:
       config.cardenas_print === undefined ? true : config.cardenas_print, 
   });

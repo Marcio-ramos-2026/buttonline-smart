@@ -42,10 +42,7 @@ export const PrintButton = ({
   
     const originalCanvas = await canvas.clone(["cardenas_print", "cardenas_canvas"]);
     const svg = await extractCardenasCanvas(originalCanvas,Number(width),Number(height))
-    // Step 4: Clone and offset each relevant object into the new canvas
 
-  
-    console.log('svg',svg)
     // Step 8: Send to server
     fetch("/api/print", {
       method: "POST",

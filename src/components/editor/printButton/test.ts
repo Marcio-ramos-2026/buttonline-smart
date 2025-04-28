@@ -64,10 +64,10 @@ export async function extractCardenasCanvas(
         await convertImageToBase64(child as fabric.Image);
       }
 
-      child.set({
-        fill: 'transparent',
-        backgroundColor: 'transparent',
-      });
+      // child.set({
+      //   fill: 'transparent',
+      //   backgroundColor: 'transparent',
+      // });
 
       cardenasPrintObjects.push(child);
     }
@@ -100,6 +100,8 @@ export async function extractCardenasCanvas(
     croppedCanvas.clipPath.scaleX = (croppedCanvas.clipPath.scaleX ?? 1) * scaleX;
     croppedCanvas.clipPath.scaleY = (croppedCanvas.clipPath.scaleY ?? 1) * scaleY;
     croppedCanvas.clipPath.setCoords();
+
+  
   }
 
   return croppedCanvas.toSVG();
@@ -135,6 +137,8 @@ async function convertImageToBase64(image: fabric.Image): Promise<void> {
 
   const base64 = canvas.toDataURL(isJpeg ? 'image/jpeg' : 'image/png', 1);
   imageElement.src = base64;
+
+  console.log('base64',base64)
 
   image.set({ element: imageElement });
 }
