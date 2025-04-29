@@ -53,6 +53,7 @@ type Shapes = shapeCircle | shapeEllipse;
 
 type ShapeCollection = Record<string, Shapes>;
 type gabarito = {
+  line?: 'vertical' | 'horizontal'
   orientation?: 'vertical' | 'horizontal'
   pdf: keyof typeof pageSizes;
   positions: Record<string, { x: number; y: number, rotate?:number }>;
@@ -147,7 +148,6 @@ export const createModel = async (model: editor_canvas): Promise<fabric.Object> 
           const typeCustom = obj as shapeCustom;
           const x = await svgShape(typeCustom);
           x.set({left:0})
-          console.log('x',x)
           return x
       }
     })
@@ -241,13 +241,14 @@ export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject
   group.set({
     scaleX: scale,
     scaleY: scale,
-    fill:'transparent',
+    // fill:'transparent',
     originX: 'center',
     originY: 'center',
     top: config?.top ?? 0,
     left: config?.left ?? 0,
-    stroke: "none",
-    strokeWidth: 0,
+    // stroke: "none",
+    // strokeWidth: 0,
+    // backgroundColor: 'transparent',
     cardenas_print:
       config.cardenas_print === undefined ? true : config.cardenas_print, 
   });

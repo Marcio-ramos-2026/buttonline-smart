@@ -64,10 +64,12 @@ export async function extractCardenasCanvas(
         await convertImageToBase64(child as fabric.Image);
       }
 
-      // child.set({
-      //   fill: 'transparent',
-      //   backgroundColor: 'transparent',
-      // });
+      if(!['group','image'].includes((child.type))){
+        child.set({
+        fill: 'transparent',
+        backgroundColor: 'transparent',
+      });
+      }
 
       cardenasPrintObjects.push(child);
     }
@@ -137,8 +139,6 @@ async function convertImageToBase64(image: fabric.Image): Promise<void> {
 
   const base64 = canvas.toDataURL(isJpeg ? 'image/jpeg' : 'image/png', 1);
   imageElement.src = base64;
-
-  console.log('base64',base64)
 
   image.set({ element: imageElement });
 }

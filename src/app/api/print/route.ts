@@ -5,6 +5,7 @@ import { PDFDocument, degrees, rgb, StandardFonts } from "pdf-lib";
 import sharp from 'sharp'
 import { ModelConfig } from "@/components/editor/model";
 import { getTranslations } from "next-intl/server";
+// import { writeFileSync } from "fs";
 
 interface printRequest {
   model_id: number;
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
 
   const gabarito = model?.gabarito as ModelConfig["gabarito"]
   const sizes = model.size?.split(",")
-  const orientation = gabarito.orientation ?? 'vertical'
+  const orientation = gabarito.orientation ?? 'horizontal'
 
   let [modelWidth, modelHeight] = sizes as string[]
   if (!modelHeight) modelHeight = modelWidth
@@ -46,6 +47,8 @@ export async function POST(request: NextRequest) {
   if (orientation === 'horizontal' && pageSize[1] > pageSize[0] ) {
     pageSize.reverse()
   }
+
+  const line = gabarito.line ?? 'horizontal'
 
   try {
     // Create a new PDF document
@@ -57,6 +60,8 @@ export async function POST(request: NextRequest) {
       .png({ quality: 100 })
       .toBuffer();
     let pngImage = await pdfDoc.embedPng(pngBuffer);
+
+    // writeFileSync('image.png',pngBuffer)
 
     
     Object.values(gabarito.positions).forEach(async (p) => {
@@ -82,7 +87,7 @@ export async function POST(request: NextRequest) {
     });
     
 
-    if (true) {
+    if (line) {
       const centerX = width / 2;
       const centerY = height / 2;
     
@@ -94,7 +99,7 @@ export async function POST(request: NextRequest) {
       const warningText = tForm('middle_line')
       const warningTextWidth = font.widthOfTextAtSize(warningText,fontSize)
     
-      if (orientation === 'vertical') {
+      if (line === 'horizontal') {
         // Horizontal line centered on page
         page.drawLine({
           start: { x: centerX - halfLine, y: centerY },
@@ -102,6 +107,22 @@ export async function POST(request: NextRequest) {
           thickness: 1,
           color: rgb(0, 0, 0),
         });
+
+         //line at the left
+         page.drawLine({
+          start: {x: 10, y: 5},
+          end: {x: 10, y: height-5},
+          thickness: 1,
+          color: rgb(0,0,0)
+        })
+
+        //line at the right
+        page.drawLine({
+          start: {x: width-10, y: 5},
+          end: {x: width-10, y: height-5},
+          thickness: 1,
+          color: rgb(0,0,0)
+        })
 
         page.drawText(warningText, {
           x: centerX - warningTextWidth / 2,
@@ -118,6 +139,22 @@ export async function POST(request: NextRequest) {
           thickness: 1,
           color: rgb(0, 0, 0),
         });
+
+        //line at the top
+        page.drawLine({
+          start: {x: 10, y: height-5},
+          end: {x: width-10, y: height-5},
+          thickness: 1,
+          color: rgb(0,0,0)
+        })
+
+        //line on the bottom
+        page.drawLine({
+          start: {x: 10, y: 5},
+          end: {x: width-10, y: 5},
+          thickness: 1,
+          color: rgb(0,0,0)
+        })
 
         
         page.drawText(warningText, {
