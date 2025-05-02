@@ -50,6 +50,21 @@ export async function POST(request: NextRequest) {
 
   const line = gabarito.line ?? 'horizontal'
 
+  let lines = gabarito.lines
+  if(!lines) {
+    if(line === 'horizontal'){
+      lines = [
+        {x:"lower",y:5},
+        {x:"higher",y:5}
+      ]
+    }else{
+      lines = [
+        {x:5,y:"lower"},
+        {x:5,y:"higher"}
+      ]
+    }
+  }
+
   try {
     // Create a new PDF document
     const pdfDoc = await PDFDocument.create();
@@ -63,7 +78,10 @@ export async function POST(request: NextRequest) {
 
     // writeFileSync('image.png',pngBuffer)
 
-    
+    let minX: number = 999,
+    maxX: number = 0,
+    minY: number = 999,
+    maxY: number = 0
     Object.values(gabarito.positions).forEach(async (p) => {
       let imgWidth = mmToPt(parseFloat(modelWidth))
       let imgHeight = mmToPt(parseFloat(modelHeight))
@@ -76,6 +94,12 @@ export async function POST(request: NextRequest) {
       if (rotate == -90) {
         y += imgHeight
       }
+
+      if(p.x < minX) minX = p.x
+      if(p.x + parseFloat(modelWidth) > maxX) maxX = p.x + parseFloat(modelWidth)
+
+      if(p.y < minY) minY = p.y
+      if(p.y + parseFloat(modelHeight) > maxY) maxY = p.y + parseFloat(modelHeight)
     
       page.drawImage(pngImage, {
         x: x,
@@ -98,6 +122,8 @@ export async function POST(request: NextRequest) {
       const fontSize = 10
       const warningText = tForm('middle_line')
       const warningTextWidth = font.widthOfTextAtSize(warningText,fontSize)
+
+      const defaultPaddingMM = 1
     
       if (line === 'horizontal') {
         // Horizontal line centered on page
@@ -107,22 +133,23 @@ export async function POST(request: NextRequest) {
           thickness: 1,
           color: rgb(0, 0, 0),
         });
-
+      
+        const YLine = mmToPt(minY - defaultPaddingMM)
          //line at the left
-         page.drawLine({
-          start: {x: 10, y: 5},
-          end: {x: 10, y: height-5},
-          thickness: 1,
-          color: rgb(0,0,0)
-        })
+        //  page.drawLine({
+        //   start: {x: defaultPaddingMM, y: YLine},
+        //   end: {x: defaultPaddingMM, y: height-YLine},
+        //   thickness: 1,
+        //   color: rgb(0,0,0)
+        // })
 
-        //line at the right
-        page.drawLine({
-          start: {x: width-10, y: 5},
-          end: {x: width-10, y: height-5},
-          thickness: 1,
-          color: rgb(0,0,0)
-        })
+        // //line at the right
+        // page.drawLine({
+        //   start: {x: width-10, y: 5},
+        //   end: {x: width-10, y: height-5},
+        //   thickness: 1,
+        //   color: rgb(0,0,0)
+        // })
 
         page.drawText(warningText, {
           x: centerX - warningTextWidth / 2,
@@ -141,20 +168,21 @@ export async function POST(request: NextRequest) {
         });
 
         //line at the top
-        page.drawLine({
-          start: {x: 10, y: height-5},
-          end: {x: width-10, y: height-5},
-          thickness: 1,
-          color: rgb(0,0,0)
-        })
+        // page.drawLine({
+        //   start: {x: 5, y: height-mmToPt(minY - 1)},
+        //   end: {x: width-5, y: height-mmToPt(minY - 1)},
+        //   thickness: 1,
+        //   color: rgb(0,0,0)
+        // })
 
+      
         //line on the bottom
-        page.drawLine({
-          start: {x: 10, y: 5},
-          end: {x: width-10, y: 5},
-          thickness: 1,
-          color: rgb(0,0,0)
-        })
+        // page.drawLine({
+        //   start: {x: 10, y: height-mmToPt(maxY + 1)},
+        //   end: {x: width-10, y: height-mmToPt(maxY + 1)},
+        //   thickness: 1,
+        //   color: rgb(0,0,0)
+        // })
 
         
         page.drawText(warningText, {
@@ -168,8 +196,36 @@ export async function POST(request: NextRequest) {
 
       }
     }
+
+
+    for (let i = 0; i < lines.length; i++) {
+      const { x: rawX, y: rawY } = lines[i];
     
+      let x: number;
+      if (rawX === 'lower') x = minX - 1;
+      else if (rawX === 'higher') x = maxX + 1;
+      else x = rawX ?? 5;
     
+      let y: number;
+      if (rawY === 'lower') y = minY - 1;
+      else if (rawY === 'higher') y = maxY + 1;
+      else y = rawY ?? 5;
+    
+      const start = line === 'vertical'
+        ? { x: mmToPt(x), y: height - mmToPt(y) }
+        : { x: mmToPt(x), y: height - mmToPt(y) };
+    
+      const end = line === 'vertical'
+        ? { x: width - mmToPt(x), y: height - mmToPt(y) }
+        : { x: mmToPt(x), y: mmToPt(0) };
+    
+      page.drawLine({
+        start,
+        end,
+        thickness: 1,
+        color: rgb(0, 0, 0),
+      });
+    }
     
 
     // Set PDF metadata

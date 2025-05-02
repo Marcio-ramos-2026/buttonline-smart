@@ -52,8 +52,10 @@ type shapeCircle = {
 type Shapes = shapeCircle | shapeEllipse;
 
 type ShapeCollection = Record<string, Shapes>;
+type GabaritoLinePosition = number | 'lower' | 'higher'
 type gabarito = {
   line?: 'vertical' | 'horizontal'
+  lines?: {x:GabaritoLinePosition,y:GabaritoLinePosition}[]
   orientation?: 'vertical' | 'horizontal'
   pdf: keyof typeof pageSizes;
   positions: Record<string, { x: number; y: number, rotate?:number }>;
@@ -260,51 +262,4 @@ export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject
 export const generateSVG = (element: fabric.FabricObject) => {
   const viewBox = `${-element.width / 2} ${-element.height / 2} ${element.width} ${element.height}`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${element.width}" height="${element.height}" viewBox="${viewBox}">${element.toSVG()}</svg>`;
-};
-
-const cleanSVGViewBox = (svgText: string): string => {
-  // Create a temporary DOM element to parse the SVG
-  const parser = new DOMParser();
-  const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
-  const svgElement = svgDoc.documentElement;
-
-  // Find all elements inside the SVG (use only relevant elements like paths, groups, etc.)
-  const elements = svgElement.querySelectorAll<SVGGraphicsElement>('*');
-
-  // Get the bounding box for all elements inside the SVG
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-
-  // Loop through each element to calculate the bounding box
-  elements.forEach((el) => {
-    // Ensure the element is of type that supports getBBox()
-    if (el instanceof SVGGraphicsElement) {
-      const bbox = el.getBBox();
-      minX = Math.min(minX, bbox.x);
-      minY = Math.min(minY, bbox.y);
-      maxX = Math.max(maxX, bbox.x + bbox.width);
-      maxY = Math.max(maxY, bbox.y + bbox.height);
-    }
-  });
-
-  // If we didn't find any elements (invalid SVG), return the original SVG text
-  if (minX === Infinity || minY === Infinity || maxX === -Infinity || maxY === -Infinity) {
-    return svgText;
-  }
-
-  // Adjust the viewBox to fit the bounding box
-  const width = maxX - minX;
-  const height = maxY - minY;
-  const viewBox = `${minX} ${minY} ${width} ${height}`;
-
-  // Update the SVG's viewBox attribute to the new bounds
-  svgElement.setAttribute('viewBox', viewBox);
-
-  // Serialize the cleaned SVG back to a string
-  const serializer = new XMLSerializer();
-  const cleanedSVG = serializer.serializeToString(svgDoc);
-
-  return cleanedSVG;
 };
