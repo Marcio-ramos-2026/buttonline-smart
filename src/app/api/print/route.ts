@@ -91,15 +91,19 @@ export async function POST(request: NextRequest) {
 
       const rotate = p.rotate ?? 0
 
-      if (rotate == -90) {
-        y += imgHeight
-      }
 
       if(p.x < minX) minX = p.x
       if(p.x + parseFloat(modelWidth) > maxX) maxX = p.x + parseFloat(modelWidth)
 
       if(p.y < minY) minY = p.y
       if(p.y + parseFloat(modelHeight) > maxY) maxY = p.y + parseFloat(modelHeight)
+
+      if (rotate == -90) {
+        y += imgHeight
+        
+        maxX = p.x + parseFloat(modelHeight)
+        maxY = p.y + parseFloat(modelWidth)
+      }
     
       page.drawImage(pngImage, {
         x: x,
@@ -122,8 +126,6 @@ export async function POST(request: NextRequest) {
       const fontSize = 10
       const warningText = tForm('middle_line')
       const warningTextWidth = font.widthOfTextAtSize(warningText,fontSize)
-
-      const defaultPaddingMM = 1
     
       if (line === 'horizontal') {
         // Horizontal line centered on page
@@ -134,22 +136,6 @@ export async function POST(request: NextRequest) {
           color: rgb(0, 0, 0),
         });
       
-        const YLine = mmToPt(minY - defaultPaddingMM)
-         //line at the left
-        //  page.drawLine({
-        //   start: {x: defaultPaddingMM, y: YLine},
-        //   end: {x: defaultPaddingMM, y: height-YLine},
-        //   thickness: 1,
-        //   color: rgb(0,0,0)
-        // })
-
-        // //line at the right
-        // page.drawLine({
-        //   start: {x: width-10, y: 5},
-        //   end: {x: width-10, y: height-5},
-        //   thickness: 1,
-        //   color: rgb(0,0,0)
-        // })
 
         page.drawText(warningText, {
           x: centerX - warningTextWidth / 2,
@@ -167,24 +153,6 @@ export async function POST(request: NextRequest) {
           color: rgb(0, 0, 0),
         });
 
-        //line at the top
-        // page.drawLine({
-        //   start: {x: 5, y: height-mmToPt(minY - 1)},
-        //   end: {x: width-5, y: height-mmToPt(minY - 1)},
-        //   thickness: 1,
-        //   color: rgb(0,0,0)
-        // })
-
-      
-        //line on the bottom
-        // page.drawLine({
-        //   start: {x: 10, y: height-mmToPt(maxY + 1)},
-        //   end: {x: width-10, y: height-mmToPt(maxY + 1)},
-        //   thickness: 1,
-        //   color: rgb(0,0,0)
-        // })
-
-        
         page.drawText(warningText, {
           x: centerX + 8,
           y: centerY - warningTextWidth / 2,
@@ -197,6 +165,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    console.log('aaa',maxY)
 
     for (let i = 0; i < lines.length; i++) {
       const { x: rawX, y: rawY } = lines[i];
@@ -211,6 +180,9 @@ export async function POST(request: NextRequest) {
       else if (rawY === 'higher') y = maxY + 1;
       else y = rawY ?? 5;
     
+      if(i == 1) {
+        console.log('aaa',rawY,y)
+      }
       const start = line === 'vertical'
         ? { x: mmToPt(x), y: height - mmToPt(y) }
         : { x: mmToPt(x), y: height - mmToPt(y) };
@@ -218,6 +190,8 @@ export async function POST(request: NextRequest) {
       const end = line === 'vertical'
         ? { x: width - mmToPt(x), y: height - mmToPt(y) }
         : { x: mmToPt(x), y: mmToPt(0) };
+
+      console.log('start',start,end)  
     
       page.drawLine({
         start,
