@@ -398,8 +398,6 @@ const ModelsExamples = ({ model }: { model: editor_canvas }) => {
     
   },[model])
 
-  console.log('svg',svg)
-
   return (
     <div className="flex flex-col rounded-lg bg-white shadow-sm border justify-between">
       <div className="px-4 py-5 sm:px-6">

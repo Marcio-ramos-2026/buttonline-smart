@@ -40,9 +40,9 @@ export const PrintButton = ({
     const canvasWidth = fabric.util.parseUnit(`${width}mm`);
     const canvasHeight = fabric.util.parseUnit(`${height}mm`);
   
-    const originalCanvas = await canvas.clone(["cardenas_print", "cardenas_canvas"]);
+    const originalCanvas = await canvas.clone(["cardenas_print", "cardenas_canvas","cardenas_mark"]);
     const svg = await extractCardenasCanvas(originalCanvas,Number(width),Number(height))
-    console.log('svg',svg)
+
     // Step 8: Send to server
     fetch("/api/print", {
       method: "POST",

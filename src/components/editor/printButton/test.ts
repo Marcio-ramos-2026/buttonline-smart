@@ -64,17 +64,17 @@ export async function extractCardenasCanvas(
         await convertImageToBase64(child as fabric.Image);
       }
 
-      if(!['group','image'].includes((child.type))){
+      if(!['group','image'].includes((child.type)) && !child.cardenas_mark){
         child.set({
-        fill: 'transparent',
-        backgroundColor: 'transparent',
-      });
+          fill: 'transparent',
+          backgroundColor: 'transparent',
+        });
       }
-
       cardenasPrintObjects.push(child);
     }
   }
-
+  
+  
   const printGroup = new fabric.Group(cardenasPrintObjects, {
     left: 0,
     top: 0,

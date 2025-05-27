@@ -165,8 +165,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    console.log('aaa',maxY)
-
     for (let i = 0; i < lines.length; i++) {
       const { x: rawX, y: rawY } = lines[i];
     
@@ -180,9 +178,6 @@ export async function POST(request: NextRequest) {
       else if (rawY === 'higher') y = maxY + 1;
       else y = rawY ?? 5;
     
-      if(i == 1) {
-        console.log('aaa',rawY,y)
-      }
       const start = line === 'vertical'
         ? { x: mmToPt(x), y: height - mmToPt(y) }
         : { x: mmToPt(x), y: height - mmToPt(y) };
@@ -190,8 +185,6 @@ export async function POST(request: NextRequest) {
       const end = line === 'vertical'
         ? { x: width - mmToPt(x), y: height - mmToPt(y) }
         : { x: mmToPt(x), y: mmToPt(0) };
-
-      console.log('start',start,end)  
     
       page.drawLine({
         start,

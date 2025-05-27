@@ -25,7 +25,7 @@ interface NetlifyRecoverPasswordProps {
   token: string;
 }
 
-const baseUrl = process.env.VERCEL_URL ?? "http://localhost:3000";
+const baseUrl = process.env.SITE_URL ?? process.env.VERCEL_URL ?? "http://localhost:3000";
 
 const messages: EmailMessageLang = {
   "pt-BR": {

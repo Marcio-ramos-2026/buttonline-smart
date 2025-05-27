@@ -120,7 +120,6 @@ export const createModel = async (model: editor_canvas): Promise<fabric.Object> 
       stroke: "black",
       strokeWidth: 0,
       selectable: false,
-      moveCursor: "default",
       originX: "center",
       originY: "center",
       hoverCursor: "default",
