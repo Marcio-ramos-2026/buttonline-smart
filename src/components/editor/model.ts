@@ -163,6 +163,7 @@ export const createModel = async (model: editor_canvas): Promise<fabric.Object> 
     moveCursor: "default",
     hoverCursor: "default",
     cardenas_canvas: "true",
+    cardenas_type: model.shape
   });
 };
 

@@ -6,10 +6,12 @@ declare module "fabric" {
     cardenas_print?: boolean;
     cardenas_mark?: boolean;
   }
+
   // to have the properties typed in the exported object
   interface SerializedObjectProps {
     cardenas_canvas?: string;
     cardenas_print?: boolean;
     cardenas_mark?: boolean;
+    cardenas_type?: string;
   }
 }

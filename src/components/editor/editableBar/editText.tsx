@@ -1,20 +1,14 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { ColorPicker } from "@/components/colorPicker";
 import {
-  Bold,
-  Italic,
-  Underline,
-  AlignJustify,
-  AlignLeft,
-  AlignRight,
+  SpaceIcon,  
   AArrowDown,
   AArrowUp,
   Radius,
   Type,
+  ArrowDownFromLine,
 } from "lucide-react";
-import { useState, SetStateAction } from "react";
+import { useState, SetStateAction, useEffect } from "react";
 import * as fabric from "fabric";
 import { Tooltip } from "@/components/tooltip/tooltip";
 import { Input } from "@/components/ui/input";
@@ -35,6 +29,7 @@ import { HandleTextBold } from "./handles/HandleTextBold";
 import { HandleTextItalico } from "./handles/HandleTextItalico";
 import { HandleTextUnderline } from "./handles/HandleTextUnderline";
 import { HandleAlignText } from "./handles/HandleAlignText";
+import { createPathFromCircleInGroup, createPathFromEllipseInGroup, createPathFromRectInGroup } from "../text/addText";
 
 export const EditText = ({
   object,
@@ -49,8 +44,11 @@ export const EditText = ({
     icon: AArrowDown,
     direction: "down",
   });
-  //@ts-ignore
-  const [radius, setRadius] = useState(object?.radius / 10);
+
+  const [radius, setRadius] = useState(object?.angle);
+  const [letterSpace, setLetterSpace] = useState(object?.charSpacing);
+  const [curvedText, setCurvedText] =  useState(object.text);
+  const [curvedDistance, setCurvedDistance] = useState(0)
 
   const handleDirectionCurved = () => {
     if (!object || !canvas) return;
@@ -83,8 +81,17 @@ export const EditText = ({
   const handleChangeRadius = (e: number[]) => {
     if (!object || !canvas) return;
     setRadius(e[0]);
+    object.set("angle",e[0])
     //@ts-ignore
-    object.setRadius(e[0] * 10);
+    canvas.fire("modified", { target: object });
+    canvas.renderAll();
+    canvas.centerObject(object);
+  };
+
+  const HandleLetterSpacing = (e: number[]) => {
+    if (!object || !canvas) return;
+    setLetterSpace(e[0]);
+    object.set("charSpacing",e[0])
     //@ts-ignore
     canvas.fire("modified", { target: object });
     canvas.renderAll();
@@ -93,17 +100,57 @@ export const EditText = ({
 
   const handleChangeText = (e: any) => {
     if (!object || !canvas) return;
-    //@ts-ignore
-    object.setText(e.target.value);
+    
+    object.set("text",e.target.value)
+    setCurvedText(e.target.value)
+
     //@ts-ignore
     canvas.fire("modified", { target: object });
-    canvas.renderAll();
+    canvas.requestRenderAll();
     canvas.centerObject(object);
   };
 
+  const handleCurvedDistance = (e: number[]) => {
+    if (!object || !canvas) return;
+    setCurvedDistance(e[0])
+
+    let newPath;
+    
+    //@ts-ignore
+    if(object.cardenas_type === 'rectangle') {
+      newPath = createPathFromRectInGroup(canvas,e[0])
+      //@ts-ignore
+    }else if(object.cardenas_type === 'ellipse') {
+      newPath = createPathFromEllipseInGroup(canvas,e[0])
+    }else{
+      newPath = createPathFromCircleInGroup(canvas,e[0])
+    }
+
+    object.set('path',newPath)
+    // //  canvas.fire("modified", { target: object });
+    canvas.requestRenderAll();
+    canvas.centerObject(object);
+  }
+
+useEffect(() => {
+  if (!object) return;
+
+  const handleModified = () => {
+    setRadius( ((object.angle + 180) % 360 + 360) % 360 - 180)
+  };
+
+  object.on('rotating', handleModified);
+  object.on('modified', handleModified);
+
+  return () => {
+    object.off('rotating', handleModified);
+    object.off('modified', handleModified);
+  };
+}, [object]);
+
   return (
     <div className="flex gap-1.5 md:gap-3 flex-1 [&_label]:w-fit [&_label]:h-full h-full">
-      {object.type === "textbox" && (
+      {["textbox"].includes(object.type) && (
         <>
           <HandleCenterCanvasY object={object} canvas={canvas} />
           <HandleCenterCanvasX object={object} canvas={canvas} />
@@ -129,19 +176,63 @@ export const EditText = ({
           <HandleShadow canvas={canvas} object={object} />
         </>
       )}
-      {object.type === "curvedText" && (
+      {object.type === "text" && (
         <>
-          <Tooltip content="Orientação da curva">
-            <button
-              type="button"
-              onClick={handleDirectionCurved}
-              className="border border-solid border-gray-300 rounded-lg px-2 py-0.5 md:py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
-            >
-              <directionCurved.icon />
-            </button>
-          </Tooltip>
+        <DropdownMenu>
+            <Tooltip content="Distância">
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="border border-solid border-gray-300 rounded-lg px-2 py-0.5 md:py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
+                >
+                  <ArrowDownFromLine className="w-6 h-6" />
+                </button>
+              </DropdownMenuTrigger>
+            </Tooltip>
+            <DropdownMenuContent className="h-auto w-64 px-4 py-3 rounded-md flex flex-col gap-1 items-center justify-center">
+              <div className="flex justify-between w-full">
+                <span className="text-xs">Distância</span>
+                <p className="text-start text-xs">{curvedDistance}</p>
+              </div>
+              <Slider
+                value={[curvedDistance]}
+                max={100}
+                min={0}
+                step={1}
+                className="w-full"
+                onValueChange={handleCurvedDistance}
+              />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        <DropdownMenu>
+            <Tooltip content="Espaçamento">
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="border border-solid border-gray-300 rounded-lg px-2 py-0.5 md:py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
+                >
+                  <SpaceIcon className="w-6 h-6" />
+                </button>
+                {/* <ButtonIcon icon={<Blend />} /> */}
+              </DropdownMenuTrigger>
+            </Tooltip>
+            <DropdownMenuContent className="h-auto w-64 px-4 py-3 rounded-md flex flex-col gap-1 items-center justify-center">
+              <div className="flex justify-between w-full">
+                <span className="text-xs">Espaçamento</span>
+                <p className="text-start text-xs">{letterSpace}</p>
+              </div>
+              <Slider
+                value={[letterSpace]}
+                max={2000}
+                min={-500}
+                step={10}
+                className="w-full"
+                onValueChange={HandleLetterSpacing}
+              />
+            </DropdownMenuContent>
+          </DropdownMenu>
           <DropdownMenu>
-            <Tooltip content="Raio">
+            <Tooltip content="Posição">
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
@@ -154,13 +245,13 @@ export const EditText = ({
             </Tooltip>
             <DropdownMenuContent className="h-auto w-64 px-4 py-3 rounded-md flex flex-col gap-1 items-center justify-center">
               <div className="flex justify-between w-full">
-                <span className="text-xs">Raio</span>
-                <p className="text-start text-xs">{radius}</p>
+                <span className="text-xs">Posição</span>
+                <p className="text-start text-xs">{radius.toFixed(2)}</p>
               </div>
               <Slider
                 value={[radius]}
-                max={100}
-                min={1}
+                max={180}
+                min={-180}
                 step={1}
                 className="w-full"
                 onValueChange={handleChangeRadius}
@@ -184,6 +275,7 @@ export const EditText = ({
                 name="changeCurvedText"
                 className="w-full"
                 onChange={handleChangeText}
+                value={curvedText}
               />
             </DropdownMenuContent>
           </DropdownMenu>
