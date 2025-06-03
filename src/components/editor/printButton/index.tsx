@@ -12,7 +12,7 @@ import type { editor_canvas } from "@prisma/client";
 import { useState } from "react";
 import { ButtonItemMultiple } from "../multiple/multiple";
 import { sign } from "crypto";
-import { extractCardenasCanvas } from "./test";
+import { extractCardenasCanvas, patchSvgWithTextPath } from "./test";
 
 
 export const PrintButton = ({
@@ -40,8 +40,10 @@ export const PrintButton = ({
     const canvasWidth = fabric.util.parseUnit(`${width}mm`);
     const canvasHeight = fabric.util.parseUnit(`${height}mm`);
   
-    const originalCanvas = await canvas.clone(["cardenas_print", "cardenas_canvas","cardenas_mark"]);
-    const svg = await extractCardenasCanvas(originalCanvas,Number(width),Number(height))
+    const originalCanvas = await canvas.clone(["cardenas_print", "cardenas_canvas","cardenas_mark","pathType"]);
+    let svg = await extractCardenasCanvas(originalCanvas,Number(width),Number(height))
+
+    // svg = patchSvgWithTextPath(svg,curvedTextObj)
 
     // Step 8: Send to server
     fetch("/api/print", {

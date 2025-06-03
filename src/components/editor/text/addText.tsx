@@ -2,8 +2,110 @@ import { useEditorContext } from "@/context/editor";
 import * as fabric from "fabric";
 import { VerticalTextBox } from "./verticalText";
 import { CurvedText } from "./curvedText";
-import { ArchedTextBox } from "./teste";
-import { useEffect, useMemo } from "react";
+
+const originalToSVG = fabric.FabricText.prototype.toSVG;
+
+fabric.FabricText.prototype.toSVG = function (reviver) {
+  //@ts-ignore
+  if (!this.path) {
+    // No path, fallback to original toSVG or default
+    if (typeof originalToSVG === 'function') {
+      return originalToSVG.call(this, reviver);
+    }
+    return this._createBaseSVGMarkup(this._toSVG(), {
+      reviver,
+      noStyle: true,
+      withShadow: true,
+    });
+  }
+
+  // Custom curved text SVG
+  //@ts-ignore
+  var fontFamily = this.fontFamily.replace(/"/g, "'");
+  //@ts-ignore
+  var fontSize = this.fontSize;
+  //@ts-ignore
+  var fontStyle = this.fontStyle;
+  //@ts-ignore
+  var fontWeight = this.fontWeight;
+  var fill = this.fill;
+
+  //@ts-ignore
+  var pathData = this.path.path;
+  var d = pathData.flat().join(' ');
+  var id = Math.random().toString(36).substr(2, 9);
+
+  var dominantbaseline = 'auto';
+  var dy = 0;
+  //@ts-ignore
+  if (this.pathAlign === 'center') {
+    dominantbaseline = 'middle';
+    //@ts-ignore
+  } else if (this.pathAlign === 'baseline') {
+    dominantbaseline = 'auto';
+    //@ts-ignore
+  } else if (this.pathAlign === 'ascender') {
+    dominantbaseline = 'hanging';
+    //@ts-ignore
+  } else if (this.pathAlign === 'descender') {
+    dominantbaseline = 'auto';
+    dy = (fontSize / 100) * -22;
+  }
+
+  var textAnchor = 'start';
+  //@ts-ignore
+  var pathStartOffset = this.pathStartOffset || 0;
+//@ts-ignore
+  if (this.textAlign === 'center') {
+    textAnchor = 'middle';
+    //@ts-ignore
+  } else if (this.textAlign === 'right') {
+    textAnchor = 'end';
+  }
+
+  var textPathEl = '<defs>\n' +
+    '  <path id="textOnPath' + id + '" d="' + d + '" />\n' +
+    '</defs>';
+
+    //@ts-ignore
+  var letterSpacingEm = (this.charSpacing || 0) / 1000;
+
+var textEl = '<text ' +
+  'font-family="' + fontFamily + '" ' +
+  'fill="' + fill + '" ' +
+  'font-size="' + fontSize + '" ' +
+  'font-style="' + fontStyle + '" ' +
+  'font-weight="' + fontWeight + '" ' +
+  'letter-spacing="' + letterSpacingEm + 'em"' +
+  '>' +
+  '<textPath ' +
+  'xlink:href="#textOnPath' + id + '" ' +
+  'text-anchor="' + textAnchor + '" ' +
+  'dominant-baseline="' + dominantbaseline + '" ' +
+  'startOffset="' + pathStartOffset + '">' +
+  //@ts-ignore
+  '<tspan dy="' + dy + '">' + this.text + '</tspan>' +
+  '</textPath>' +
+  '</text>';
+
+  var svgString = this._createBaseSVGMarkup([textPathEl, textEl], {
+    reviver: reviver,
+    noStyle: true,
+    withShadow: true,
+  });
+
+  svgString = svgString.replace(
+    /<svg([^>]*)>/,
+    '<svg$1 ' +
+    'xmlns="http://www.w3.org/2000/svg" ' +
+    'xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+    'width="' + this.width + '" ' +
+    'height="' + this.height + '" ' +
+    'viewBox="0 0 ' + this.width + ' ' + this.height + '">'
+  );
+
+  return svgString;
+};
 
 export function AddText() {
   const { canvas, currentModel } = useEditorContext();
@@ -67,6 +169,8 @@ export function AddText() {
     }else{
       path = createPathFromCircleInGroup(canvas,0)
     }
+
+    path.set({ id: 'curved-text-path' });
 
     const curvedText = new fabric.FabricText('Um texto curvado aparece aqui na sua impressão', {
       fontSize: 14,

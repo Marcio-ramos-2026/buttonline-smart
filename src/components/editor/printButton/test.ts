@@ -142,3 +142,62 @@ async function convertImageToBase64(image: fabric.Image): Promise<void> {
 
   image.set({ element: imageElement });
 }
+
+function circleToPathD(cx: number, cy: number, r: number, matrix: number[]): string {
+  // matrix is [a, b, c, d, e, f] from transform="matrix(a b c d e f)"
+  // Transform the center point:
+  const x = matrix[0] * cx + matrix[2] * cy + matrix[4];
+  const y = matrix[1] * cx + matrix[3] * cy + matrix[5];
+  
+  // Approximate scaled radius as average scale from matrix:
+  // Note: This is a simplification, true transform of circle can become ellipse
+  const scaleX = Math.sqrt(matrix[0]*matrix[0] + matrix[1]*matrix[1]);
+  const scaleY = Math.sqrt(matrix[2]*matrix[2] + matrix[3]*matrix[3]);
+  const rX = r * scaleX;
+  const rY = r * scaleY;
+
+  // Create elliptical arc path (SVG elliptical arc)
+  // Move to (x - rX, y)
+  // Arc to (x + rX, y) and back
+
+  return `
+    M ${x - rX} ${y}
+    A ${rX} ${rY} 0 1 0 ${x + rX} ${y}
+    A ${rX} ${rY} 0 1 0 ${x - rX} ${y}
+  `.trim().replace(/\s+/g, ' ');
+}
+
+
+function extractFirstCirclePathD(svg: string): string | null {
+  const circleRegex = /<circle[^>]*cx="([^"]+)"[^>]*cy="([^"]+)"[^>]*r="([^"]+)"[^>]*\/?>/;
+  const transformRegex = /transform="matrix\(([^)]+)\)"/;
+
+  // Find first circle element
+  const circleMatch = svg.match(circleRegex);
+  if (!circleMatch) return null;
+  const cx = parseFloat(circleMatch[1]);
+  const cy = parseFloat(circleMatch[2]);
+  const r = parseFloat(circleMatch[3]);
+
+  // Find transform matrix closest before this circle (simplified: find first matrix in svg)
+  const transformMatch = svg.match(transformRegex);
+  let matrix = [1, 0, 0, 1, 0, 0]; // identity by default
+  if (transformMatch) {
+    matrix = transformMatch[1].split(/\s+/).map(parseFloat);
+  }
+
+  return circleToPathD(cx, cy, r, matrix);
+}
+
+export function patchSvgWithTextPath(svg: string, curvedTextObj: fabric.FabricText, pathId = 'curved-text-path'): string {
+  // ... your text extraction and replacement logic ...
+
+  // Extract path d from first circle + transform in SVG
+  const pathD = extractFirstCirclePathD(svg);
+  if (pathD) {
+    const defsBlock = `<defs><path id="${pathId}" d="${pathD}" /></defs>`;
+    svg = svg.replace(/<svg([^>]*)>/, `<svg$1>${defsBlock}`);
+  }
+
+  return svg;
+}

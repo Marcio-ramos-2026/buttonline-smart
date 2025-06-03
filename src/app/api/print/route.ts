@@ -2,9 +2,10 @@ import { pageSizes } from "@/components/editor/model";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { PDFDocument, degrees, rgb, StandardFonts } from "pdf-lib";
-import sharp from 'sharp'
+// import sharp from 'sharp'
 import { ModelConfig } from "@/components/editor/model";
 import { getTranslations } from "next-intl/server";
+import puppeteer from 'puppeteer' 
 // import { writeFileSync } from "fs";
 
 interface printRequest {
@@ -16,6 +17,76 @@ interface printRequest {
 }
 
 const mmToPt = (mm: number) => parseFloat((mm * 2.83465).toFixed(5));
+
+export async function svgToPngBuffer(svg: string): Promise<Buffer> {
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+  const page = await browser.newPage();
+
+  // Set initial viewport to something reasonable
+  await page.setViewport({ width: 800, height: 600 });
+
+  // Load the SVG inside HTML body without CSS scaling
+  await page.setContent(`
+    <!DOCTYPE html>
+    <html>
+      <body style="margin:0; padding:0;">
+        ${svg}
+      </body>
+    </html>
+  `);
+
+  const svgHandle = await page.$('svg');
+  if (!svgHandle) {
+    await browser.close();
+    throw new Error('SVG element not found');
+  }
+
+  // Get bounding box of SVG element (unscaled)
+  const bbox = await svgHandle.boundingBox();
+  if (!bbox) {
+    await browser.close();
+    throw new Error('Could not get bounding box of SVG');
+  }
+
+  const scale = 5;
+
+  // Resize viewport to bbox scaled by scale factor
+  await page.setViewport({
+    width: Math.ceil(bbox.width * scale),
+    height: Math.ceil(bbox.height * scale),
+    deviceScaleFactor: 1,
+  });
+
+  // **IMPORTANT**: Set SVG element's width and height attributes scaled by 'scale' to match viewport
+  await page.evaluate((width, height, scale) => {
+    const svg = document.querySelector('svg');
+    if (svg) {
+      svg.setAttribute('width', `${width * scale}px`);
+      svg.setAttribute('height', `${height * scale}px`);
+      // Remove CSS scale transform if any
+      svg.style.transform = '';
+      svg.style.transformOrigin = '';
+    }
+  }, bbox.width, bbox.height, scale);
+
+  // Take screenshot of entire viewport (which matches scaled SVG)
+  const screenshotBuffer = await page.screenshot({
+    omitBackground: true,
+    clip: {
+      x: 0,
+      y: 0,
+      width: Math.ceil(bbox.width * scale),
+      height: Math.ceil(bbox.height * scale),
+    }
+  });
+
+  await browser.close();
+
+  return Buffer.from(screenshotBuffer);
+}
+
 
 export async function POST(request: NextRequest) {
   const data: printRequest = await request.json()
@@ -71,12 +142,11 @@ export async function POST(request: NextRequest) {
     const page = pdfDoc.addPage(pageSize); // Define canvas size (width x height)
     const { width, height } = page.getSize();
 
-    const pngBuffer = await sharp(Buffer.from(svg), { density: 1000 })
-      .png({ quality: 100 })
-      .toBuffer();
-    let pngImage = await pdfDoc.embedPng(pngBuffer);
+  
+    const pngBuffer = await svgToPngBuffer(svg);
 
-    // writeFileSync('image.png',pngBuffer)
+    const pngImage = await pdfDoc.embedPng(pngBuffer);
+
 
     let minX: number = 999,
     maxX: number = 0,
