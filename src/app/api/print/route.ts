@@ -18,7 +18,7 @@ interface printRequest {
 
 const mmToPt = (mm: number) => parseFloat((mm * 2.83465).toFixed(5));
 
-export async function svgToPngBuffer(svg: string): Promise<Buffer> {
+async function svgToPngBuffer(svg: string): Promise<Buffer> {
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
