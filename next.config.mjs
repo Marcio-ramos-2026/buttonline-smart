@@ -30,7 +30,7 @@ const nextConfig = {
         dangerouslyAllowSVG: true,
     },
 	experimental: {
-		serverComponentsExternalPackages: ["pdfkit"],
+		serverComponentsExternalPackages: ["pdfkit"]
 	},
 };
 

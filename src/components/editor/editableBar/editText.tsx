@@ -178,6 +178,8 @@ useEffect(() => {
       )}
       {object.type === "text" && (
         <>
+        <HandleFontSize canvas={canvas} object={object} />
+        <HandleTextColor canvas={canvas} object={object} />
         <DropdownMenu>
             <Tooltip content="Distância">
               <DropdownMenuTrigger asChild>

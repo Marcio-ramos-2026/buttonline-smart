@@ -11,7 +11,7 @@ import * as fabric from "fabric";
 import type { editor_canvas } from "@prisma/client";
 import { useState } from "react";
 import { ButtonItemMultiple } from "../multiple/multiple";
-import { sign } from "crypto";
+// import { sign } from "crypto";
 import { extractCardenasCanvas, patchSvgWithTextPath } from "./test";
 
 
@@ -42,6 +42,8 @@ export const PrintButton = ({
   
     const originalCanvas = await canvas.clone(["cardenas_print", "cardenas_canvas","cardenas_mark","pathType"]);
     let svg = await extractCardenasCanvas(originalCanvas,Number(width),Number(height))
+    const pngBlob = await svgToPngBlob(svg)
+    const pngBase64 = await blobToBase64(pngBlob)
 
     // svg = patchSvgWithTextPath(svg,curvedTextObj)
 
@@ -49,7 +51,7 @@ export const PrintButton = ({
     fetch("/api/print", {
       method: "POST",
       body: JSON.stringify({
-        svg,
+        button: pngBase64,
         model_id: currentModel.id,
         canvasWidth,
         canvasHeight,
@@ -185,16 +187,42 @@ export const PrintButton = ({
   );
 };
 
-function getScreenDPI() {
-  const div = document.createElement("div");
-  div.style.width = "1in"; // 1 inch in CSS units
-  div.style.height = "1in";
-  div.style.position = "absolute";
-  div.style.visibility = "hidden";
-  document.body.appendChild(div);
+export async function svgToPngBlob(svg: string, scale = 2): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const svgBlob = new Blob([svg], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
 
-  const dpi = div.offsetWidth; // The number of pixels in 1 inch
-  document.body.removeChild(div);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
 
-  return dpi;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return reject(new Error("Canvas context not found"));
+
+      ctx.scale(scale, scale);
+      ctx.drawImage(img, 0, 0);
+
+      canvas.toBlob((blob) => {
+        if (!blob) return reject(new Error("Conversion to Blob failed"));
+        resolve(blob);
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+    };
+
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+async function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      resolve(reader.result as string);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob); // reads as data URL like "data:image/png;base64,..."
+  });
 }
