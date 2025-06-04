@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate && find ./node_modules/chrome-aws-lambda -name '*.js.map' -delete",
+    "postinstall": "prisma generate",
     "email": "email dev -p 3001 --dir src/emails"
   },
   "prisma": {
