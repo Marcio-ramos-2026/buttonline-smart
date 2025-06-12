@@ -45,9 +45,10 @@ export async function POST(request: NextRequest) {
 
   let pageSize = pageSizes[gabarito.pdf] as [number, number]
   if (orientation === 'horizontal' && pageSize[1] > pageSize[0] ) {
-    const copySize = pageSize
-    pageSize[0] = copySize[1]
-    pageSize[1] = copySize[0]
+    // const copySize = pageSize
+    // pageSize[0] = copySize[1]
+    // pageSize[1] = copySize[0]
+    pageSize.reverse()
   }
 
   const line = gabarito.line ?? 'horizontal'
