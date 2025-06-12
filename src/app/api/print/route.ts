@@ -2,7 +2,7 @@ import { pageSizes } from "@/components/editor/model";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { PDFDocument, degrees, rgb, StandardFonts } from "pdf-lib";
-import sharp from 'sharp'
+// import sharp from 'sharp'
 import { ModelConfig } from "@/components/editor/model";
 import { getTranslations } from "next-intl/server";
 
@@ -43,9 +43,11 @@ export async function POST(request: NextRequest) {
   let [modelWidth, modelHeight] = sizes as string[]
   if (!modelHeight) modelHeight = modelWidth
 
-  const pageSize = pageSizes[gabarito.pdf] as [number, number]
+  let pageSize = pageSizes[gabarito.pdf] as [number, number]
   if (orientation === 'horizontal' && pageSize[1] > pageSize[0] ) {
-    pageSize.reverse()
+    const copySize = pageSize
+    pageSize[0] = copySize[1]
+    pageSize[1] = copySize[0]
   }
 
   const line = gabarito.line ?? 'horizontal'

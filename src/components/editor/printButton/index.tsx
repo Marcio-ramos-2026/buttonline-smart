@@ -102,11 +102,16 @@ export const PrintButton = ({
       let [width,height] = button.size
       if(!height) height = width
 
+       const pngBlob = await svgToPngBlob(button.svg)
+      const pngBase64 = await blobToBase64(pngBlob)
+
+
       return {
         size: button.size,
         name: button.name,
         qty: button.qty,
-        svg: button.svg
+        // svg: button.svg,
+        button:pngBase64
       }
     }))
 

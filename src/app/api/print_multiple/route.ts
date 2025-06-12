@@ -1,16 +1,13 @@
-import { createModel, pageSizes } from "@/components/editor/model";
-import { prisma } from "@/lib/prisma";
+import { pageSizes } from "@/components/editor/model";
 import { NextRequest, NextResponse } from "next/server";
-import { PDFDocument, Degrees, degrees, PDFImage } from "pdf-lib";
-import sharp from 'sharp'
-import { ModelConfig } from "@/components/editor/model";
-import { size } from "pdfkit/js/page";
+import { PDFDocument } from "pdf-lib";
 
 interface printRequest {
   qty: number;
   svg: string;
   name: number;
   size: [string,string]
+  button: string;
 }
 
 const mmToPt2 = (mm: number) => mm * 2.83465
@@ -43,10 +40,12 @@ export async function POST(request: NextRequest) {
       const obj = data[i];
 
       // Convert the SVG to PNG buffer
-      const pngBuffer = await sharp(Buffer.from(obj.svg), { density: 1000 })
-        .png({ quality: 100 })
-        .toBuffer();
+      // const pngBuffer = await sharp(Buffer.from(obj.svg), { density: 1000 })
+      //   .png({ quality: 100 })
+      //   .toBuffer();
 
+       const base64Data = obj.button.split(',')[1];
+      const pngBuffer = Buffer.from(base64Data, 'base64');
       let pngImage = await pdfDoc.embedPng(pngBuffer);
 
       // Image dimensions in points
