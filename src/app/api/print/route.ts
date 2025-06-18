@@ -207,11 +207,16 @@ export async function POST(request: NextRequest) {
     // Serialize the PDF to bytes
     const pdfBytes = await pdfDoc.save();
 
+    const sanitizedName = model.name
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g, "")
+  .replace(/[^a-zA-Z0-9-_]/g, "_");
+
     // Return the PDF as a response
     return new NextResponse(pdfBytes, {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename='${model.name}.pdf'`,
+        "Content-Disposition": `attachment; filename='${sanitizedName}.pdf'`,
       },
     });
   } catch (error) {
