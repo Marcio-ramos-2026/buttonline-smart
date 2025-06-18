@@ -23,6 +23,7 @@ type shapeCustom =  {
   svg: string;  
   top: number;
   left: number;
+  rotate: number;
 } & Shape
 
 type shapeRectangle = {
@@ -248,6 +249,7 @@ export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject
     originY: 'center',
     top: config?.top ?? 0,
     left: config?.left ?? 0,
+    angle: config?.rotate ?? 0,
     // stroke: "none",
     // strokeWidth: 0,
     // backgroundColor: 'transparent',
