@@ -5,7 +5,9 @@ import bcrypt from 'bcrypt'
 function getDefaultRoles() {
     return [
         { id: 1, name: 'Administrator', description: 'ROLE_ADMINISTRATOR' },
-        { id: 2, name: 'User', description: 'ROLE_USER' },
+        { id: 2, name: 'User', description: 'ROLE_USER', permissions: [
+            ALLOWED_PERMISSIONS.EDITOR_VIEW
+        ] },
     ];
 }
 
@@ -28,16 +30,22 @@ async function main() {
 
     // DEFAULT ROLES
     for (const role of getDefaultRoles()) {
+        const rolePermissions = role.permissions
+            ? role.permissions.map((permName) => ({
+                permission: { connect: { name: permName } },
+            }))
+            : permissionsData.map((perm) => ({
+                permission: { connect: { id: perm.id } },
+            }));
+
         await prisma.role.upsert({
             where: { id: role.id },
             update: {
                 name: role.name,
                 description: role.description,
                 permissions: {
-                    deleteMany: {}, // Clear existing permissions to avoid duplication
-                    create: permissionsData.map((perm) => ({
-                        permission: { connect: { id: perm.id } },
-                    })),
+                    deleteMany: {}, // Clean up existing permissions
+                    create: rolePermissions,
                 },
             },
             create: {
@@ -45,9 +53,7 @@ async function main() {
                 name: role.name,
                 description: role.description,
                 permissions: {
-                    create: permissionsData.map((perm) => ({
-                        permission: { connect: { id: perm.id } },
-                    })),
+                    create: rolePermissions,
                 },
             },
         });

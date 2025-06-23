@@ -47,7 +47,7 @@ export async function registerAction(data: SignUpType) {
       });
     }
 
-    const voucher = await validateVoucher(createdUser);
+    // const voucher = await validateVoucher(createdUser);
 
     return {
       message: "Usurário criado com sucesso",
