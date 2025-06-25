@@ -80,6 +80,8 @@ export const MultipleButton = () => {
     const canvasCopy = await canvas.clone([
       "cardenas_print",
       "cardenas_canvas",
+      "cardenas_mark",
+      "pathType"
     ]);
 
     let sizes = currentModel?.size?.split(",") as [string, ...string[]];
