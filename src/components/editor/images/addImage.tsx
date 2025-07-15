@@ -32,6 +32,8 @@ export function AddImage() {
 
     image.scale(scaleFactor);
 
+    image.set({ shadow: undefined });
+
     canvas.add(image);
     canvas.centerObject(image);
     canvas.renderAll();

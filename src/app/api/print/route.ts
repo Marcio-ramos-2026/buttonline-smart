@@ -82,6 +82,8 @@ export async function POST(request: NextRequest) {
     const pngBuffer = Buffer.from(base64Data, 'base64');
     let pngImage = await pdfDoc.embedPng(pngBuffer);
 
+
+
     let minX: number = 999,
     maxX: number = 0,
     minY: number = 999,

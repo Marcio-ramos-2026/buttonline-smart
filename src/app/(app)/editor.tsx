@@ -227,7 +227,7 @@ const ChangeButtonCollor = () => {
         <ColorPicker
           value={color as string}
           onChange={handleChangeColor}
-          className="border-gray-300"
+          className="border-gray-300 !h-[50px]"
         />
       </DropdownMenuContent>
     </DropdownMenu>

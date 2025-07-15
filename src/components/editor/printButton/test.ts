@@ -15,11 +15,12 @@ export async function extractCardenasCanvas(
 
   const bounds = cardenasCanvasObject.getBoundingRect();
 
+
   // Step 2: Create a cropped canvas
   const croppedCanvas = new fabric.StaticCanvas('', {
     width: bounds.width,
     height: bounds.height,
-    backgroundColor: 'transparent',
+    backgroundColor: cardenasCanvasObject.getObjects()[0].fill as string,
   });
 
   // ✅ Step 3: Clone the entire `cardenasCanvasObject` to use as a clipPath
@@ -135,6 +136,9 @@ async function convertImageToBase64(image: fabric.Image): Promise<void> {
 
   canvas.width = imageElement.naturalWidth;
   canvas.height = imageElement.naturalHeight;
+  ctx.fillStyle = "#fff";
+ctx.fillRect(0, 0, canvas.width, canvas.height); // BEFORE drawing image
+
   ctx.drawImage(imageElement, 0, 0);
 
   const base64 = canvas.toDataURL(isJpeg ? 'image/jpeg' : 'image/png', 1);
