@@ -5,6 +5,7 @@ declare module "fabric" {
     cardenas_canvas?: string;
     cardenas_print?: boolean;
     cardenas_mark?: boolean;
+    cardenas_overlay?: boolean;
   }
 
   // to have the properties typed in the exported object
