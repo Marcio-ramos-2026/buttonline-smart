@@ -244,6 +244,8 @@ export const RenderCanvas = () => {
 
   const t = useTranslations("pages.editor");
   const [object, setObject] = useState<fabric.Object | null>(null);
+  const overlayRef = useRef<fabric.Group | null>(null);
+
 
   useEffect(() => {
     if (!canvas) return;
@@ -308,19 +310,54 @@ export const RenderCanvas = () => {
     //   return;
     // }
 
-    createModel(currentModel).then((canvasModel)=>{
+    createModel(currentModel).then(async (canvasModel)=>{
+      const canvasOverlay = await canvasModel.clone() as fabric.Group
+    
       canvas.remove(...canvas.getObjects());
 
       const scale = canvasConfig.maxScale / canvasModel.width;
       canvasModel.scale(scale);
-      // canvasModel = canvasModel.toObject()
+      canvasOverlay.scale(scale);
+      
 
+      const objects = canvasOverlay.getObjects();
+      objects.forEach((obj, i) => {
+        if (i !== 2) {
+          canvasOverlay.remove(obj);
+        }
+        obj.set({ fill: "transparent", selectable: false, evented: false });
+
+      });
+
+      overlayRef.current = canvasOverlay
+
+      
+      canvas.overlayImage = canvasOverlay
+      canvas.overlayImage.set({
+         originX: 'center',
+        originY: 'center',
+        left: canvas.width! / 2,
+        top: canvas.height! / 2,
+      })
+
+      // fabric.FabricImage.fromObject(canvasElOverlay.current).then(r => {
+      //   console.log('rrr',r)
+      //   canvas.overlayImage = r
+      // })
+
+      canvas.preserveObjectStacking = false
       canvas.add(canvasModel);
+      // canvas.add(canvasOverlay);
+      // canvas.bringObjectToFront(canvasOverlay)
       canvas.centerObject(canvasModel);
+      // canvas.centerObject(canvasOverlay);
       canvas.renderAll();
 
       setRealCanvas(canvasModel);
+
+      
     })    
+
   }, [canvas, currentModel]);
 
   if (!currentModel) {

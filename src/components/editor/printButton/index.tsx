@@ -13,6 +13,7 @@ import { useState } from "react";
 import { ButtonItemMultiple } from "../multiple/multiple";
 // import { sign } from "crypto";
 import { extractCardenasCanvas, patchSvgWithTextPath } from "./test";
+import { get } from "idb-keyval";
 
 
 export const PrintButton = ({
@@ -87,59 +88,54 @@ export const PrintButton = ({
   
 
   const handlePrintMultiple = async () => {
-    const storedButtons = localStorage.getItem("cardenas_multiple_buttons");
-    if (!storedButtons){
-      alert('Nenhum múltiplo salvo')
-      return
-    }
+  const storedButtons = (await get("cardenas_multiple_buttons")) as any[] | undefined;
 
-    setPrinting(true)
+  if (!storedButtons || storedButtons.length === 0) {
+    alert("Nenhum múltiplo salvo");
+    return;
+  }
 
-    const parsedButtons = JSON.parse(storedButtons) as ButtonItemMultiple[];
+  setPrinting(true);
 
-    let bodyButtons = await Promise.all(parsedButtons.map(async (button) => {
+  try {
+    const bodyButtons = await Promise.all(
+      storedButtons.map(async (button) => {
+        let [width, height] = button.size;
+        if (!height) height = width;
 
-      let [width,height] = button.size
-      if(!height) height = width
+        const pngBlob = await svgToPngBlob(button.svg);
+        const pngBase64 = await blobToBase64(pngBlob);
 
-       const pngBlob = await svgToPngBlob(button.svg)
-      const pngBase64 = await blobToBase64(pngBlob)
+        return {
+          size: button.size,
+          name: button.name,
+          qty: button.qty,
+          button: pngBase64,
+        };
+      })
+    );
 
-
-      return {
-        size: button.size,
-        name: button.name,
-        qty: button.qty,
-        // svg: button.svg,
-        button:pngBase64
-      }
-    }))
-
-
-    fetch("/api/print_multiple", {
+    const response = await fetch("/api/print_multiple", {
       method: "POST",
-      body: JSON.stringify(bodyButtons), // Send any necessary data for PDF generation
+      body: JSON.stringify(bodyButtons),
       headers: {
         "Content-Type": "application/json",
       },
-    })
-      .then((response) => response.blob()) // Get the response as a Blob (binary data)
-      .then((blob) => {
-        // Create a URL for the Blob
-        const url = window.URL.createObjectURL(blob);
+    });
 
-        // Open the PDF in a new tab
-        const printTAB = window.open(url, "_blank");
-        if(!printTAB?.document) return
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const printTAB = window.open(url, "_blank");
 
-
-        printTAB.print();
-        
-      })
-      .catch((error) => {
-        console.error("Error fetching the PDF:", error);
-      }).finally(()=> setPrinting(false))
+    if (printTAB?.document) {
+      printTAB.print();
+    }
+  } catch (error) {
+    console.error("Error fetching the PDF:", error);
+  } finally {
+    setPrinting(false);
   }
+};
 
   return (
     <Dialog>
