@@ -14,6 +14,7 @@ export const pageSizes = {
 type Shape = {
   background: string;
   cardenas_print: boolean;
+  cardenas_overlay: boolean;
 };
 
 type shapeCustom =  {
@@ -183,6 +184,7 @@ const ellipse = (config: shapeEllipse): fabric.FabricObject => {
     hoverCursor: "default",
     cardenas_print:
       config.cardenas_print === undefined ? true : config.cardenas_print,
+    cardenas_overlay: config?.cardenas_overlay
   });
 };
 
@@ -198,7 +200,8 @@ const circle = (config: shapeCircle) => {
     originX: "center",
     originY: "center",
     hoverCursor: "default",
-    cardenas_print: config.cardenas_print === undefined ? true: config.cardenas_print
+    cardenas_print: config.cardenas_print === undefined ? true: config.cardenas_print,
+    cardenas_overlay: config?.cardenas_overlay
   });
 }
 
@@ -219,6 +222,7 @@ const rectangle = (config: shapeRectangle) => {
     ry: config?.radius ?? 0,
     cardenas_print:
       config.cardenas_print === undefined ? true : config.cardenas_print, 
+    cardenas_overlay: config?.cardenas_overlay
   });
 };
 
@@ -255,6 +259,7 @@ export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject
     // backgroundColor: 'transparent',
     cardenas_print:
       config.cardenas_print === undefined ? true : config.cardenas_print, 
+    cardenas_overlay: config?.cardenas_overlay
   });
 
   return group as fabric.FabricObject;

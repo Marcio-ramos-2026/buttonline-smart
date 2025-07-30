@@ -310,53 +310,48 @@ export const RenderCanvas = () => {
     //   return;
     // }
 
-    createModel(currentModel).then(async (canvasModel)=>{
-      const canvasOverlay = await canvasModel.clone() as fabric.Group
-    
-      canvas.remove(...canvas.getObjects());
+    createModel(currentModel).then(async (canvasModel) => {
+  canvas.remove(...canvas.getObjects());
 
-      const scale = canvasConfig.maxScale / canvasModel.width;
-      canvasModel.scale(scale);
-      canvasOverlay.scale(scale);
-      
+  const scale = canvasConfig.maxScale / canvasModel.width;
+  canvasModel.scale(scale);
 
-      const objects = canvasOverlay.getObjects();
-      objects.forEach((obj, i) => {
-        if (i !== 2) {
-          canvasOverlay.remove(obj);
-        }
-        obj.set({ fill: "transparent", selectable: false, evented: false });
+  canvas.add(canvasModel);
+  canvas.centerObject(canvasModel);
 
+  const { left, top } = canvasModel;
+
+  const canvasOverlay = await canvasModel.clone(["cardenas_overlay"]) as fabric.Group;
+  canvasOverlay.scale(scale);
+
+  const objects = canvasOverlay.getObjects();
+  objects.forEach((obj) => {
+    if (!obj.cardenas_overlay) {
+            obj.set({ visible: false });
+
+    } else {
+      obj.set({
+        fill: "transparent",
+        selectable: false,
+        evented: false,
       });
+    }
+  });
 
-      overlayRef.current = canvasOverlay
+  overlayRef.current = canvasOverlay;
 
-      
-      canvas.overlayImage = canvasOverlay
-      canvas.overlayImage.set({
-         originX: 'center',
-        originY: 'center',
-        left: canvas.width! / 2,
-        top: canvas.height! / 2,
-      })
+  canvas.overlayImage = canvasOverlay;
+  canvas.overlayImage.set({
+    left,
+    top,
+  });
 
-      // fabric.FabricImage.fromObject(canvasElOverlay.current).then(r => {
-      //   console.log('rrr',r)
-      //   canvas.overlayImage = r
-      // })
+  canvas.preserveObjectStacking = false;
+  canvas.renderAll();
 
-      canvas.preserveObjectStacking = false
-      canvas.add(canvasModel);
-      // canvas.add(canvasOverlay);
-      // canvas.bringObjectToFront(canvasOverlay)
-      canvas.centerObject(canvasModel);
-      // canvas.centerObject(canvasOverlay);
-      canvas.renderAll();
+  setRealCanvas(canvasModel);
+});
 
-      setRealCanvas(canvasModel);
-
-      
-    })    
 
   }, [canvas, currentModel]);
 

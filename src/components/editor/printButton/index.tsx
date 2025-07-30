@@ -41,7 +41,7 @@ export const PrintButton = ({
     const canvasWidth = fabric.util.parseUnit(`${width}mm`);
     const canvasHeight = fabric.util.parseUnit(`${height}mm`);
   
-    const originalCanvas = await canvas.clone(["cardenas_print", "cardenas_canvas","cardenas_mark","pathType"]);
+    const originalCanvas = await canvas.clone(["cardenas_print", "cardenas_canvas","cardenas_mark","pathType","cardenas_overlay"]);
     let svg = await extractCardenasCanvas(originalCanvas,Number(width),Number(height))
     const pngBlob = await svgToPngBlob(svg)
     const pngBase64 = await blobToBase64(pngBlob)
