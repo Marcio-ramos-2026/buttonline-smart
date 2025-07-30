@@ -39,20 +39,62 @@ export function AddImage() {
     canvas.renderAll();
   };
 
-  const handleUploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!canvas) return;
+  const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  if (!canvas) return;
 
-    const imgObj = e.target.files?.[0];
-    if (!imgObj) return;
-    const imageUrl = URL.createObjectURL(imgObj);
-    setUploadedImages((prev) => {
-      const updatedImages = [
-        { preview: imageUrl, webFormat: imageUrl },
-        ...(prev as Array<{ preview: string; webFormat: string }>),
-      ];
-      return updatedImages;
-    });
-  };
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  const maxAllowedSize = 1 * 1024 * 1024; // 1 MB
+
+  const shouldOptimize = file.size > maxAllowedSize;
+
+  const imageBitmap = await createImageBitmap(file);
+
+  const originalWidth = imageBitmap.width;
+  const originalHeight = imageBitmap.height;
+
+  // Default values: no resize, original file
+  let optimizedUrl = URL.createObjectURL(file);
+
+  if (shouldOptimize) {
+    const maxWidth = 1000; // You can make this dynamic based on image size
+    const scale = Math.min(1, maxWidth / originalWidth);
+    const newWidth = originalWidth * scale;
+    const newHeight = originalHeight * scale;
+
+    const offscreenCanvas = document.createElement("canvas");
+    offscreenCanvas.width = newWidth;
+    offscreenCanvas.height = newHeight;
+
+    const ctx = offscreenCanvas.getContext("2d");
+    ctx?.drawImage(imageBitmap, 0, 0, newWidth, newHeight);
+
+    // You can even adjust quality based on file size if you want
+    const quality = file.size > 3 * 1024 * 1024 ? 0.6 : 0.75;
+
+    const blob: Blob | null = await new Promise((resolve) =>
+      offscreenCanvas.toBlob(
+        (b) => resolve(b),
+        "image/jpeg", // use 'image/webp' for better results in most browsers
+        quality
+      )
+    );
+
+    if (blob) {
+      optimizedUrl = URL.createObjectURL(blob);
+    }
+  }
+
+  setUploadedImages((prev) => {
+    const updatedImages = [
+      { preview: optimizedUrl, webFormat: optimizedUrl },
+      ...(prev as Array<{ preview: string; webFormat: string }>),
+    ];
+    return updatedImages;
+  });
+};
+
 
   const handleDropImage = (e: React.DragEvent<HTMLInputElement>) => {
     e.preventDefault();

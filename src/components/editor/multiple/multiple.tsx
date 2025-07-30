@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { CopyPlus, Trash2, Printer } from "lucide-react";
+import { CopyPlus, Trash2 } from "lucide-react";
 import * as fabric from "fabric";
 import { useEffect, useState } from "react";
 import { useEditorContext } from "@/context/editor";
@@ -14,96 +14,147 @@ import {
 import { IncrementorInput } from "@/components/ui/inputNumber";
 import DividerHorizontal from "@/components/divider";
 import { extractCardenasCanvas } from "../printButton/test";
+import { get, set, del } from "idb-keyval";
+import { LoadingIcon } from "@/components/loading";
 
 export type ButtonItemMultiple = {
-  canvas: fabric.Canvas; // Se souber o tipo exato, substitua `any` pelo tipo correto
+  canvas: fabric.Canvas;
   qty: number;
   name?: string;
   size: [string, string];
   svg: string;
-};
+}
+
+async function convertBlobUrlsToBase64(canvasJson: any): Promise<any> {
+  if (!canvasJson.objects) return canvasJson;
+
+  const blobUrlToBase64 = (blobUrl: string): Promise<string> =>
+    fetch(blobUrl)
+      .then(res => res.blob())
+      .then(blob => new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          if (typeof reader.result === 'string') resolve(reader.result);
+          else reject('Failed to convert blob to base64');
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      }));
+
+  for (const obj of canvasJson.objects) {
+    if (obj.type === 'image' && obj.src && obj.src.startsWith('blob:')) {
+      try {
+        obj.src = await blobUrlToBase64(obj.src);
+      } catch (err) {
+        console.error('Failed converting blob URL to base64:', obj.src, err);
+        obj.src = ''; // fallback empty src to prevent errors
+      }
+    }
+  }
+
+  return canvasJson;
+}
+
 
 export const MultipleButton = () => {
   const { canvas, currentModel } = useEditorContext();
-
   const [buttons, setButtons] = useState<ButtonItemMultiple[]>([]);
-
-  const [printing, setPrinting] = useState(false);
+  const [addingNew, setAddingNew] = useState(true)
 
   useEffect(() => {
-    const storedButtons = localStorage.getItem("cardenas_multiple_buttons");
-    if (storedButtons) {
-      const parsedButtons = JSON.parse(storedButtons);
-
-      loadButtons(parsedButtons);
-    }
+    setAddingNew(true)
+    loadButtonsFromIndexedDB().finally(()=>setAddingNew(false));
   }, []);
 
   useEffect(() => {
-    if (buttons?.length) {
-      saveButtonsToLocalStorage(buttons);
+    if (buttons.length > 0) {
+      saveButtonsToIndexedDB(buttons);
     } else {
-      localStorage.removeItem("cardenas_multiple_buttons");
+      // del("cardenas_multiple_buttons"); // Clear if empty
     }
   }, [buttons]);
 
-  const saveButtonsToLocalStorage = (buttons: ButtonItemMultiple[]) => {
-    const serializedButtons = buttons.map((btn) => ({
-      ...btn,
-      canvas: btn.canvas.toJSON(), // Convert canvas to JSON
-    }));
-    localStorage.setItem(
-      "cardenas_multiple_buttons",
-      JSON.stringify(serializedButtons)
+  const saveButtonsToIndexedDB = async (buttons: ButtonItemMultiple[]) => {
+    const serializedButtons = await Promise.all(
+      buttons.map(async (btn) => {
+        let json = btn.canvas.toJSON();
+        json = await convertBlobUrlsToBase64(json);
+        return { ...btn, canvas: json };
+      })
     );
-  };
 
-  const loadButtons = async (storedButtons: any[]) => {
-    const loadedButtons: ButtonItemMultiple[] = await Promise.all(storedButtons.map(async (btn) => {
-      const canvasElement = document.createElement("canvas"); // Create an actual canvas element
-      const newCanvas = new fabric.Canvas(canvasElement); // Attach it to fabric.Canvas
+    try {
+      await set('cardenas_multiple_buttons', serializedButtons);
+    } catch (err) {
+      console.error('Failed to save buttons to IndexedDB', err);
+    }
+  }
 
-      await newCanvas.loadFromJSON(btn.canvas, () => {
-        newCanvas.renderAll();
-      });
+  const loadButtonsFromIndexedDB = async () => {
+    try {
+      const storedButtons: any[] = (await get("cardenas_multiple_buttons")) || [];
 
-      return {
-        ...btn,
-        canvas: newCanvas,
-      };
-    }))
-    setButtons(loadedButtons);
+      const loadedButtons: ButtonItemMultiple[] = await Promise.all(
+        storedButtons.map(async (btn) => {
+          const canvasElement = document.createElement("canvas");
+          const newCanvas = new fabric.Canvas(canvasElement);
+
+          await newCanvas.loadFromJSON(btn.canvas, () => {
+            newCanvas.renderAll();
+          });
+
+          return {
+            ...btn,
+            canvas: newCanvas,
+          };
+        })
+      );
+      
+      setButtons(loadedButtons);
+    } catch (err) {
+      console.error("❌ Failed to load buttons from IndexedDB", err);
+    }
   };
 
   const addMultiple = async () => {
     if (!canvas) return;
+
+    setAddingNew(true)
     const canvasCopy = await canvas.clone([
       "cardenas_print",
       "cardenas_canvas",
       "cardenas_mark",
-      "pathType"
+      "cardenas_type",
+      "pathType",
     ]);
 
     let sizes = currentModel?.size?.split(",") as [string, ...string[]];
     if (!sizes[1]) sizes[1] = sizes[0];
 
-     const svg = await extractCardenasCanvas(canvasCopy,Number(sizes[0]),Number(sizes[1]))
+    const svg = await extractCardenasCanvas(
+      canvasCopy,
+      Number(sizes[0]),
+      Number(sizes[1])
+    );
 
-    setButtons((current) => [
-      ...current,
-      {
-        canvas: canvasCopy,
-        qty: 1,
-        name: currentModel?.name,
-        size: [sizes[0], sizes[1]],
-        svg: svg,
-      },
-    ]);
+    const svgCanvas = {
+      canvas: canvasCopy,
+      qty: 1,
+      name: currentModel?.name,
+      size: [sizes[0], sizes[1]] as [string,string],
+      svg,
+    }
+    setButtons((current) => {
+      const newButtons = [...current, svgCanvas];
+      // saveButtonsToIndexedDB(newButtons);
+      return newButtons;
+    })
+    setAddingNew(false)
   };
 
   const removeMultiple = (index: number) => {
     setButtons((prevItems) => prevItems.filter((_, i) => i !== index));
-  };
+  }
 
   const changeQty = (index: number, qty: string) => {
     setButtons((current) =>
@@ -111,7 +162,7 @@ export const MultipleButton = () => {
         i === index ? { ...button, qty: Number(qty) } : button
       )
     );
-  };
+  }
 
   return (
     <div>
@@ -151,7 +202,9 @@ export const MultipleButton = () => {
                       <IncrementorInput
                         min={1}
                         defaultValue={item.qty}
-                        onChange={(e) => changeQty(key, e.currentTarget.value)}
+                        onChange={(e) =>
+                          changeQty(key, e.currentTarget.value)
+                        }
                       />
                     </div>
 
@@ -166,6 +219,11 @@ export const MultipleButton = () => {
                   <DividerHorizontal className="my-1" />
                 </div>
               ))}
+              {addingNew && 
+                <div className="flex justify-center items-center">
+                  <LoadingIcon />
+                </div>
+              }
             </div>
           </div>
         </DropdownMenuContent>
