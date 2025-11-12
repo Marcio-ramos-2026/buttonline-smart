@@ -447,7 +447,7 @@ const ModelsExamples = ({ model }: { model: editor_canvas }) => {
 
     const url = new URL(window.location.href);
 
-    url.searchParams.set('id', model.id);
+    url.searchParams.set('id', model.id.toString());
 
     window.location.href = url.toString();
 };
