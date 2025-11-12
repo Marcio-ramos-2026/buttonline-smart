@@ -240,9 +240,10 @@ const ChangeModelDropdown = () => {
   const [modelPicked, setModelPicked] = useState<editor_canvas | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const handleOnClose = () => {
-    console.log("onc", modelPicked);
+  const isAdminView = new URL(window.location.href).searchParams.has('admin_view');
 
+
+  const handleOnClose = () => {
     setOpenDialog(true);
   };
 
@@ -279,6 +280,16 @@ const ChangeModelDropdown = () => {
         setOpenDialog={setOpenDialog}
         openDialog={openDialog}
       />
+
+      {isAdminView && 
+        <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN]}>
+          <Button onClick={() => {
+                const url = new URL(window.location.href);
+                url.searchParams.delete('admin_view');
+                url.searchParams.delete('id');
+                window.location.href = url.toString();
+          }}>Ver buttons ativos</Button>
+      </Permission>}
     </>
   );
 };

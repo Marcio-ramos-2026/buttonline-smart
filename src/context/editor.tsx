@@ -28,6 +28,10 @@ import styles from "./styles.module.css";
 import { EditableBar } from "@/components/editor/editableBar";
 import clsx from "clsx";
 import { MultipleButton } from "@/components/editor/multiple/multiple";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Permission } from "@/components/permission";
+import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 
 const { theme } = resolveConfig(tailwindConfig);
 
@@ -358,7 +362,29 @@ export const RenderCanvas = () => {
   if (!currentModel) {
     return (
       <div className="flex items-center flex-col w-full p-8 gap-6">
-        <h1 className="text-4xl">{t("models.selectTitle")}</h1>
+        <div className="flex gap-8 items-center justify-between">
+          <h1 className="text-4xl">{t("models.selectTitle")}</h1>
+           <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN]}>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  checked={new URL(window.location.href).searchParams.has('admin_view')}
+
+                  onCheckedChange={(checked: boolean) => {
+                    const url = new URL(window.location.href);
+
+                    if (checked) {
+                      url.searchParams.set('admin_view', 'true');
+                    } else {
+                      url.searchParams.delete('admin_view');
+                    }
+
+                    window.location.href = url.toString();
+                  }}
+                />
+                <Label htmlFor="airplane-mode">Ver modelos em andamento</Label>
+              </div>
+            </Permission>
+        </div>
         <div className="grid xl:grid-cols-4 md:grid-cols-3 sm:grid-cols-1 w-full gap-6">
           {models.map((m) => {
             return <ModelsExamples model={m} key={m.id} />;
@@ -419,8 +445,12 @@ const ModelsExamples = ({ model }: { model: editor_canvas }) => {
   const handleSelectModel = (model: editor_canvas) => {
     setLoadingSelectedModel(true);
 
-    window.location.href = `?id=${model.id}`;
-  };
+    const url = new URL(window.location.href);
+
+    url.searchParams.set('id', model.id);
+
+    window.location.href = url.toString();
+};
 
   useEffect(()=> {
 
