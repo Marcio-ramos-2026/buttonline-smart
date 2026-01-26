@@ -1,67 +1,71 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const { JSDOM } = require('jsdom');
 
 const inputFolder = path.join(__dirname, '../public/conversion/old-svg');
 const outputFolder = path.join(__dirname, '../public/conversion/new-svg');
 
-// Ensure output folder exists
 if (!fs.existsSync(outputFolder)) {
-  fs.mkdirSync(outputFolder);
+  fs.mkdirSync(outputFolder, { recursive: true });
 }
 
 fs.readdirSync(inputFolder).forEach((file) => {
-  if (path.extname(file) === '.svg') {
-    const inputPath = path.join(inputFolder, file);
-    const outputPath = path.join(outputFolder, file);
+  if (path.extname(file) !== '.svg') return;
 
-    // Step 1: Inkscape processing
-    const inkscapeCommand = `inkscape "${inputPath}" --actions="select-all;object-to-path;stroke-to-path;export-filename:${outputPath};export-do"`;
+  const inputPath = path.join(inputFolder, file);
+  const baseName = path.basename(file, '.svg');
+  const outputSvgPath = path.join(outputFolder, `${baseName}.svg`);
+  const outputTxtPath = path.join(outputFolder, `${baseName}.txt`);
 
-    console.log(`✅ Processing with Inkscape: ${file}`);
-    try {
-      execSync(inkscapeCommand, { stdio: 'inherit' });
-    } catch (err) {
-      console.error(`❌ Error processing with Inkscape ${file}:`, err.message);
-    }
+  console.log(`\n▶ Processing ${file}`);
 
-    // Step 2: Clean up with SVGO
-    const svgoCommand = `svgo "${outputPath}"`;
+  /**
+   * INKSCAPE ACTIONS
+   * - select everything
+   * - convert all objects to path
+   * - convert stroke to path
+   * - union all paths
+   * - remove stroke
+   * - apply solid fill
+   * - fit canvas
+   */
+  const inkscapeCmd = [
+    'inkscape',
+    `"${inputPath}"`,
+    '--actions="edit-select-all;',
+    'object-to-path;',
+    'object-stroke-to-path;',
+    'path-union;',
+    'object-set-attribute:style,stroke:none;',
+    'object-set-attribute:style,fill:#000000;',
+    'fit-canvas-to-selection"',
+    '--export-type=svg',
+    `--export-filename="${outputSvgPath}"`
+  ].join(' ');
 
-    console.log(`✅ Cleaning up with SVGO: ${file}`);
-    try {
-      execSync(svgoCommand, { stdio: 'inherit' });
-    } catch (err) {
-      console.error(`❌ Error cleaning up with SVGO ${file}:`, err.message);
-    }
+  try {
+    execSync(inkscapeCmd, { stdio: 'inherit' });
+  } catch (err) {
+    console.error(`❌ Inkscape failed for ${file}`);
+    return;
+  }
 
-    // Step 3: Merge all <path> into a single <path>
-    console.log(`✅ Merging all paths into one: ${file}`);
-    try {
-      const svgContent = fs.readFileSync(outputPath, 'utf8');
-      const dom = new JSDOM(svgContent, { contentType: "image/svg+xml" });
-      const document = dom.window.document;
+  /**
+   * ENCODE SVG FOR DATABASE
+   */
+  try {
+    const svgContent = fs.readFileSync(outputSvgPath, 'utf8');
 
-      const paths = Array.from(document.querySelectorAll('path'));
+    const encoded = svgContent
+      .replace(/\\/g, '\\\\')
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, '')
+      .replace(/\r/g, '');
 
-      if (paths.length > 1) {
-        const mergedD = paths.map(p => p.getAttribute('d')).join(' ');
-        
-        // Remove all original paths
-        paths.forEach(p => p.parentNode.removeChild(p));
-        
-        // Create a single merged path
-        const mergedPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        mergedPath.setAttribute('d', mergedD);
-        document.querySelector('svg').appendChild(mergedPath);
+    fs.writeFileSync(outputTxtPath, encoded, 'utf8');
 
-        // Save the modified SVG
-        const finalSvg = document.documentElement.outerHTML;
-        fs.writeFileSync(outputPath, finalSvg, 'utf8');
-      }
-    } catch (err) {
-      console.error(`❌ Error merging paths ${file}:`, err.message);
-    }
+    console.log(`✔ SVG + TXT generated for ${file}`);
+  } catch (err) {
+    console.error(`❌ Encoding failed for ${file}`);
   }
 });

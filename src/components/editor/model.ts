@@ -15,6 +15,7 @@ type Shape = {
   background: string;
   cardenas_print: boolean;
   cardenas_overlay: boolean;
+  cardenas_editable: boolean;
 };
 
 type shapeCustom =  {
@@ -74,6 +75,7 @@ export type ModelConfig = {
   objects: ShapeCollection;
   gabarito: gabarito;
 };
+
 
 export const createModel = async (model: editor_canvas): Promise<fabric.Object> => {
   const objConfig = model?.config as ModelConfig;
@@ -136,25 +138,47 @@ export const createModel = async (model: editor_canvas): Promise<fabric.Object> 
   ////////////////////////////////////////////////////////
 
   const elements: fabric.FabricObject[] = await Promise.all(
-    Object.values(objConfig?.objects).map(async (obj, k) => {
-      switch (obj.type) {
-        case "ellipse":
-          const typeEllipse = obj as shapeEllipse;
-          return ellipse(typeEllipse);
-        case "circle":
-          const typeCircle = obj as shapeCircle;
-          return circle(typeCircle);
-        case "rectangle":
-          const typeRectangle = obj as shapeRectangle;
-          return rectangle(typeRectangle);
-        case 'custom':
-          const typeCustom = obj as shapeCustom;
-          const x = await svgShape(typeCustom);
-          x.set({left:0})
-          return x
+  Object.values(objConfig?.objects).map(async (obj) => {
+    switch (obj.type) {
+      case "ellipse": {
+        const typeEllipse = obj as shapeEllipse;
+        return applyEditableBehavior(
+          ellipse(typeEllipse),
+          obj.cardenas_editable
+        );
       }
-    })
-  ).then(results => results.filter((el): el is fabric.FabricObject => el !== null));
+
+      case "circle": {
+        const typeCircle = obj as shapeCircle;
+        return applyEditableBehavior(
+          circle(typeCircle),
+          obj.cardenas_editable
+        );
+      }
+
+      case "rectangle": {
+        const typeRectangle = obj as shapeRectangle;
+        return applyEditableBehavior(
+          rectangle(typeRectangle),
+          obj.cardenas_editable
+        );
+      }
+
+      case "custom": {
+        const typeCustom = obj as shapeCustom;
+        const x = await svgShape(typeCustom);
+        x.set({ left: 0 });
+        return applyEditableBehavior(x, obj.cardenas_editable);
+      }
+
+      default:
+        return null;
+    }
+  })
+).then(results =>
+  results.filter((el): el is fabric.FabricObject => el !== null)
+);
+
     
   if (elements.length > 0) {
     elements.push(createMark(elements[0])); 
@@ -165,7 +189,9 @@ export const createModel = async (model: editor_canvas): Promise<fabric.Object> 
     moveCursor: "default",
     hoverCursor: "default",
     cardenas_canvas: "true",
-    cardenas_type: model.shape
+    cardenas_type: model.shape,
+    subTargetCheck: true,
+    interactive: true,
   });
 };
 
@@ -248,19 +274,17 @@ export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject
   group.set({
     scaleX: scale,
     scaleY: scale,
-    // fill:'transparent',
+
     originX: 'center',
     originY: 'center',
     top: config?.top ?? 0,
     left: config?.left ?? 0,
     angle: config?.rotate ?? 0,
-    // stroke: "none",
-    // strokeWidth: 0,
-    // backgroundColor: 'transparent',
     cardenas_print:
-      config.cardenas_print === undefined ? true : config.cardenas_print, 
-    cardenas_overlay: config?.cardenas_overlay
+      config.cardenas_print === undefined ? true : config.cardenas_print,
+    cardenas_overlay: config?.cardenas_overlay,
   });
+
 
   return group as fabric.FabricObject;
 };
@@ -269,4 +293,41 @@ export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject
 export const generateSVG = (element: fabric.FabricObject) => {
   const viewBox = `${-element.width / 2} ${-element.height / 2} ${element.width} ${element.height}`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${element.width}" height="${element.height}" viewBox="${viewBox}">${element.toSVG()}</svg>`;
+};
+
+const applyEditableBehavior = <T extends fabric.Object>(
+  obj: T,
+  editable?: boolean
+): T => {
+  editable = true;
+  if (!editable) {
+    obj.set({
+      selectable: false,
+      evented: false,
+      hoverCursor: 'default',
+      moveCursor: 'default',
+    });
+    return obj;
+  }
+
+  obj.set({
+    selectable: true,
+    evented: true,
+    lockMovementX: true,
+    lockMovementY: true,
+    lockScalingX: true,
+    lockScalingY: true,
+    lockRotation: true,
+    lockSkewingX: true,
+    lockSkewingY: true,
+
+    hasControls: false,
+    hasBorders: true,
+
+    hoverCursor: 'pointer',
+    moveCursor: 'pointer',
+    cardenas_editable: true
+  });
+
+  return obj;
 };

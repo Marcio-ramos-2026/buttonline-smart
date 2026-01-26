@@ -126,7 +126,8 @@ export const MultipleButton = () => {
       "cardenas_mark",
       "cardenas_type",
       "pathType",
-      "cardenas_overlay"
+      "cardenas_overlay",
+      "cardenas_editable"
     ]);
 
     let sizes = currentModel?.size?.split(",") as [string, ...string[]];

@@ -5,6 +5,7 @@ declare module "fabric" {
     cardenas_canvas?: string;
     cardenas_print?: boolean;
     cardenas_mark?: boolean;
+    cardenas_editable?: boolean;
     cardenas_overlay?: boolean;
   }
 
