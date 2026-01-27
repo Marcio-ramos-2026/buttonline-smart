@@ -313,7 +313,8 @@ const applyEditableBehavior = <T extends fabric.Object>(
   obj.set({
     selectable: true,
     evented: true,
-    lockMovementX: true,
+
+   lockMovementX: true,
     lockMovementY: true,
     lockScalingX: true,
     lockScalingY: true,
@@ -322,10 +323,9 @@ const applyEditableBehavior = <T extends fabric.Object>(
     lockSkewingY: true,
 
     hasControls: false,
-    hasBorders: true,
+    hasBorders: false,
 
-    hoverCursor: 'pointer',
-    moveCursor: 'pointer',
+
     cardenas_editable: true
   });
 
