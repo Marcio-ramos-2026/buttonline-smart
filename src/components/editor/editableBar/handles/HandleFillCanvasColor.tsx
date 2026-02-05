@@ -8,55 +8,68 @@ import * as fabric from "fabric";
 import { PaintBucket } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ColorPicker } from "@/components/colorPicker";
-import { useTranslations } from "next-intl";
 import { CanvasObjectType } from "./type";
 
 export const HandleFillCanvasColor = ({ object, canvas }: CanvasObjectType) => {
-  const [colorFill, setColorFill] = useState<string | null>(null);
-  const t = useTranslations("pages.editor.editableBar");
+  const [colorFill, setColorFill] = useState<string>("#000000");
 
+  /**
+   * APLICA FILL NO CANVAS
+   * → único lugar que escreve no fabric
+   */
   const applyFill = (color: string) => {
     if (!object || !canvas) return;
 
-    // SVG / custom icon (Group)
     if (object.type === "group") {
-    //@ts-ignore
       const group = object as fabric.Group;
 
       group.getObjects().forEach(child => {
-        if ("fill" in child) {
-          child.set({ fill: color });
+
+        if (child.type === "path") {
+          (child as fabric.Path).set({
+            fill: color,
+            fillRule: "nonzero", // essencial para path fechado
+          });
         }
       });
 
       group.dirty = true;
-    } 
-    // Shapes / paths normais
-    else if ("fill" in object) {
+    } else if ("fill" in object) {
       object.set({ fill: color });
     }
 
-    //@ts-ignore
+    // evento padrão do seu editor
+    // @ts-ignore
     canvas.fire("modified", { target: object });
     canvas.renderAll();
   };
 
+  /**
+   * CHANGE HANDLER
+   */
   const handleChangeFill = (color: string) => {
     setColorFill(color);
     applyFill(color);
   };
 
+  /**
+   * LEITURA DO ESTADO ATUAL
+   * → NÃO escreve no canvas
+   */
   useEffect(() => {
     if (!object) return;
 
     if (object.type === "group") {
-        //@ts-ignore
-      const firstWithFill = (object as fabric.Group)
+      const group = object as fabric.Group;
+
+      const firstPathWithFill = group
         .getObjects()
-        .find(o => "fill" in o && o.fill);
+        .find(
+          o => o.type === "path" && (o as fabric.Path).fill
+        ) as fabric.Path | undefined;
 
       setColorFill(
-        (firstWithFill as any)?.fill?.toString() ?? "#000000"
+        (firstPathWithFill?.fill as string) ?? "#000000"
       );
     } else {
       setColorFill((object as any)?.fill?.toString() ?? "#000000");
@@ -65,24 +78,20 @@ export const HandleFillCanvasColor = ({ object, canvas }: CanvasObjectType) => {
 
   return (
     <DropdownMenu>
-      <Tooltip content={t("fillColor")}>
+      <Tooltip content="Cor de preenchimento">
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
+            className="border border-gray-300 rounded-lg px-2 py-1 hover:bg-gray-900/20"
           >
             <PaintBucket className="w-6 h-6" />
           </button>
         </DropdownMenuTrigger>
       </Tooltip>
 
-      <DropdownMenuContent className="h-auto w-64 px-4 py-3 rounded-md flex flex-col gap-1 items-center justify-center">
-        <div className="flex justify-between w-full">
-          <span className="text-xs">{t("fillColor")}</span>
-        </div>
-
+      <DropdownMenuContent className="w-64 px-4 py-3 flex flex-col gap-2">
         <ColorPicker
-          value={colorFill as string}
+          value={colorFill}
           onChange={handleChangeFill}
           className="border-gray-300"
         />

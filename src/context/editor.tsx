@@ -330,13 +330,16 @@ export const RenderCanvas = () => {
 
   const objects = canvasOverlay.getObjects();
   objects.forEach((obj) => {
+    console.log('obj',obj.type)
     if (!obj.cardenas_overlay) {
-            obj.set({ visible: false });
+      
+            obj.set({ visible: false,fill: null });
 
     } else {
       obj.set({
-        fill: "transparent",
-        selectable: false,
+        fill: null,
+        selectable: true,
+         opacity: 0,
         evented: false,
       });
     }
