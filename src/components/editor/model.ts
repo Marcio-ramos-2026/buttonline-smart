@@ -333,7 +333,7 @@ const applyEditableBehavior = <T extends fabric.Object>(
   obj: T,
   editable?: boolean
 ): T => {
-  editable = true;
+  
   if (!editable) {
     obj.set({
       selectable: false,
@@ -347,6 +347,9 @@ const applyEditableBehavior = <T extends fabric.Object>(
   obj.set({
     selectable: true,
     evented: true,
+
+    hoverCursor: 'pointer',
+    moveCursor: 'pointer',
 
    lockMovementX: true,
     lockMovementY: true,
