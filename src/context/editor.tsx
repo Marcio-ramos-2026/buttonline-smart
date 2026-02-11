@@ -367,7 +367,7 @@ export const RenderCanvas = () => {
            <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN]}>
               <div className="flex items-center space-x-2">
                 <Switch
-                  checked={new URL(window.location.href).searchParams.has('admin_view')}
+                  checked={typeof window !== "undefined" && new URL(window.location.href).searchParams.has("admin_view")}
 
                   onCheckedChange={(checked: boolean) => {
                     const url = new URL(window.location.href);

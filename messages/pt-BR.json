@@ -203,6 +203,7 @@
         "line3": "Frente do button"
       },
       "sideBar": {
+        "backToList": "Voltar à lista",
         "buttonBgColor": "Cor de fundo do Button",
         "clip": "Esconder conteúdo fora do Button",
         "changeModel": {
