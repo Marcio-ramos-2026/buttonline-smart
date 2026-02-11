@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { ColorPicker } from "@/components/colorPicker";
 import { useTranslations } from "next-intl";
 import { CanvasObjectType } from "./type";
+import { getFillAreaObject } from "@/components/editor/model";
 
 export const HandleFillCanvasColor = ({ object, canvas }: CanvasObjectType) => {
   const [colorFill, setColorFill] = useState<string | null>(null);
@@ -18,27 +19,22 @@ export const HandleFillCanvasColor = ({ object, canvas }: CanvasObjectType) => {
   const applyFill = (color: string) => {
     if (!object || !canvas) return;
 
-    // SVG / custom icon (Group)
     if (object.type === "group") {
-    //@ts-ignore
-      const group = object as fabric.Group;
-
-      group.getObjects().forEach(child => {
-        if ("fill" in child) {
-          child.set({ fill: color });
-        }
-      });
-
-      group.dirty = true;
-    } 
-    // Shapes / paths normais
-    else if ("fill" in object) {
+      const group = object as unknown as fabric.Group;
+      const fillAreaObj = getFillAreaObject(group);
+      if (fillAreaObj) {
+        fillAreaObj.set("fill", color);
+        fillAreaObj.set("dirty", true);
+      }
+      group.set("dirty", true);
+      group.setCoords?.();
+    } else if ("fill" in object) {
       object.set({ fill: color });
     }
 
-    //@ts-ignore
-    canvas.fire("modified", { target: object });
-    canvas.renderAll();
+    (canvas as fabric.Canvas & { _objectsToRender?: unknown })._objectsToRender = undefined;
+    (canvas as fabric.Canvas & { fire(name: string, opt?: unknown): void }).fire("modified", { target: object });
+    canvas.requestRenderAll?.() ?? canvas.renderAll?.();
   };
 
   const handleChangeFill = (color: string) => {
@@ -50,16 +46,12 @@ export const HandleFillCanvasColor = ({ object, canvas }: CanvasObjectType) => {
     if (!object) return;
 
     if (object.type === "group") {
-        //@ts-ignore
-      const firstWithFill = (object as fabric.Group)
-        .getObjects()
-        .find(o => "fill" in o && o.fill);
-
-      setColorFill(
-        (firstWithFill as any)?.fill?.toString() ?? "#000000"
-      );
+      const fillAreaObj = getFillAreaObject(object as unknown as fabric.Group);
+      const raw = (fillAreaObj as fabric.Object & { fill?: unknown })?.fill?.toString();
+      setColorFill(raw && raw !== "transparent" ? raw : "#000000");
     } else {
-      setColorFill((object as any)?.fill?.toString() ?? "#000000");
+      const raw = (object as fabric.Object & { fill?: unknown })?.fill?.toString();
+      setColorFill(raw && raw !== "transparent" ? raw : "#000000");
     }
   }, [object]);
 
@@ -84,7 +76,7 @@ export const HandleFillCanvasColor = ({ object, canvas }: CanvasObjectType) => {
         <ColorPicker
           value={colorFill as string}
           onChange={handleChangeFill}
-          className="border-gray-300"
+          className="min-h-8 w-full border-gray-300"
         />
       </DropdownMenuContent>
     </DropdownMenu>

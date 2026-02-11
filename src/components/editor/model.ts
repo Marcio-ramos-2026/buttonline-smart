@@ -1,5 +1,6 @@
 import { editor_canvas } from "@prisma/client";
 import * as fabric from "fabric";
+import { CARDENAS_FILL_AREA_ID } from "@/lib/svg-normalizer";
 
 export type ModelType = {
   [key: string]: () => fabric.Object; // The key is a string and the value is a function returning an object
@@ -263,6 +264,11 @@ export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject
   const objects = loaded.objects.filter(Boolean) as fabric.Object[];
   const group = new fabric.Group(objects);
 
+  // Path de fill (cardenas-fill-area): sem cache para o color picker atualizar na tela
+  const fillPath = getFillAreaObject(group);
+  if (fillPath) fillPath.set("objectCaching", false);
+  group.set("objectCaching", false);
+
   // Convert mm to px for accurate scaling
   const targetWidthPx = fabric.util.parseUnit(`${config.width}mm`);
   const targetHeightPx = fabric.util.parseUnit(`${config.height}mm`);
@@ -289,6 +295,34 @@ export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject
   return group as fabric.FabricObject;
 };
 
+
+/**
+ * Retorna o path de área pintável de um Group (SVG normalizado).
+ * Busca primeiro por id=CARDENAS_FILL_AREA_ID; senão usa heurística (path com fill e stroke none).
+ */
+export function getFillAreaObject(group: fabric.Group): fabric.Object | null {
+  const objects = group.getObjects();
+  const byId = objects.find((o) => (o as fabric.Object & { id?: string }).id === CARDENAS_FILL_AREA_ID);
+  if (byId) return byId;
+  const isPathLike = (o: fabric.Object) => o.type === "path" || "path" in o;
+  return (
+    objects.find((o) => {
+      const cast = o as fabric.Object & { fill?: unknown; stroke?: string };
+      return (o.type === "path" || "path" in o) && cast.fill != null && String(cast.stroke ?? "").toLowerCase() === "none";
+    }) ?? null
+  );
+}
+
+/**
+ * Remove o path de preenchimento (elemento de cor) de um Group.
+ * Usado na cópia do overlay para que a cópia mostre só o contorno, sem a área pintada.
+ */
+export function removeFillElementFromGroup(obj: fabric.Object): void {
+  if (obj.type !== "group") return;
+  const group = obj as fabric.Group;
+  const fillPath = getFillAreaObject(group);
+  if (fillPath) group.remove(fillPath);
+}
 
 export const generateSVG = (element: fabric.FabricObject) => {
   const viewBox = `${-element.width / 2} ${-element.height / 2} ${element.width} ${element.height}`;
