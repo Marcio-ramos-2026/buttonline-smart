@@ -201,6 +201,7 @@
         "line3": "Frente del Botón"
       },
       "sideBar": {
+        "back": "Volver",
         "backToList": "Volver a la lista",
         "buttonBgColor": "Color de fondo del Botón",
         "clip": "Ocultar contenido fuera del Botón",

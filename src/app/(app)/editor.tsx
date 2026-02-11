@@ -146,9 +146,10 @@ export function Editor({ user }: EditorProps) {
                     <button
                       type="button"
                       onClick={goToList}
-                      className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20 inline-flex items-center justify-center"
+                      className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20 inline-flex items-center gap-1.5 justify-center"
                     >
-                      <ArrowLeft className="w-5 h-5" />
+                      <ArrowLeft className="w-5 h-5 shrink-0" />
+                      <span className="text-sm">{t("back")}</span>
                     </button>
                   </Tooltip>
                   <button

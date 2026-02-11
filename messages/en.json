@@ -201,6 +201,7 @@
         "line3": "Button Front"
       },
       "sideBar": {
+        "back": "Back",
         "backToList": "Back to list",
         "buttonBgColor": "Button Background Color",
         "clip": "Hide content outside the Button",
