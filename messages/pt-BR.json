@@ -230,6 +230,7 @@
       "editableBar": {
         "strokeColor": "Cor da borda",
         "bgColor": "Cor de fundo",
+        "fillColor": "Cor",
         "opacity": "Opacidade",
         "layer": {
           "layer": "Posição",

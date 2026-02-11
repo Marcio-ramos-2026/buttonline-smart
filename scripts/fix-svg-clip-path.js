@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const inputFolder = path.join(__dirname, '../public/conversion/old-svg');
-const outputFolder = path.join(__dirname, '../public/conversion/new-svg');
+const inputFolder = path.join(__dirname, '../public/svg/client');
+const outputFolder = path.join(__dirname, '../public/svg/output');
 
 if (!fs.existsSync(outputFolder)) {
   fs.mkdirSync(outputFolder, { recursive: true });

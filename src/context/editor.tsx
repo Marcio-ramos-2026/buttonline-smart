@@ -16,7 +16,7 @@ import { useResizeObserver } from "@/hooks/useResizeObserver";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../tailwind.config";
 import type { editor_canvas } from "@prisma/client";
-import { createModel, generateSVG, ModelType } from "@/components/editor/model";
+import { createModel, generateSVG, ModelType, removeFillElementFromGroup } from "@/components/editor/model";
 import { useDebounceCallback } from "@/hooks/useDebounceCallback";
 import { Button } from "@/components/ui/button";
 import { ReactSVG } from "react-svg";
