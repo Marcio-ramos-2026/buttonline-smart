@@ -77,6 +77,12 @@ export async function extractCardenasCanvas(
           backgroundColor: 'transparent',
         });
       }
+
+      // cardenas_editable: show only the painted area in PDF — remove stroke/outline
+      if (child.cardenas_editable) {
+        stripStrokeForPdf(child);
+      }
+
       cardenasPrintObjects.push(child);
     }
   }
@@ -124,6 +130,17 @@ function rectsIntersect(a: TBBox, b: TBBox): boolean {
     a.top + a.height <= b.top ||
     a.top >= b.top + b.height
   );
+}
+
+// Helper: Remove stroke/outline so only filled area shows in PDF (for cardenas_editable)
+function stripStrokeForPdf(obj: fabric.Object): void {
+  obj.set({
+    stroke: 'transparent',
+    strokeWidth: 0,
+  });
+  if (obj instanceof fabric.Group) {
+    obj.getObjects().forEach(stripStrokeForPdf);
+  }
 }
 
 // Helper: Convert image to embedded base64
