@@ -56,16 +56,22 @@ export async function extractCardenasCanvas(
     croppedCanvas.add(clone);
   }
 
-  // Step 6: Add only the `cardenas_print` children of cardenas_canvas
+  // Step 6: Add only the `cardenas_print` or `cardenas_editable` children of cardenas_canvas
+  // (cardenas_editable overrides cardenas_print: if editable, always show in PDF)
   const cardenasPrintObjects: fabric.Object[] = [];
 
-  for (const child of cardenasCanvasObject.getObjects()) {
-    if (child.cardenas_print) {
+  const cardenasChildren = cardenasCanvasObject.getObjects();
+  for (let i = 0; i < cardenasChildren.length; i++) {
+    const child = cardenasChildren[i];
+    const includeInPdf = child.cardenas_print || child.cardenas_editable;
+    if (includeInPdf) {
       if (child.type === 'image') {
         await convertImageToBase64(child as fabric.Image);
       }
 
-      if(!['group','image'].includes((child.type)) && !child.cardenas_mark){
+      // First child (index 0) is the button area — keep its fill so background color appears in PDF
+      const isButtonArea = i === 0;
+      if (!['group', 'image'].includes(child.type ?? '') && !child.cardenas_mark && !isButtonArea) {
         child.set({
           fill: 'transparent',
           backgroundColor: 'transparent',
