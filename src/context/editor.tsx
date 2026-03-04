@@ -26,6 +26,7 @@ import { PrintButton } from "@/components/editor/printButton";
 import { useTranslations } from "next-intl";
 import styles from "./styles.module.css";
 import { EditableBar } from "@/components/editor/editableBar";
+import { HandleFillCanvasColor } from "@/components/editor/editableBar/handles/HandleFillCanvasColor";
 import clsx from "clsx";
 import { MultipleButton } from "@/components/editor/multiple/multiple";
 import { Switch } from "@/components/ui/switch";
@@ -248,7 +249,16 @@ export const RenderCanvas = () => {
 
   const t = useTranslations("pages.editor");
   const [object, setObject] = useState<fabric.Object | null>(null);
+  type TaggedObject = { object: fabric.FabricObject; tags: Record<string, string> };
+  const [editableObjects, setEditableObjects] = useState<TaggedObject[]>([]);
   const overlayRef = useRef<fabric.Group | null>(null);
+
+  const findEditableObjects = (group: fabric.Group): TaggedObject[] =>
+    group.getObjects().flatMap((obj) => {
+      if (obj.cardenas_tags) return [{ object: obj, tags: obj.cardenas_tags }];
+      if (obj.type === "group") return findEditableObjects(obj as unknown as fabric.Group);
+      return [];
+    });
 
 
   useEffect(() => {
@@ -354,6 +364,7 @@ export const RenderCanvas = () => {
   canvas.preserveObjectStacking = false;
   canvas.renderAll();
 
+  setEditableObjects(findEditableObjects(canvasModel as unknown as fabric.Group));
   setRealCanvas(canvasModel);
 });
 
@@ -398,17 +409,36 @@ export const RenderCanvas = () => {
   return (
     <div ref={containerRef} className="bg-gray-100 h-full w-full relative">
       <div className={clsx(
-        "absolute left-3 right-3 z-50 top-2 flex flex-col md:flex-row gap-2 md:gap-10 max-h-14 items-center",
+        "absolute left-3 right-3 z-50 top-2 flex flex-col md:flex-row gap-2 md:gap-10 items-start",
         !!object?.type ? 'justify-between' : 'items-end md:justify-end'
       )}>
         {!!object?.type && <div className="bg-white rounded-lg drop-shadow-md px-4 py-2 w-full md:w-fit md:max-w-[50%] min-h-14 h-14 scrollBar"><EditableBar object={object} setObject={setObject} /></div>}
-        <div className="bg-background inline-flex justify-center items-center gap-4 w-fit p-2 rounded-lg drop-shadow-md">
-          <p>{currentModel.name}</p>
-          <PrintButton
-            canvas={canvas as fabric.Canvas}
-            currentModel={currentModel}
-          />
-          <MultipleButton />
+        <div className="flex flex-col items-end gap-2">
+          <div className="bg-background inline-flex justify-center items-center gap-4 w-fit p-2 rounded-lg drop-shadow-md">
+            <p>{currentModel.name}</p>
+            <PrintButton
+              canvas={canvas as fabric.Canvas}
+              currentModel={currentModel}
+            />
+            <MultipleButton />
+          </div>
+          {editableObjects.length > 0 && (
+            <div className="bg-background w-fit rounded-lg drop-shadow-md overflow-hidden">
+              <div className="px-4 py-2.5 border-b border-border">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Configurações</p>
+              </div>
+              <div className="flex flex-col">
+                {editableObjects.map(({ object, tags }, i) => (
+                  tags.background && (
+                    <div key={i} className="flex items-center justify-between gap-6 px-3 py-2 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-foreground">{tags.background}</span>
+                      <HandleFillCanvasColor object={object} canvas={canvas} />
+                    </div>
+                  )
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

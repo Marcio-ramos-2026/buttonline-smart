@@ -56,14 +56,15 @@ export async function extractCardenasCanvas(
     croppedCanvas.add(clone);
   }
 
-  // Step 6: Add only the `cardenas_print` or `cardenas_editable` children of cardenas_canvas
-  // (cardenas_editable overrides cardenas_print: if editable, always show in PDF)
+  // Step 6: Add only the `cardenas_print` or tagged children of cardenas_canvas
+  // (tags overrides cardenas_print: if tagged, always show in PDF)
   const cardenasPrintObjects: fabric.Object[] = [];
 
   const cardenasChildren = cardenasCanvasObject.getObjects();
   for (let i = 0; i < cardenasChildren.length; i++) {
     const child = cardenasChildren[i];
-    const includeInPdf = child.cardenas_print || child.cardenas_editable;
+    const hasTags = !!child.cardenas_tags && Object.keys(child.cardenas_tags).length > 0;
+    const includeInPdf = child.cardenas_print || hasTags;
     if (includeInPdf) {
       if (child.type === 'image') {
         await convertImageToBase64(child as fabric.Image);
@@ -78,8 +79,8 @@ export async function extractCardenasCanvas(
         });
       }
 
-      // cardenas_editable: show only the painted area in PDF — remove stroke/outline
-      if (child.cardenas_editable) {
+      // background tag: show only the painted area in PDF — remove stroke/outline
+      if (child.cardenas_tags?.background) {
         stripStrokeForPdf(child);
       }
 

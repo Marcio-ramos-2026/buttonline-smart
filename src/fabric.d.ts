@@ -5,7 +5,7 @@ declare module "fabric" {
     cardenas_canvas?: string;
     cardenas_print?: boolean;
     cardenas_mark?: boolean;
-    cardenas_editable?: boolean;
+    cardenas_tags?: Record<string, string>;
     cardenas_overlay?: boolean;
     /** Wrapper interno que contém os filhos nested de um grupo — nunca deve aparecer no overlay. */
     cardenas_children_wrapper?: boolean;

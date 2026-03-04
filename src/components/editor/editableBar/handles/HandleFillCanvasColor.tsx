@@ -9,10 +9,11 @@ import { PaintBucket } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ColorPicker } from "@/components/colorPicker";
 import { useTranslations } from "next-intl";
-import { CanvasObjectType } from "./type";
 import { getFillAreaObject } from "@/components/editor/model";
 
-export const HandleFillCanvasColor = ({ object, canvas }: CanvasObjectType) => {
+type Props = { object: fabric.FabricObject; canvas: fabric.Canvas | null };
+
+export const HandleFillCanvasColor = ({ object, canvas }: Props) => {
   const [colorFill, setColorFill] = useState<string | null>(null);
   const t = useTranslations("pages.editor.editableBar");
 
@@ -21,7 +22,15 @@ export const HandleFillCanvasColor = ({ object, canvas }: CanvasObjectType) => {
 
     if (object.type === "group") {
       const group = object as unknown as fabric.Group;
-      const fillAreaObj = getFillAreaObject(group);
+      let fillAreaObj = getFillAreaObject(group);
+      if (!fillAreaObj) {
+        for (const child of group.getObjects()) {
+          if (child.type === "group") {
+            fillAreaObj = getFillAreaObject(child as unknown as fabric.Group);
+            if (fillAreaObj) break;
+          }
+        }
+      }
       if (fillAreaObj) {
         fillAreaObj.set("fill", color);
         fillAreaObj.set("dirty", true);

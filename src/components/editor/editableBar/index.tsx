@@ -7,7 +7,6 @@ import { EditText } from "./editText";
 import { EditImage } from "./editImage";
 import { EditICon } from "./editableIcon";
 import { EditShapes } from "./editableShapes";
-import { HandleFillCanvasColor } from "./handles/HandleFillCanvasColor";
 
 const shapesType = ["triangle", "circle", "rect", "polygon"];
 
@@ -15,20 +14,6 @@ export const EditableBar = ({ object, setObject }: { object: fabric.Object, setO
   const { canvas } = useEditorContext();
 
   if (!object?.type) return;
-
-  if(object.cardenas_editable) {
-   
-  return (
-    <div className="flex items-center w-fit h-full">
-      <HandleFillCanvasColor
-        //@ts-ignore
-        object={object}
-        canvas={canvas}
-        className="!h-[40px]"
-      />
-    </div>
-  )
-  }
 
   return (
     <div className="flex items-center w-fit h-full">

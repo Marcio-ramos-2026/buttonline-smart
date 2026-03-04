@@ -22,7 +22,7 @@ type Shape = {
   color?: string;
   cardenas_print: boolean;
   cardenas_overlay: boolean;
-  cardenas_editable: boolean;
+  tags?: Record<string, string>;
 };
 
 type shapeCustom =  {
@@ -187,13 +187,13 @@ export const createModel = async (model: editor_canvas): Promise<fabric.Object> 
         const leaf = container as unknown as LeafShape;
         switch (leaf.type) {
           case "ellipse":
-            selfShape = applyEditableBehavior(ellipse(leaf as shapeEllipse), leaf.cardenas_editable);
+            selfShape = applyEditableBehavior(ellipse(leaf as shapeEllipse), leaf.tags);
             break;
           case "circle":
-            selfShape = applyEditableBehavior(circle(leaf as shapeCircle), leaf.cardenas_editable);
+            selfShape = applyEditableBehavior(circle(leaf as shapeCircle), leaf.tags);
             break;
           case "rectangle":
-            selfShape = applyEditableBehavior(rectangle(leaf as shapeRectangle), leaf.cardenas_editable);
+            selfShape = applyEditableBehavior(rectangle(leaf as shapeRectangle), leaf.tags);
             break;
           case "custom": {
             const customConfig = leaf as shapeCustom;
@@ -209,7 +209,7 @@ export const createModel = async (model: editor_canvas): Promise<fabric.Object> 
             }
             const x = await svgShape({ ...customConfig, svg: svgToLoad });
             x.set({ left: 0 });
-            selfShape = applyEditableBehavior(x, leaf.cardenas_editable);
+            selfShape = applyEditableBehavior(x, leaf.tags);
             break;
           }
         }
@@ -296,12 +296,12 @@ export const createModel = async (model: editor_canvas): Promise<fabric.Object> 
         cardenas_print: container.cardenas_print === undefined ? true : container.cardenas_print,
         cardenas_overlay: container.cardenas_overlay,
       });
-      return isNested ? applySelectableOnly(group) : applyEditableBehavior(group, container.cardenas_editable);
+      return isNested ? applySelectableOnly(group) : applyEditableBehavior(group, container.tags);
     }
 
     const leaf = obj as LeafShape;
     const applyBehavior = <T extends fabric.Object>(o: T) =>
-      isNested ? applySelectableOnly(o) : applyEditableBehavior(o, leaf.cardenas_editable);
+      isNested ? applySelectableOnly(o) : applyEditableBehavior(o, leaf.tags);
 
     switch (leaf.type) {
       case "ellipse":
@@ -498,8 +498,9 @@ export const generateSVG = (element: fabric.FabricObject) => {
 
 const applyEditableBehavior = <T extends fabric.Object>(
   obj: T,
-  editable?: boolean
+  tags?: Record<string, string>
 ): T => {
+  const editable = !!tags && Object.keys(tags).length > 0;
 
   if (!editable) {
     obj.set({
@@ -518,7 +519,7 @@ const applyEditableBehavior = <T extends fabric.Object>(
     hoverCursor: 'pointer',
     moveCursor: 'pointer',
 
-   lockMovementX: true,
+    lockMovementX: true,
     lockMovementY: true,
     lockScalingX: true,
     lockScalingY: true,
@@ -529,8 +530,7 @@ const applyEditableBehavior = <T extends fabric.Object>(
     hasControls: false,
     hasBorders: false,
 
-
-    cardenas_editable: true
+    cardenas_tags: tags,
   });
 
   return obj;
