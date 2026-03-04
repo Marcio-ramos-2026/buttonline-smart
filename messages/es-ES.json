@@ -240,6 +240,13 @@
           "back": "Hacia Atrás",
           "forward": "Hacia Adelante"
         }
+      },
+      "configuracoes": {
+        "title": "Configuración",
+        "shirtColor": "Color de la camisa",
+        "backgroundColor": "Color de fondo",
+        "primaryColor": "Color primario",
+        "secondaryColor": "Color secundario"
       }
     },
     "privacy": {

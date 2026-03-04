@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { CopyPlus } from "lucide-react";
 import CanvasHistory from "@/lib/fabricHistory";
 import { PrintButton } from "@/components/editor/printButton";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import styles from "./styles.module.css";
 import { EditableBar } from "@/components/editor/editableBar";
 import { HandleFillCanvasColor } from "@/components/editor/editableBar/handles/HandleFillCanvasColor";
@@ -248,17 +248,44 @@ export const RenderCanvas = () => {
   } = useEditorContext();
 
   const t = useTranslations("pages.editor");
+  const locale = useLocale();
   const [object, setObject] = useState<fabric.Object | null>(null);
-  type TaggedObject = { object: fabric.FabricObject; tags: Record<string, string> };
-  const [editableObjects, setEditableObjects] = useState<TaggedObject[]>([]);
+  type TagValue = string | Record<string, string>;
+  type TaggedObject = { object: fabric.FabricObject; tags: Record<string, TagValue>; tagGroup?: string };
+  type TagGroup = { objects: fabric.FabricObject[]; tags: Record<string, TagValue> };
+
+  const resolveTagLabel = (value: TagValue): string => {
+    if (typeof value === "string") return value;
+    return value[locale] ?? value["en"] ?? value["pt-BR"] ?? Object.values(value)[0] ?? "";
+  };
+  const [editableObjects, setEditableObjects] = useState<TagGroup[]>([]);
   const overlayRef = useRef<fabric.Group | null>(null);
 
   const findEditableObjects = (group: fabric.Group): TaggedObject[] =>
     group.getObjects().flatMap((obj) => {
-      if (obj.cardenas_tags) return [{ object: obj, tags: obj.cardenas_tags }];
-      if (obj.type === "group") return findEditableObjects(obj as unknown as fabric.Group);
-      return [];
+      const current: TaggedObject[] = obj.cardenas_tags
+        ? [{ object: obj, tags: obj.cardenas_tags, tagGroup: obj.cardenas_tag_group }]
+        : [];
+      const children =
+        obj.type === "group"
+          ? findEditableObjects(obj as unknown as fabric.Group)
+          : [];
+      return [...current, ...children];
     });
+
+  const groupEditableObjects = (flat: TaggedObject[]): TagGroup[] => {
+    const groups = new Map<string, TagGroup>();
+    let soloIndex = 0;
+    flat.forEach(({ object, tags, tagGroup }) => {
+      const key = tagGroup ?? `__solo__${soloIndex++}`;
+      if (tagGroup && groups.has(key)) {
+        groups.get(key)!.objects.push(object);
+      } else {
+        groups.set(key, { objects: [object], tags });
+      }
+    });
+    return Array.from(groups.values());
+  };
 
 
   useEffect(() => {
@@ -364,7 +391,7 @@ export const RenderCanvas = () => {
   canvas.preserveObjectStacking = false;
   canvas.renderAll();
 
-  setEditableObjects(findEditableObjects(canvasModel as unknown as fabric.Group));
+  setEditableObjects(groupEditableObjects(findEditableObjects(canvasModel as unknown as fabric.Group)));
   setRealCanvas(canvasModel);
 });
 
@@ -425,14 +452,14 @@ export const RenderCanvas = () => {
           {editableObjects.length > 0 && (
             <div className="bg-background w-fit rounded-lg drop-shadow-md overflow-hidden">
               <div className="px-4 py-2.5 border-b border-border">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Configurações</p>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t("configuracoes.title")}</p>
               </div>
               <div className="flex flex-col">
-                {editableObjects.map(({ object, tags }, i) => (
+                {editableObjects.map(({ objects, tags }, i) => (
                   tags.background && (
                     <div key={i} className="flex items-center justify-between gap-6 px-3 py-2 hover:bg-muted/50 transition-colors">
-                      <span className="text-sm text-foreground">{tags.background}</span>
-                      <HandleFillCanvasColor object={object} canvas={canvas} />
+                      <span className="text-sm text-foreground">{resolveTagLabel(tags.background)}</span>
+                      <HandleFillCanvasColor objects={objects} canvas={canvas} />
                     </div>
                   )
                 ))}

@@ -239,6 +239,13 @@
           "back": "Back",
           "forward": "Forward"
         }
+      },
+      "configuracoes": {
+        "title": "Settings",
+        "shirtColor": "Shirt color",
+        "backgroundColor": "Background color",
+        "primaryColor": "Primary color",
+        "secondaryColor": "Secondary color"
       }
     },
     "privacy": {

@@ -11,15 +11,13 @@ import { ColorPicker } from "@/components/colorPicker";
 import { useTranslations } from "next-intl";
 import { getFillAreaObject } from "@/components/editor/model";
 
-type Props = { object: fabric.FabricObject; canvas: fabric.Canvas | null };
+type Props = { objects: fabric.FabricObject[]; canvas: fabric.Canvas | null };
 
-export const HandleFillCanvasColor = ({ object, canvas }: Props) => {
+export const HandleFillCanvasColor = ({ objects, canvas }: Props) => {
   const [colorFill, setColorFill] = useState<string | null>(null);
   const t = useTranslations("pages.editor.editableBar");
 
-  const applyFill = (color: string) => {
-    if (!object || !canvas) return;
-
+  const applyFillToObject = (object: fabric.FabricObject, color: string) => {
     if (object.type === "group") {
       const group = object as unknown as fabric.Group;
       let fillAreaObj = getFillAreaObject(group);
@@ -40,9 +38,13 @@ export const HandleFillCanvasColor = ({ object, canvas }: Props) => {
     } else if ("fill" in object) {
       object.set({ fill: color });
     }
+  };
 
+  const applyFill = (color: string) => {
+    if (!objects.length || !canvas) return;
+    objects.forEach((obj) => applyFillToObject(obj, color));
     (canvas as fabric.Canvas & { _objectsToRender?: unknown })._objectsToRender = undefined;
-    (canvas as fabric.Canvas & { fire(name: string, opt?: unknown): void }).fire("modified", { target: object });
+    (canvas as fabric.Canvas & { fire(name: string, opt?: unknown): void }).fire("modified", { target: objects[0] });
     canvas.requestRenderAll?.() ?? canvas.renderAll?.();
   };
 
@@ -52,6 +54,7 @@ export const HandleFillCanvasColor = ({ object, canvas }: Props) => {
   };
 
   useEffect(() => {
+    const object = objects[0];
     if (!object) return;
 
     if (object.type === "group") {
@@ -62,7 +65,7 @@ export const HandleFillCanvasColor = ({ object, canvas }: Props) => {
       const raw = (object as fabric.Object & { fill?: unknown })?.fill?.toString();
       setColorFill(raw && raw !== "transparent" ? raw : "#000000");
     }
-  }, [object]);
+  }, [objects]);
 
   return (
     <DropdownMenu>

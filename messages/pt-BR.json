@@ -241,6 +241,13 @@
           "back": "Para Trás",
           "forward": "Para Frente"
         }
+      },
+      "configuracoes": {
+        "title": "Configurações",
+        "shirtColor": "Cor da camisa",
+        "backgroundColor": "Cor de fundo",
+        "primaryColor": "Cor primária",
+        "secondaryColor": "Cor secundária"
       }
     },
     "privacy": {
