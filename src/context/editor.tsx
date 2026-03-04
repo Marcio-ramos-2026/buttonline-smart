@@ -16,10 +16,10 @@ import { useResizeObserver } from "@/hooks/useResizeObserver";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../tailwind.config";
 import type { editor_canvas } from "@prisma/client";
-import { createModel, generateSVG, ModelType, removeFillElementFromGroup } from "@/components/editor/model";
+import { createModel, generateSVG } from "@/components/editor/model";
+import { ReactSVG } from "react-svg";
 import { useDebounceCallback } from "@/hooks/useDebounceCallback";
 import { Button } from "@/components/ui/button";
-import { ReactSVG } from "react-svg";
 import { CopyPlus } from "lucide-react";
 import CanvasHistory from "@/lib/fabricHistory";
 import { PrintButton } from "@/components/editor/printButton";
@@ -325,20 +325,21 @@ export const RenderCanvas = () => {
 
   const { left, top } = canvasModel;
 
-  const canvasOverlay = await canvasModel.clone(["cardenas_overlay"]) as fabric.Group;
+  const canvasOverlay = await canvasModel.clone(["cardenas_overlay", "cardenas_children_wrapper"]) as fabric.Group;
   canvasOverlay.scale(scale);
 
   const objects = canvasOverlay.getObjects();
   objects.forEach((obj) => {
     if (!obj.cardenas_overlay) {
-            obj.set({ visible: false });
-
+      obj.set({ visible: false });
     } else {
-      obj.set({
-        fill: "transparent",
-        selectable: false,
-        evented: false,
-      });
+      obj.set({ fill: "transparent", selectable: false, evented: false });
+      // Esconde o childrenWrapper dentro do grupo de overlay (filhos nested nunca aparecem no overlay)
+      if (obj.type === "group") {
+        (obj as fabric.Group).getObjects().forEach((child) => {
+          if (child.cardenas_children_wrapper) child.set({ visible: false });
+        });
+      }
     }
   });
 
@@ -439,26 +440,21 @@ export const RenderCanvas = () => {
 
 const ModelsExamples = ({ model }: { model: editor_canvas }) => {
   const [loadingSelectedModel, setLoadingSelectedModel] = useState(false);
-  const [svg,setSvg] = useState('')
+  const [svg, setSvg] = useState('');
   const t = useTranslations("pages.editor");
 
   const handleSelectModel = (model: editor_canvas) => {
     setLoadingSelectedModel(true);
-
     const url = new URL(window?.location.href);
-
     url.searchParams.set('id', model.id.toString());
-
     window.location.href = url.toString();
-};
+  };
 
-  useEffect(()=> {
-
-    createModel(model).then((modelResponse)=>{
-      setSvg(btoa(generateSVG(modelResponse)))
-    })
-    
-  },[model])
+  useEffect(() => {
+    createModel(model).then((modelResponse) => {
+      setSvg(btoa(generateSVG(modelResponse)));
+    });
+  }, [model]);
 
   return (
     <div className="flex flex-col rounded-lg bg-white shadow-sm border justify-between">
@@ -466,10 +462,7 @@ const ModelsExamples = ({ model }: { model: editor_canvas }) => {
         <h5 className="text-primary text-center">{model.name}</h5>
       </div>
       <div className={styles.templateSample}>
-        {svg && <ReactSVG
-          className=" text-red-500"
-          src={`data:image/svg+xml;base64,${svg}`}
-        />}
+        {svg && <ReactSVG className=" text-red-500" src={`data:image/svg+xml;base64,${svg}`} />}
       </div>
 
       <div className="">

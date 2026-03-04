@@ -13,7 +13,8 @@
     "svg:normalize": "node scripts/normalize-svg.js",
     "svg:normalize:js": "tsx scripts/normalize-svg-pure-js.ts",
     "svg:fix-fill": "node scripts/fix-svg-fill.js",
-    "svg:prepare": "tsx scripts/prepare-svg-for-editor.ts"
+    "svg:prepare": "tsx scripts/prepare-svg-for-editor.ts",
+    "svg:all": "tsx scripts/run-all-svg-pipeline.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.js"

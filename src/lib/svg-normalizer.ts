@@ -245,6 +245,48 @@ function ensureViewBox(svgString: string, viewBoxFromOriginal: string | null): s
 /** Id do path de área pintável injetado pela normalização. Usado no Fabric para identificar e manipular. */
 export const CARDENAS_FILL_AREA_ID = "cardenas-fill-area";
 
+/** Id do clipPath injetado pela normalização (mesmo contorno que a área de fill). */
+export const CARDENAS_CLIP_PATH_ID = "cardenas-clip";
+
+/**
+ * Extrai o atributo "d" do primeiro <path> dentro de um <clipPath> no SVG.
+ * Se o SVG já define clipPath, esse path é o contorno correto para clipping.
+ *
+ * Para o editor reconhecer e usar o clip: coloque um <clipPath> no SVG com um
+ * <path d="..."> que descreva o contorno da área (ex.: o mesmo contorno do desenho).
+ * Exemplo:
+ *   <svg ...>
+ *     <defs>
+ *       <clipPath id="cardenas-clip">
+ *         <path d="M0,0 L100,0 L100,100 L0,100 Z"/>
+ *       </clipPath>
+ *     </defs>
+ *     ... resto do desenho ...
+ *   </svg>
+ *
+ * @returns string d ou null se não houver clipPath com path
+ */
+export function extractClipPathD(svgString: string): string | null {
+  const clipPathMatch = svgString.match(/<clipPath[\s\S]*?<\/clipPath>/i);
+  if (!clipPathMatch) return null;
+  const block = clipPathMatch[0];
+  const dMatch = block.match(/<path[^>]*\s+d\s*=\s*["']([^"']+)["']/i) ?? block.match(/d\s*=\s*["']([^"']+)["']/i);
+  return dMatch ? dMatch[1].trim().replace(/\s+/g, " ") : null;
+}
+
+/**
+ * Injeta um <clipPath> no SVG com o path informado (mesmo contorno da área de fill).
+ * Coloca dentro de <defs>; cria <defs> se não existir.
+ */
+function injectClipPath(originalSvg: string, pathD: string): string {
+  const clipBlock = `<clipPath id="${CARDENAS_CLIP_PATH_ID}"><path d="${pathD}"/></clipPath>`;
+  if (/<defs[\s\S]*?<\/defs\s*>/i.test(originalSvg)) {
+    return originalSvg.replace(/(<\/defs\s*>)/i, `\n  ${clipBlock}\n$1`);
+  }
+  const defsBlock = `<defs>\n  ${clipBlock}\n</defs>`;
+  return originalSvg.replace(/(<svg[^>]*>)/i, `$1\n  ${defsBlock}\n  `);
+}
+
 /**
  * Injeta um path de fill no SVG (após </defs> ou após <svg>).
  * fill-rule="evenodd" = exterior preenchido, furos vazios, sem depender do sentido dos anéis.
@@ -256,6 +298,14 @@ function injectFillPath(originalSvg: string, pathD: string, fillColor = "transpa
     return originalSvg.replace(/(<\/defs\s*>)/i, `$1\n  ${pathTag}\n  `);
   }
   return originalSvg.replace(/(<svg[^>]*>)/i, `$1\n  ${pathTag}\n  `);
+}
+
+/**
+ * Injeta um path com id=CARDENAS_FILL_AREA_ID e o "d" informado (ex.: extraído de clipPath).
+ * Use quando o SVG já tem &lt;clipPath&gt; e você quer que esse path seja usado como área de clip.
+ */
+export function injectFillPathFromD(originalSvg: string, pathD: string): string {
+  return injectFillPath(originalSvg, pathD);
 }
 
 /**
@@ -333,7 +383,8 @@ export function normalizeSvg(
     if (stripMetadata) return stripEditorMetadata(originalSvgString);
     return ensureViewBox(originalSvgString, viewBoxOriginal);
   }
-  let out = injectFillPath(originalSvgString, pathD, fillColor);
+  let out = injectClipPath(originalSvgString, pathD);
+  out = injectFillPath(out, pathD, fillColor);
   if (stripMetadata) out = stripEditorMetadata(out);
   out = ensureViewBox(out, viewBoxOriginal);
   return out;
