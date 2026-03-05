@@ -36,28 +36,9 @@ export async function extractCardenasCanvas(
   // ✅ Step 4: Set the clipPath on the canvas itself
   croppedCanvas.clipPath = clipPath;
 
-  // Step 5: Add relevant intersecting objects (excluding the canvas group)
-  const relevantObjects = originalCanvas.getObjects().filter(obj =>
-    obj !== cardenasCanvasObject && rectsIntersect(bounds, obj.getBoundingRect())
-  );
-
-  for (const obj of relevantObjects) {
-    const clone = await obj.clone();
-
-    clone.set({
-      left: (clone.left ?? 0) - bounds.left,
-      top: (clone.top ?? 0) - bounds.top,
-    });
-
-    if (clone.type === 'image') {
-      await convertImageToBase64(clone as fabric.Image);
-    }
-
-    croppedCanvas.add(clone);
-  }
-
-  // Step 6: Add only the `cardenas_print` or tagged children of cardenas_canvas
+  // Step 5: Add only the `cardenas_print` or tagged children of cardenas_canvas
   // (tags overrides cardenas_print: if tagged, always show in PDF)
+  // Added FIRST so it renders below user-placed objects
   const cardenasPrintObjects: fabric.Object[] = [];
 
   const cardenasChildren = cardenasCanvasObject.getObjects();
@@ -87,14 +68,34 @@ export async function extractCardenasCanvas(
       cardenasPrintObjects.push(child);
     }
   }
-  
-  
+
   const printGroup = new fabric.Group(cardenasPrintObjects, {
     left: 0,
     top: 0,
   });
 
   croppedCanvas.add(printGroup);
+
+  // Step 6: Add relevant intersecting objects (excluding the canvas group)
+  // Added AFTER printGroup so user-placed images render on top of the button design
+  const relevantObjects = originalCanvas.getObjects().filter(obj =>
+    obj !== cardenasCanvasObject && rectsIntersect(bounds, obj.getBoundingRect())
+  );
+
+  for (const obj of relevantObjects) {
+    const clone = await obj.clone();
+
+    clone.set({
+      left: (clone.left ?? 0) - bounds.left,
+      top: (clone.top ?? 0) - bounds.top,
+    });
+
+    if (clone.type === 'image') {
+      await convertImageToBase64(clone as fabric.Image);
+    }
+
+    croppedCanvas.add(clone);
+  }
 
   // Step 7: Scale everything to target dimensions
   const targetWidth = fabric.util.parseUnit(`${width}mm`);
