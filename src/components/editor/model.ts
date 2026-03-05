@@ -222,6 +222,23 @@ export const createModel = async (model: editor_canvas): Promise<fabric.Object> 
         results.filter((el): el is fabric.FabricObject => el !== null)
       );
 
+      // Converte a origem dos filhos de centro para top-left do pai.
+      // top: 0, left: 0 no config corresponde ao canto superior esquerdo do selfShape.
+      // A fórmula compensa as meias-dimensões do filho (originX/Y: "center"):
+      //   left_final = config_left - halfParentW + halfChildW
+      // Assim left:0 = borda esquerda do filho na borda esquerda do pai.
+      if (selfShape && childElements.length > 0) {
+        const halfParentW = selfShape.getScaledWidth() / 2;
+        const halfParentH = selfShape.getScaledHeight() / 2;
+        childElements.forEach((el) => {
+          el.set({
+            left: (el.left ?? 0) - halfParentW + el.getScaledWidth() / 2,
+            top: (el.top ?? 0) - halfParentH + el.getScaledHeight() / 2,
+          });
+          el.setCoords();
+        });
+      }
+
       // Clip path aplicado ao wrapper dos filhos (não em cada filho individualmente).
       // Isso garante que o clip fique fixo no espaço do wrapper enquanto os filhos se movem livremente.
       let groupObjects: fabric.FabricObject[];
@@ -297,14 +314,35 @@ export const createModel = async (model: editor_canvas): Promise<fabric.Object> 
         cardenas_print: container.cardenas_print === undefined ? true : container.cardenas_print,
         cardenas_overlay: container.cardenas_overlay,
       });
-      const hasTags = !!container.tags && Object.keys(container.tags).length > 0;
-      return (isNested && !hasTags) ? applySelectableOnly(group) : applyEditableBehavior(group, container.tags, container.tagGroup);
+      if (isNested) {
+        group.set({
+          selectable: false,
+          evented: false,
+          hoverCursor: 'default',
+          moveCursor: 'default',
+          cardenas_tags: container.tags,
+          cardenas_tag_group: container.tagGroup,
+        });
+        return group;
+      }
+      return applyEditableBehavior(group, container.tags, container.tagGroup);
     }
 
     const leaf = obj as LeafShape;
-    const hasTags = !!leaf.tags && Object.keys(leaf.tags).length > 0;
-    const applyBehavior = <T extends fabric.Object>(o: T) =>
-      (isNested && !hasTags) ? applySelectableOnly(o) : applyEditableBehavior(o, leaf.tags, leaf.tagGroup);
+    const applyBehavior = <T extends fabric.Object>(o: T) => {
+      if (isNested) {
+        o.set({
+          selectable: false,
+          evented: false,
+          hoverCursor: 'default',
+          moveCursor: 'default',
+          cardenas_tags: leaf.tags,
+          cardenas_tag_group: leaf.tagGroup,
+        });
+        return o;
+      }
+      return applyEditableBehavior(o, leaf.tags, leaf.tagGroup);
+    };
 
     switch (leaf.type) {
       case "ellipse":
@@ -359,8 +397,8 @@ const ellipse = (config: shapeEllipse): fabric.FabricObject => {
     originX: "center",
     originY: "center",
     hoverCursor: "default",
-    top: Number(config?.top ?? 0),
-    left: Number(config?.left ?? 0),
+    top: fabric.util.parseUnit(`${Number(config?.top ?? 0)}mm`),
+    left: fabric.util.parseUnit(`${Number(config?.left ?? 0)}mm`),
     angle: Number(config?.rotate ?? 0),
     cardenas_print:
       config.cardenas_print === undefined ? true : config.cardenas_print,
@@ -380,8 +418,8 @@ const circle = (config: shapeCircle) => {
     originX: "center",
     originY: "center",
     hoverCursor: "default",
-    top: Number(config?.top ?? 0),
-    left: Number(config?.left ?? 0),
+    top: fabric.util.parseUnit(`${Number(config?.top ?? 0)}mm`),
+    left: fabric.util.parseUnit(`${Number(config?.left ?? 0)}mm`),
     angle: Number(config?.rotate ?? 0),
     cardenas_print: config.cardenas_print === undefined ? true: config.cardenas_print,
     cardenas_overlay: config?.cardenas_overlay
@@ -403,8 +441,8 @@ const rectangle = (config: shapeRectangle) => {
     hoverCursor: "default",
     rx: config?.radius ?? 0,
     ry: config?.radius ?? 0,
-    top: Number(config?.top ?? 0),
-    left: Number(config?.left ?? 0),
+    top: fabric.util.parseUnit(`${Number(config?.top ?? 0)}mm`),
+    left: fabric.util.parseUnit(`${Number(config?.left ?? 0)}mm`),
     angle: Number(config?.rotate ?? 0),
     cardenas_print:
       config.cardenas_print === undefined ? true : config.cardenas_print,
@@ -455,8 +493,8 @@ export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject
 
     originX: 'center',
     originY: 'center',
-    top: config?.top ?? 0,
-    left: config?.left ?? 0,
+    top: fabric.util.parseUnit(`${config?.top ?? 0}mm`),
+    left: fabric.util.parseUnit(`${config?.left ?? 0}mm`),
     angle: config?.rotate ?? 0,
     cardenas_print:
       config.cardenas_print === undefined ? true : config.cardenas_print,
@@ -506,47 +544,29 @@ const applyEditableBehavior = <T extends fabric.Object>(
 ): T => {
   const editable = !!tags && Object.keys(tags).length > 0;
 
-  if (!editable) {
-    obj.set({
-      selectable: false,
-      evented: false,
-      hoverCursor: 'default',
-      moveCursor: 'default',
-    });
-    return obj;
-  }
-
   obj.set({
-    selectable: true,
-    evented: true,
-
-    hoverCursor: 'pointer',
-    moveCursor: 'pointer',
-
-    lockMovementX: true,
-    lockMovementY: true,
-    lockScalingX: true,
-    lockScalingY: true,
-    lockRotation: true,
-    lockSkewingX: true,
-    lockSkewingY: true,
-
-    hasControls: false,
-    hasBorders: false,
-
-    cardenas_tags: tags,
-    cardenas_tag_group: tagGroup,
+    selectable: false,
+    evented: false,
+    hoverCursor: 'default',
+    moveCursor: 'default',
   });
+
+  if (editable) {
+    obj.set({
+      cardenas_tags: tags,
+      cardenas_tag_group: tagGroup,
+    });
+  }
 
   return obj;
 };
 
 const applySelectableOnly = <T extends fabric.Object>(obj: T): T => {
   obj.set({
-    selectable: true,
-    evented: true,
-    hoverCursor: 'move',
-    moveCursor: 'move',
+    selectable: false,
+    evented: false,
+    hoverCursor: 'default',
+    moveCursor: 'default',
   });
   return obj;
 };
