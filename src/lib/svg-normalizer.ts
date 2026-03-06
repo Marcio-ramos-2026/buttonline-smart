@@ -9,7 +9,6 @@
  * Novos elementos (ex.: <rect>, <circle>) podem ser suportados com novas funções extract*.
  */
 
-// @ts-expect-error no types
 import polygonClipping from "polygon-clipping";
 import { pointsOnPath } from "points-on-path";
 
@@ -339,7 +338,7 @@ export function normalizeSvg(
 
   let result: Polygon[];
   try {
-    result = polygonClipping.union(...allPolygons);
+    result = polygonClipping.union(...(allPolygons as [Polygon, ...Polygon[]]));
   } catch (_) {
     if (stripMetadata) return stripEditorMetadata(originalSvgString);
     return ensureViewBox(originalSvgString, viewBoxOriginal);
