@@ -471,10 +471,15 @@ export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject
   const objects = loaded.objects.filter(Boolean) as fabric.Object[];
   const group = new fabric.Group(objects);
 
-  // Path de fill (cardenas-fill-area): sem cache para o color picker atualizar na tela
+  // Path de fill (cardenas-fill-area): sem cache para o color picker atualizar na tela.
+  // Marca com CARDENAS_FILL_AREA_ID para que getFillAreaObject sempre encontre o mesmo objeto,
+  // independente do valor atual do fill (evita inconsistência quando config.color é definido).
   const fillPath = getFillAreaObject(group);
   if (fillPath) {
     fillPath.set("objectCaching", false);
+    if (!(fillPath as fabric.Object & { id?: string }).id) {
+      (fillPath as fabric.Object & { id?: string }).id = CARDENAS_FILL_AREA_ID;
+    }
     if (config.color) fillPath.set("fill", config.color);
   }
   group.set("objectCaching", false);

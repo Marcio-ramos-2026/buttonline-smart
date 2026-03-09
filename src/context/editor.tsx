@@ -16,7 +16,7 @@ import { useResizeObserver } from "@/hooks/useResizeObserver";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../tailwind.config";
 import type { editor_canvas } from "@prisma/client";
-import { createModel, generateSVG } from "@/components/editor/model";
+import { createModel, generateSVG, getFillAreaObject } from "@/components/editor/model";
 import { ReactSVG } from "react-svg";
 import { useDebounceCallback } from "@/hooks/useDebounceCallback";
 import { Button } from "@/components/ui/button";
@@ -371,9 +371,13 @@ export const RenderCanvas = () => {
       obj.set({ visible: false });
     } else {
       obj.set({ fill: "transparent", selectable: false, evented: false });
-      // Esconde o childrenWrapper dentro do grupo de overlay (filhos nested nunca aparecem no overlay)
       if (obj.type === "group") {
-        (obj as fabric.Group).getObjects().forEach((child) => {
+        const group = obj as fabric.Group;
+        // Limpa o fill da área pintável para que a cor do canvas principal apareça através do overlay
+        const fillAreaObj = getFillAreaObject(group);
+        if (fillAreaObj) fillAreaObj.set("fill", "transparent");
+        // Esconde o childrenWrapper dentro do grupo de overlay (filhos nested nunca aparecem no overlay)
+        group.getObjects().forEach((child) => {
           if (child.cardenas_children_wrapper) child.set({ visible: false });
         });
       }
