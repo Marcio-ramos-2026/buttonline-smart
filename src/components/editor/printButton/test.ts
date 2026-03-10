@@ -23,76 +23,68 @@ export async function extractCardenasCanvas(
     backgroundColor: cardenasCanvasObject.getObjects()[0].fill as string,
   });
 
-  // ✅ Step 3: Clone the entire `cardenasCanvasObject` to use as a clipPath
+  // Step 3: Clone cardenasCanvasObject to use as clip path (preserves button shape)
   const clipPath = await cardenasCanvasObject.clone();
-  clipPath.set({
-    left: 0,
-    top: 0,
-    originX: 'left',
-    originY: 'top',
-    absolutePositioned: true,
-  });
-
-  // ✅ Step 4: Set the clipPath on the canvas itself
+  clipPath.set({ left: 0, top: 0, originX: 'left', originY: 'top', absolutePositioned: true });
   croppedCanvas.clipPath = clipPath;
 
-  // Step 5: Add only the `cardenas_print` or tagged children of cardenas_canvas
-  // (tags overrides cardenas_print: if tagged, always show in PDF)
-  // Added FIRST so it renders below user-placed objects
-  const cardenasPrintObjects: fabric.Object[] = [];
-
   const cardenasChildren = cardenasCanvasObject.getObjects();
-  for (let i = 0; i < cardenasChildren.length; i++) {
-    const child = cardenasChildren[i];
-    const hasTags = !!child.cardenas_tags && Object.keys(child.cardenas_tags).length > 0;
-    const includeInPdf = child.cardenas_print || hasTags;
-    if (includeInPdf) {
-      if (child.type === 'image') {
-        await convertImageToBase64(child as fabric.Image);
-      }
 
-      // First child (index 0) is the button area — keep its fill so background color appears in PDF
-      const isButtonArea = i === 0;
-      if (!['group', 'image'].includes(child.type ?? '') && !child.cardenas_mark && !isButtonArea) {
-        child.set({
-          fill: 'transparent',
-          backgroundColor: 'transparent',
-        });
-      }
-
-      // background tag: show only the painted area in PDF — remove stroke/outline
-      if (child.cardenas_tags?.background) {
-        stripStrokeForPdf(child);
-      }
-
-      cardenasPrintObjects.push(child);
-    }
+  // Clones a group child and converts its position to croppedCanvas coordinates.
+  // calcTransformMatrix() includes the parent group's transforms, giving absolute canvas coords.
+  async function cloneToCanvas(child: fabric.Object): Promise<fabric.Object> {
+    const clone = await child.clone();
+    const { translateX, translateY, scaleX, scaleY, angle, skewX, skewY } =
+      fabric.util.qrDecompose(child.calcTransformMatrix());
+    clone.set({
+      left: translateX - bounds.left,
+      top: translateY - bounds.top,
+      scaleX,
+      scaleY,
+      angle,
+      skewX,
+      skewY,
+      originX: 'center',
+      originY: 'center',
+    });
+    clone.setCoords();
+    if (clone.type === 'image') await convertImageToBase64(clone as fabric.Image);
+    return clone;
   }
 
-  const printGroup = new fabric.Group(cardenasPrintObjects, {
-    left: 0,
-    top: 0,
-  });
+  // Layer 1: element [0] — client canvas background
+  if (cardenasChildren[0]) {
+    croppedCanvas.add(await cloneToCanvas(cardenasChildren[0]));
+  }
 
-  croppedCanvas.add(printGroup);
-
-  // Step 6: Add relevant intersecting objects (excluding the canvas group)
-  // Added AFTER printGroup so user-placed images render on top of the button design
-  const relevantObjects = originalCanvas.getObjects().filter(obj =>
-    obj !== cardenasCanvasObject && rectsIntersect(bounds, obj.getBoundingRect())
+  // Layer 2: user-placed objects (between background and design elements)
+  const relevantObjects = originalCanvas.getObjects().filter(
+    obj => obj !== cardenasCanvasObject && rectsIntersect(bounds, obj.getBoundingRect())
   );
-
   for (const obj of relevantObjects) {
     const clone = await obj.clone();
-
     clone.set({
       left: (clone.left ?? 0) - bounds.left,
       top: (clone.top ?? 0) - bounds.top,
     });
+    if (clone.type === 'image') await convertImageToBase64(clone as fabric.Image);
+    croppedCanvas.add(clone);
+  }
 
-    if (clone.type === 'image') {
-      await convertImageToBase64(clone as fabric.Image);
+  // Layer 3: design elements [1..n] — always above user images
+  for (let i = 1; i < cardenasChildren.length; i++) {
+    const child = cardenasChildren[i];
+    if (child.cardenas_overlay) continue;
+
+    const hasTags = !!child.cardenas_tags && Object.keys(child.cardenas_tags).length > 0;
+    if (!child.cardenas_print && !hasTags) continue;
+
+    const clone = await cloneToCanvas(child);
+
+    if (!['group', 'image'].includes(clone.type ?? '') && !child.cardenas_mark) {
+      clone.set({ fill: 'transparent', backgroundColor: 'transparent' });
     }
+    if (child.cardenas_tags?.background) stripStrokeForPdf(clone);
 
     croppedCanvas.add(clone);
   }
@@ -117,8 +109,6 @@ export async function extractCardenasCanvas(
     croppedCanvas.clipPath.scaleX = (croppedCanvas.clipPath.scaleX ?? 1) * scaleX;
     croppedCanvas.clipPath.scaleY = (croppedCanvas.clipPath.scaleY ?? 1) * scaleY;
     croppedCanvas.clipPath.setCoords();
-
-  
   }
 
   return croppedCanvas.toSVG();
