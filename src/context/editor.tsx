@@ -16,7 +16,8 @@ import { useResizeObserver } from "@/hooks/useResizeObserver";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../tailwind.config";
 import type { editor_canvas } from "@prisma/client";
-import { createModel, generateSVG, getFillAreaObject } from "@/components/editor/model";
+import { createModel, generateSVG } from "@/components/editor/model";
+import { CARDENAS_FILL_AREA_ID } from "@/lib/svg-normalizer";
 import { ReactSVG } from "react-svg";
 import { useDebounceCallback } from "@/hooks/useDebounceCallback";
 import { Button } from "@/components/ui/button";
@@ -362,7 +363,7 @@ export const RenderCanvas = () => {
 
   const { left, top } = canvasModel;
 
-  const canvasOverlay = await canvasModel.clone(["cardenas_overlay", "cardenas_children_wrapper"]) as fabric.Group;
+  const canvasOverlay = await canvasModel.clone(["cardenas_overlay", "cardenas_children_wrapper", "id"]) as fabric.Group;
   canvasOverlay.scale(scale);
 
   const objects = canvasOverlay.getObjects();
@@ -373,9 +374,25 @@ export const RenderCanvas = () => {
       obj.set({ fill: "transparent", selectable: false, evented: false });
       if (obj.type === "group") {
         const group = obj as fabric.Group;
-        // Limpa o fill da área pintável para que a cor do canvas principal apareça através do overlay
-        const fillAreaObj = getFillAreaObject(group);
-        if (fillAreaObj) fillAreaObj.set("fill", "transparent");
+        // Limpa o fill da área pintável identificada por CARDENAS_FILL_AREA_ID.
+        // Só objetos marcados com esse id (shapes com config.color) têm o fill limpo no overlay.
+        // Shapes cujo fill vem do próprio SVG (sem config.color) NÃO recebem o id, portanto
+        // permanecem visíveis no overlay.
+        const clearFillArea = (g: fabric.Group): void => {
+          const byId = g.getObjects().find(
+            (o) => (o as fabric.Object & { id?: string }).id === CARDENAS_FILL_AREA_ID
+          );
+          if (byId) {
+            byId.set("fill", "transparent");
+            return;
+          }
+          g.getObjects().forEach((child) => {
+            if (child.type === "group" && !child.cardenas_children_wrapper) {
+              clearFillArea(child as fabric.Group);
+            }
+          });
+        };
+        clearFillArea(group);
         // Esconde o childrenWrapper dentro do grupo de overlay (filhos nested nunca aparecem no overlay)
         group.getObjects().forEach((child) => {
           if (child.cardenas_children_wrapper) child.set({ visible: false });

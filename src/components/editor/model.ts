@@ -477,10 +477,16 @@ export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject
   const fillPath = getFillAreaObject(group);
   if (fillPath) {
     fillPath.set("objectCaching", false);
-    if (!(fillPath as fabric.Object & { id?: string }).id) {
-      (fillPath as fabric.Object & { id?: string }).id = CARDENAS_FILL_AREA_ID;
+    if (config.color) {
+      // Só marca com CARDENAS_FILL_AREA_ID quando config.color está presente.
+      // Shapes sem config.color (ex: fill vindo do próprio SVG) NÃO devem ser marcados,
+      // pois o overlay clearing usa este id para limpar o fill — o fill desses shapes
+      // deve permanecer visível no overlay.
+      if (!(fillPath as fabric.Object & { id?: string }).id) {
+        (fillPath as fabric.Object & { id?: string }).id = CARDENAS_FILL_AREA_ID;
+      }
+      fillPath.set("fill", config.color);
     }
-    if (config.color) fillPath.set("fill", config.color);
   }
   group.set("objectCaching", false);
 
