@@ -477,14 +477,15 @@ export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject
   const fillPath = getFillAreaObject(group);
   if (fillPath) {
     fillPath.set("objectCaching", false);
+    // Sempre marca com CARDENAS_FILL_AREA_ID para lookup determinístico (ex: childrenWrapper.clipPath).
+    if (!(fillPath as fabric.Object & { id?: string }).id) {
+      (fillPath as fabric.Object & { id?: string }).id = CARDENAS_FILL_AREA_ID;
+    }
     if (config.color) {
-      // Só marca com CARDENAS_FILL_AREA_ID quando config.color está presente.
-      // Shapes sem config.color (ex: fill vindo do próprio SVG) NÃO devem ser marcados,
-      // pois o overlay clearing usa este id para limpar o fill — o fill desses shapes
-      // deve permanecer visível no overlay.
-      if (!(fillPath as fabric.Object & { id?: string }).id) {
-        (fillPath as fabric.Object & { id?: string }).id = CARDENAS_FILL_AREA_ID;
-      }
+      // cardenas_colorable: true indica que este fill é configurável via editor (config.color presente).
+      // O overlay clearing só limpa fills marcados com esta flag, preservando shapes cujo fill
+      // vem do próprio SVG (sem config.color).
+      (fillPath as fabric.Object & { cardenas_colorable?: boolean }).cardenas_colorable = true;
       fillPath.set("fill", config.color);
     }
   }

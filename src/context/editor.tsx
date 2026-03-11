@@ -363,7 +363,7 @@ export const RenderCanvas = () => {
 
   const { left, top } = canvasModel;
 
-  const canvasOverlay = await canvasModel.clone(["cardenas_overlay", "cardenas_children_wrapper", "id"]) as fabric.Group;
+  const canvasOverlay = await canvasModel.clone(["cardenas_overlay", "cardenas_children_wrapper", "id", "cardenas_colorable"]) as fabric.Group;
   canvasOverlay.scale(scale);
 
   const objects = canvasOverlay.getObjects();
@@ -383,7 +383,11 @@ export const RenderCanvas = () => {
             (o) => (o as fabric.Object & { id?: string }).id === CARDENAS_FILL_AREA_ID
           );
           if (byId) {
-            byId.set("fill", "transparent");
+            // Só limpa o fill de shapes com config.color (marcados com cardenas_colorable).
+            // Shapes cujo fill vem do próprio SVG não têm esta flag e devem permanecer visíveis.
+            if ((byId as fabric.Object & { cardenas_colorable?: boolean }).cardenas_colorable) {
+              byId.set("fill", "transparent");
+            }
             return;
           }
           g.getObjects().forEach((child) => {

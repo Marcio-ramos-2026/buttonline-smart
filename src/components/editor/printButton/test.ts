@@ -57,7 +57,30 @@ export async function extractCardenasCanvas(
     croppedCanvas.add(await cloneToCanvas(cardenasChildren[0]));
   }
 
-  // Layer 2: user-placed objects (between background and design elements)
+  // Layer 2: design elements [1..n] — below user images (matches editor stacking)
+  for (let i = 1; i < cardenasChildren.length; i++) {
+    const child = cardenasChildren[i];
+    const hasTags = !!child.cardenas_tags && Object.keys(child.cardenas_tags).length > 0;
+    const hasChildrenWrapper = child instanceof fabric.Group &&
+      child.getObjects().some(o => o.cardenas_children_wrapper);
+
+    // Pure overlay objects (no editable content, no nested children) are UI guides — skip.
+    // Overlay objects with tags (editable fill) or nested children are real design elements — include.
+    if (child.cardenas_overlay && !hasTags && !hasChildrenWrapper) continue;
+    if (!child.cardenas_print && !hasTags) continue;
+
+    const clone = await cloneToCanvas(child);
+
+    if (!['group', 'image'].includes(clone.type ?? '') && !child.cardenas_mark) {
+      clone.set({ fill: 'transparent', backgroundColor: 'transparent' });
+    }
+    // Don't strip stroke from overlay objects — they may have decorative lines to preserve.
+    if (!child.cardenas_overlay && child.cardenas_tags?.background) stripStrokeForPdf(clone);
+
+    croppedCanvas.add(clone);
+  }
+
+  // Layer 3: user-placed objects — on top of design elements (matches editor stacking)
   const relevantObjects = originalCanvas.getObjects().filter(
     obj => obj !== cardenasCanvasObject && rectsIntersect(bounds, obj.getBoundingRect())
   );
@@ -68,24 +91,6 @@ export async function extractCardenasCanvas(
       top: (clone.top ?? 0) - bounds.top,
     });
     if (clone.type === 'image') await convertImageToBase64(clone as fabric.Image);
-    croppedCanvas.add(clone);
-  }
-
-  // Layer 3: design elements [1..n] — always above user images
-  for (let i = 1; i < cardenasChildren.length; i++) {
-    const child = cardenasChildren[i];
-    if (child.cardenas_overlay) continue;
-
-    const hasTags = !!child.cardenas_tags && Object.keys(child.cardenas_tags).length > 0;
-    if (!child.cardenas_print && !hasTags) continue;
-
-    const clone = await cloneToCanvas(child);
-
-    if (!['group', 'image'].includes(clone.type ?? '') && !child.cardenas_mark) {
-      clone.set({ fill: 'transparent', backgroundColor: 'transparent' });
-    }
-    if (child.cardenas_tags?.background) stripStrokeForPdf(clone);
-
     croppedCanvas.add(clone);
   }
 
