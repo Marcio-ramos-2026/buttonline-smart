@@ -203,6 +203,8 @@
         "line3": "Frente do button"
       },
       "sideBar": {
+        "back": "Voltar",
+        "backToList": "Voltar à lista",
         "buttonBgColor": "Cor de fundo do Button",
         "clip": "Esconder conteúdo fora do Button",
         "changeModel": {
@@ -230,6 +232,7 @@
       "editableBar": {
         "strokeColor": "Cor da borda",
         "bgColor": "Cor de fundo",
+        "fillColor": "Cor",
         "opacity": "Opacidade",
         "layer": {
           "layer": "Posição",
@@ -238,6 +241,13 @@
           "back": "Para Trás",
           "forward": "Para Frente"
         }
+      },
+      "configuracoes": {
+        "title": "Configurações",
+        "shirtColor": "Cor da camisa",
+        "backgroundColor": "Cor de fundo",
+        "primaryColor": "Cor primária",
+        "secondaryColor": "Cor secundária"
       }
     },
     "privacy": {

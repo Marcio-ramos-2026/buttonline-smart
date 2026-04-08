@@ -27,7 +27,7 @@ export const HandleTextColor = ({ object, canvas }: CanvasObjectType) => {
     <ColorPicker
       value={color as string}
       onChange={handleChangeColor}
-      className="border-gray-300 h-full"
+      className="border-gray-300 !h-[40px]"
     />
   );
 };

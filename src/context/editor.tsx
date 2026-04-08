@@ -16,16 +16,18 @@ import { useResizeObserver } from "@/hooks/useResizeObserver";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../tailwind.config";
 import type { editor_canvas } from "@prisma/client";
-import { createModel, generateSVG, ModelType } from "@/components/editor/model";
+import { createModel, generateSVG } from "@/components/editor/model";
+import { CARDENAS_FILL_AREA_ID } from "@/lib/svg-normalizer";
+import { ReactSVG } from "react-svg";
 import { useDebounceCallback } from "@/hooks/useDebounceCallback";
 import { Button } from "@/components/ui/button";
-import { ReactSVG } from "react-svg";
 import { CopyPlus } from "lucide-react";
 import CanvasHistory from "@/lib/fabricHistory";
 import { PrintButton } from "@/components/editor/printButton";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import styles from "./styles.module.css";
 import { EditableBar } from "@/components/editor/editableBar";
+import { HandleFillCanvasColor } from "@/components/editor/editableBar/handles/HandleFillCanvasColor";
 import clsx from "clsx";
 import { MultipleButton } from "@/components/editor/multiple/multiple";
 import { Switch } from "@/components/ui/switch";
@@ -247,8 +249,44 @@ export const RenderCanvas = () => {
   } = useEditorContext();
 
   const t = useTranslations("pages.editor");
+  const locale = useLocale();
   const [object, setObject] = useState<fabric.Object | null>(null);
+  type TagValue = string | Record<string, string>;
+  type TaggedObject = { object: fabric.FabricObject; tags: Record<string, TagValue>; tagGroup?: string };
+  type TagGroup = { objects: fabric.FabricObject[]; tags: Record<string, TagValue> };
+
+  const resolveTagLabel = (value: TagValue): string => {
+    if (typeof value === "string") return value;
+    return value[locale] ?? value["en"] ?? value["pt-BR"] ?? Object.values(value)[0] ?? "";
+  };
+  const [editableObjects, setEditableObjects] = useState<TagGroup[]>([]);
   const overlayRef = useRef<fabric.Group | null>(null);
+
+  const findEditableObjects = (group: fabric.Group): TaggedObject[] =>
+    group.getObjects().flatMap((obj) => {
+      const current: TaggedObject[] = obj.cardenas_tags
+        ? [{ object: obj, tags: obj.cardenas_tags, tagGroup: obj.cardenas_tag_group }]
+        : [];
+      const children =
+        obj.type === "group"
+          ? findEditableObjects(obj as unknown as fabric.Group)
+          : [];
+      return [...current, ...children];
+    });
+
+  const groupEditableObjects = (flat: TaggedObject[]): TagGroup[] => {
+    const groups = new Map<string, TagGroup>();
+    let soloIndex = 0;
+    flat.forEach(({ object, tags, tagGroup }) => {
+      const key = tagGroup ?? `__solo__${soloIndex++}`;
+      if (tagGroup && groups.has(key)) {
+        groups.get(key)!.objects.push(object);
+      } else {
+        groups.set(key, { objects: [object], tags });
+      }
+    });
+    return Array.from(groups.values());
+  };
 
 
   useEffect(() => {
@@ -325,20 +363,45 @@ export const RenderCanvas = () => {
 
   const { left, top } = canvasModel;
 
-  const canvasOverlay = await canvasModel.clone(["cardenas_overlay"]) as fabric.Group;
+  const canvasOverlay = await canvasModel.clone(["cardenas_overlay", "cardenas_children_wrapper", "id", "cardenas_colorable"]) as fabric.Group;
   canvasOverlay.scale(scale);
 
   const objects = canvasOverlay.getObjects();
   objects.forEach((obj) => {
     if (!obj.cardenas_overlay) {
-            obj.set({ visible: false });
-
+      obj.set({ visible: false });
     } else {
-      obj.set({
-        fill: "transparent",
-        selectable: false,
-        evented: false,
-      });
+      obj.set({ fill: "transparent", selectable: false, evented: false });
+      if (obj.type === "group") {
+        const group = obj as fabric.Group;
+        // Limpa o fill da área pintável identificada por CARDENAS_FILL_AREA_ID.
+        // Só objetos marcados com esse id (shapes com config.color) têm o fill limpo no overlay.
+        // Shapes cujo fill vem do próprio SVG (sem config.color) NÃO recebem o id, portanto
+        // permanecem visíveis no overlay.
+        const clearFillArea = (g: fabric.Group): void => {
+          const byId = g.getObjects().find(
+            (o) => (o as fabric.Object & { id?: string }).id === CARDENAS_FILL_AREA_ID
+          );
+          if (byId) {
+            // Só limpa o fill de shapes com config.color (marcados com cardenas_colorable).
+            // Shapes cujo fill vem do próprio SVG não têm esta flag e devem permanecer visíveis.
+            if ((byId as fabric.Object & { cardenas_colorable?: boolean }).cardenas_colorable) {
+              byId.set("fill", "transparent");
+            }
+            return;
+          }
+          g.getObjects().forEach((child) => {
+            if (child.type === "group" && !child.cardenas_children_wrapper) {
+              clearFillArea(child as fabric.Group);
+            }
+          });
+        };
+        clearFillArea(group);
+        // Esconde o childrenWrapper dentro do grupo de overlay (filhos nested nunca aparecem no overlay)
+        group.getObjects().forEach((child) => {
+          if (child.cardenas_children_wrapper) child.set({ visible: false });
+        });
+      }
     }
   });
 
@@ -353,6 +416,7 @@ export const RenderCanvas = () => {
   canvas.preserveObjectStacking = false;
   canvas.renderAll();
 
+  setEditableObjects(groupEditableObjects(findEditableObjects(canvasModel as unknown as fabric.Group)));
   setRealCanvas(canvasModel);
 });
 
@@ -367,7 +431,7 @@ export const RenderCanvas = () => {
            <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN]}>
               <div className="flex items-center space-x-2">
                 <Switch
-                  checked={new URL(window.location.href).searchParams.has('admin_view')}
+                  checked={typeof window !== "undefined" && new URL(window.location.href).searchParams.has("admin_view")}
 
                   onCheckedChange={(checked: boolean) => {
                     const url = new URL(window.location.href);
@@ -397,17 +461,36 @@ export const RenderCanvas = () => {
   return (
     <div ref={containerRef} className="bg-gray-100 h-full w-full relative">
       <div className={clsx(
-        "absolute left-3 right-3 z-50 top-2 flex flex-col md:flex-row gap-2 md:gap-10 max-h-14 items-center",
+        "absolute left-3 right-3 z-50 top-2 flex flex-col md:flex-row gap-2 md:gap-10 items-start",
         !!object?.type ? 'justify-between' : 'items-end md:justify-end'
       )}>
-        {!!object?.type && <div className="bg-white rounded-lg drop-shadow-md px-4 py-2 w-full md:w-fit md:max-w-[50%] min-h-14 overflow-x-auto scrollBar"><EditableBar object={object} setObject={setObject} /></div>}
-        <div className="bg-background inline-flex justify-center items-center gap-4 w-fit p-2 rounded-lg drop-shadow-md">
-          <p>{currentModel.name}</p>
-          <PrintButton
-            canvas={canvas as fabric.Canvas}
-            currentModel={currentModel}
-          />
-          <MultipleButton />
+        {!!object?.type && <div className="bg-white rounded-lg drop-shadow-md px-4 py-2 w-full md:w-fit md:max-w-[50%] min-h-14 h-14 scrollBar"><EditableBar object={object} setObject={setObject} /></div>}
+        <div className="flex flex-col items-end gap-2">
+          <div className="bg-background inline-flex justify-center items-center gap-4 w-fit p-2 rounded-lg drop-shadow-md">
+            <p>{currentModel.name}</p>
+            <PrintButton
+              canvas={canvas as fabric.Canvas}
+              currentModel={currentModel}
+            />
+            <MultipleButton />
+          </div>
+          {editableObjects.length > 0 && (
+            <div className="bg-background w-fit rounded-lg drop-shadow-md overflow-hidden">
+              <div className="px-4 py-2.5 border-b border-border">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t("configuracoes.title")}</p>
+              </div>
+              <div className="flex flex-col">
+                {editableObjects.map(({ objects, tags }, i) => (
+                  tags.background && (
+                    <div key={i} className="flex items-center justify-between gap-6 px-3 py-2 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-foreground">{resolveTagLabel(tags.background)}</span>
+                      <HandleFillCanvasColor objects={objects} canvas={canvas} />
+                    </div>
+                  )
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -439,26 +522,21 @@ export const RenderCanvas = () => {
 
 const ModelsExamples = ({ model }: { model: editor_canvas }) => {
   const [loadingSelectedModel, setLoadingSelectedModel] = useState(false);
-  const [svg,setSvg] = useState('')
+  const [svg, setSvg] = useState('');
   const t = useTranslations("pages.editor");
 
   const handleSelectModel = (model: editor_canvas) => {
     setLoadingSelectedModel(true);
-
-    const url = new URL(window.location.href);
-
+    const url = new URL(window?.location.href);
     url.searchParams.set('id', model.id.toString());
-
     window.location.href = url.toString();
-};
+  };
 
-  useEffect(()=> {
-
-    createModel(model).then((modelResponse)=>{
-      setSvg(btoa(generateSVG(modelResponse)))
-    })
-    
-  },[model])
+  useEffect(() => {
+    createModel(model).then((modelResponse) => {
+      setSvg(btoa(generateSVG(modelResponse)));
+    });
+  }, [model]);
 
   return (
     <div className="flex flex-col rounded-lg bg-white shadow-sm border justify-between">
@@ -466,10 +544,7 @@ const ModelsExamples = ({ model }: { model: editor_canvas }) => {
         <h5 className="text-primary text-center">{model.name}</h5>
       </div>
       <div className={styles.templateSample}>
-        {svg && <ReactSVG
-          className=" text-red-500"
-          src={`data:image/svg+xml;base64,${svg}`}
-        />}
+        {svg && <ReactSVG className=" text-red-500" src={`data:image/svg+xml;base64,${svg}`} />}
       </div>
 
       <div className="">

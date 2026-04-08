@@ -23,65 +23,76 @@ export async function extractCardenasCanvas(
     backgroundColor: cardenasCanvasObject.getObjects()[0].fill as string,
   });
 
-  // ✅ Step 3: Clone the entire `cardenasCanvasObject` to use as a clipPath
+  // Step 3: Clone cardenasCanvasObject to use as clip path (preserves button shape)
   const clipPath = await cardenasCanvasObject.clone();
-  clipPath.set({
-    left: 0,
-    top: 0,
-    originX: 'left',
-    originY: 'top',
-    absolutePositioned: true,
-  });
-
-  // ✅ Step 4: Set the clipPath on the canvas itself
+  clipPath.set({ left: 0, top: 0, originX: 'left', originY: 'top', absolutePositioned: true });
   croppedCanvas.clipPath = clipPath;
 
-  // Step 5: Add relevant intersecting objects (excluding the canvas group)
-  const relevantObjects = originalCanvas.getObjects().filter(obj =>
-    obj !== cardenasCanvasObject && rectsIntersect(bounds, obj.getBoundingRect())
-  );
+  const cardenasChildren = cardenasCanvasObject.getObjects();
 
-  for (const obj of relevantObjects) {
-    const clone = await obj.clone();
-
+  // Clones a group child and converts its position to croppedCanvas coordinates.
+  // calcTransformMatrix() includes the parent group's transforms, giving absolute canvas coords.
+  async function cloneToCanvas(child: fabric.Object): Promise<fabric.Object> {
+    const clone = await child.clone();
+    const { translateX, translateY, scaleX, scaleY, angle, skewX, skewY } =
+      fabric.util.qrDecompose(child.calcTransformMatrix());
     clone.set({
-      left: (clone.left ?? 0) - bounds.left,
-      top: (clone.top ?? 0) - bounds.top,
+      left: translateX - bounds.left,
+      top: translateY - bounds.top,
+      scaleX,
+      scaleY,
+      angle,
+      skewX,
+      skewY,
+      originX: 'center',
+      originY: 'center',
     });
+    clone.setCoords();
+    if (clone.type === 'image') await convertImageToBase64(clone as fabric.Image);
+    return clone;
+  }
 
-    if (clone.type === 'image') {
-      await convertImageToBase64(clone as fabric.Image);
+  // Layer 1: element [0] — client canvas background
+  if (cardenasChildren[0]) {
+    croppedCanvas.add(await cloneToCanvas(cardenasChildren[0]));
+  }
+
+  // Layer 2: design elements [1..n] — below user images (matches editor stacking)
+  for (let i = 1; i < cardenasChildren.length; i++) {
+    const child = cardenasChildren[i];
+    const hasTags = !!child.cardenas_tags && Object.keys(child.cardenas_tags).length > 0;
+    const hasChildrenWrapper = child instanceof fabric.Group &&
+      child.getObjects().some(o => o.cardenas_children_wrapper);
+
+    // Pure overlay objects (no editable content, no nested children) are UI guides — skip.
+    // Overlay objects with tags (editable fill) or nested children are real design elements — include.
+    if (child.cardenas_overlay && !hasTags && !hasChildrenWrapper) continue;
+    if (!child.cardenas_print && !hasTags) continue;
+
+    const clone = await cloneToCanvas(child);
+
+    if (!['group', 'image'].includes(clone.type ?? '') && !child.cardenas_mark) {
+      clone.set({ fill: 'transparent', backgroundColor: 'transparent' });
     }
+    // Don't strip stroke from overlay objects — they may have decorative lines to preserve.
+    if (!child.cardenas_overlay && child.cardenas_tags?.background) stripStrokeForPdf(clone);
 
     croppedCanvas.add(clone);
   }
 
-  // Step 6: Add only the `cardenas_print` children of cardenas_canvas
-  const cardenasPrintObjects: fabric.Object[] = [];
-
-  for (const child of cardenasCanvasObject.getObjects()) {
-    if (child.cardenas_print) {
-      if (child.type === 'image') {
-        await convertImageToBase64(child as fabric.Image);
-      }
-
-      if(!['group','image'].includes((child.type)) && !child.cardenas_mark){
-        child.set({
-          fill: 'transparent',
-          backgroundColor: 'transparent',
-        });
-      }
-      cardenasPrintObjects.push(child);
-    }
+  // Layer 3: user-placed objects — on top of design elements (matches editor stacking)
+  const relevantObjects = originalCanvas.getObjects().filter(
+    obj => obj !== cardenasCanvasObject && rectsIntersect(bounds, obj.getBoundingRect())
+  );
+  for (const obj of relevantObjects) {
+    const clone = await obj.clone();
+    clone.set({
+      left: (clone.left ?? 0) - bounds.left,
+      top: (clone.top ?? 0) - bounds.top,
+    });
+    if (clone.type === 'image') await convertImageToBase64(clone as fabric.Image);
+    croppedCanvas.add(clone);
   }
-  
-  
-  const printGroup = new fabric.Group(cardenasPrintObjects, {
-    left: 0,
-    top: 0,
-  });
-
-  croppedCanvas.add(printGroup);
 
   // Step 7: Scale everything to target dimensions
   const targetWidth = fabric.util.parseUnit(`${width}mm`);
@@ -103,8 +114,6 @@ export async function extractCardenasCanvas(
     croppedCanvas.clipPath.scaleX = (croppedCanvas.clipPath.scaleX ?? 1) * scaleX;
     croppedCanvas.clipPath.scaleY = (croppedCanvas.clipPath.scaleY ?? 1) * scaleY;
     croppedCanvas.clipPath.setCoords();
-
-  
   }
 
   return croppedCanvas.toSVG();
@@ -118,6 +127,17 @@ function rectsIntersect(a: TBBox, b: TBBox): boolean {
     a.top + a.height <= b.top ||
     a.top >= b.top + b.height
   );
+}
+
+// Helper: Remove stroke/outline so only filled area shows in PDF (for cardenas_editable)
+function stripStrokeForPdf(obj: fabric.Object): void {
+  obj.set({
+    stroke: 'transparent',
+    strokeWidth: 0,
+  });
+  if (obj instanceof fabric.Group) {
+    obj.getObjects().forEach(stripStrokeForPdf);
+  }
 }
 
 // Helper: Convert image to embedded base64

@@ -201,6 +201,8 @@
         "line3": "Button Front"
       },
       "sideBar": {
+        "back": "Back",
+        "backToList": "Back to list",
         "buttonBgColor": "Button Background Color",
         "clip": "Hide content outside the Button",
         "changeModel": {
@@ -228,6 +230,7 @@
       "editableBar": {
         "strokeColor": "Border Color",
         "bgColor": "Background Color",
+        "fillColor": "Color",
         "opacity": "Opacity",
         "layer": {
           "layer": "Layer",
@@ -236,6 +239,13 @@
           "back": "Back",
           "forward": "Forward"
         }
+      },
+      "configuracoes": {
+        "title": "Settings",
+        "shirtColor": "Shirt color",
+        "backgroundColor": "Background color",
+        "primaryColor": "Primary color",
+        "secondaryColor": "Secondary color"
       }
     },
     "privacy": {

@@ -5,7 +5,13 @@ declare module "fabric" {
     cardenas_canvas?: string;
     cardenas_print?: boolean;
     cardenas_mark?: boolean;
+    cardenas_tags?: Record<string, string | Record<string, string>>;
+    cardenas_tag_group?: string;
     cardenas_overlay?: boolean;
+    /** Wrapper interno que contém os filhos nested de um grupo — nunca deve aparecer no overlay. */
+    cardenas_children_wrapper?: boolean;
+    /** Clip path usado no shape (ex.: contorno da camiseta). Aplicado no grupo raiz para clipar marca e filhos. */
+    cardenasClipPath?: fabric.FabricObject;
   }
 
   // to have the properties typed in the exported object

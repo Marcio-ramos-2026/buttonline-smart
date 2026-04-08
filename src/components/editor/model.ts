@@ -1,5 +1,11 @@
 import { editor_canvas } from "@prisma/client";
 import * as fabric from "fabric";
+import {
+  CARDENAS_FILL_AREA_ID,
+  extractClipPathD,
+  injectFillPathFromD,
+  prepareSvgForEditor,
+} from "@/lib/svg-normalizer";
 
 export type ModelType = {
   [key: string]: () => fabric.Object; // The key is a string and the value is a function returning an object
@@ -13,15 +19,18 @@ export const pageSizes = {
 
 type Shape = {
   background: string;
+  color?: string;
   cardenas_print: boolean;
   cardenas_overlay: boolean;
+  tags?: Record<string, string | Record<string, string>>;
+  tagGroup?: string;
 };
 
 type shapeCustom =  {
   type: string;
   width: number;
   height: number;
-  svg: string;  
+  svg: string;
   top: number;
   left: number;
   rotate: number;
@@ -31,6 +40,9 @@ type shapeRectangle = {
   type: string;
   width: number;
   height: number;
+  top?: number | string;
+  left?: number | string;
+  rotate?: number | string;
   strokeWidth?: number;
   strokeDashArray?: [number, number];
   radius?: number;
@@ -40,6 +52,9 @@ type shapeEllipse = {
   type: string;
   width: number;
   height: number;
+  top?: number | string;
+  left?: number | string;
+  rotate?: number | string;
   strokeWidth?: number;
   strokeDashArray?: [number, number];
 } & Shape;
@@ -47,13 +62,22 @@ type shapeEllipse = {
 type shapeCircle = {
   type: string;
   radius: number;
+  top?: number | string;
+  left?: number | string;
+  rotate?: number | string;
   strokeWidth?: number;
   strokeDashArray?: [number, number];
 } & Shape;
 
-type Shapes = shapeCircle | shapeEllipse;
+/** Folha: shape com type (circle, ellipse, rectangle, custom). */
+type LeafShape = shapeCircle | shapeEllipse | shapeRectangle | shapeCustom;
 
-type ShapeCollection = Record<string, Shapes>;
+/** Nó recursivo: tem `objects` → vira grupo; senão é folha por `type`. Nested = clipado ao pai. */
+export type RecursiveShape =
+  | LeafShape
+  | ({ objects: Record<string, RecursiveShape> } & Partial<Shape>);
+
+type ShapeCollection = Record<string, RecursiveShape>;
 type GabaritoLinePosition = number | 'lower' | 'higher'
 type gabarito = {
   line?: 'vertical' | 'horizontal'
@@ -74,6 +98,7 @@ export type ModelConfig = {
   objects: ShapeCollection;
   gabarito: gabarito;
 };
+
 
 export const createModel = async (model: editor_canvas): Promise<fabric.Object> => {
   const objConfig = model?.config as ModelConfig;
@@ -134,46 +159,236 @@ export const createModel = async (model: editor_canvas): Promise<fabric.Object> 
   };
 
   ////////////////////////////////////////////////////////
+  /** Cria um objeto Fabric de forma recursiva. Se tem `objects` → grupo (nested = clip ao pai). Senão → folha por `type`. */
+  const createElement = async (
+    obj: RecursiveShape,
+    isNested: boolean = false
+  ): Promise<fabric.FabricObject | null> => {
+    const hasObjects =
+      obj &&
+      typeof obj === "object" &&
+      "objects" in obj &&
+      obj.objects != null &&
+      typeof obj.objects === "object" &&
+      !Array.isArray(obj.objects);
+
+    if (hasObjects) {
+      const container = obj as {
+        objects: Record<string, RecursiveShape>;
+        type?: string;
+      } & Partial<Shape>;
+      const hasLeafType =
+        container.type === "circle" ||
+        container.type === "ellipse" ||
+        container.type === "rectangle" ||
+        container.type === "custom";
+
+      let selfShape: fabric.FabricObject | null = null;
+      if (hasLeafType) {
+        const leaf = container as unknown as LeafShape;
+        switch (leaf.type) {
+          case "ellipse":
+            selfShape = applyEditableBehavior(ellipse(leaf as shapeEllipse));
+            break;
+          case "circle":
+            selfShape = applyEditableBehavior(circle(leaf as shapeCircle));
+            break;
+          case "rectangle":
+            selfShape = applyEditableBehavior(rectangle(leaf as shapeRectangle));
+            break;
+          case "custom": {
+            const customConfig = leaf as shapeCustom;
+            // Com filhos: path para clip. Prioridade: clipPath do SVG → normalização.
+            let svgToLoad = customConfig.svg;
+            if (container.objects && typeof customConfig.svg === "string") {
+              const clipD = extractClipPathD(customConfig.svg);
+              if (clipD) {
+                svgToLoad = injectFillPathFromD(customConfig.svg, clipD);
+              } else {
+                svgToLoad = prepareSvgForEditor(customConfig.svg);
+              }
+            }
+            const x = await svgShape({ ...customConfig, svg: svgToLoad });
+            x.set({ left: 0 });
+            selfShape = applyEditableBehavior(x);
+            break;
+          }
+        }
+      }
+
+      const childElements = await Promise.all(
+        Object.values(container.objects).map((child) => createElement(child, true))
+      ).then((results) =>
+        results.filter((el): el is fabric.FabricObject => el !== null)
+      );
+
+      // Converte a origem dos filhos de centro para top-left do pai.
+      // top: 0, left: 0 no config corresponde ao canto superior esquerdo do selfShape.
+      // A fórmula compensa as meias-dimensões do filho (originX/Y: "center"):
+      //   left_final = config_left - halfParentW + halfChildW
+      // Assim left:0 = borda esquerda do filho na borda esquerda do pai.
+      if (selfShape && childElements.length > 0) {
+        const halfParentW = selfShape.getScaledWidth() / 2;
+        const halfParentH = selfShape.getScaledHeight() / 2;
+        childElements.forEach((el) => {
+          el.set({
+            left: (el.left ?? 0) - halfParentW + el.getScaledWidth() / 2,
+            top: (el.top ?? 0) - halfParentH + el.getScaledHeight() / 2,
+          });
+          el.setCoords();
+        });
+      }
+
+      // Clip path aplicado ao wrapper dos filhos (não em cada filho individualmente).
+      // Isso garante que o clip fique fixo no espaço do wrapper enquanto os filhos se movem livremente.
+      let groupObjects: fabric.FabricObject[];
+      if (selfShape && childElements.length > 0 && selfShape.type === "group") {
+        const fillPath = getFillAreaObject(selfShape as fabric.Group);
+        if (fillPath && (fillPath.type === "path" || "path" in fillPath)) {
+          const pathClone = await fillPath.clone();
+          // fillPath no espaço do group externo (= espaço local do childrenWrapper, pois ambos estão em 0,0)
+          const pathInGroupMatrix = fabric.util.multiplyTransformMatrices(
+            selfShape.calcOwnMatrix(),
+            fillPath.calcOwnMatrix()
+          );
+          const decomposed = fabric.util.qrDecompose(pathInGroupMatrix);
+          // Guard: se a decomposição produziu NaN ou escala 0 (SVG com dimensões inválidas), sem clip
+          const validDecomposition =
+            isFinite(decomposed.scaleX) &&
+            isFinite(decomposed.scaleY) &&
+            decomposed.scaleX !== 0 &&
+            decomposed.scaleY !== 0;
+
+          if (validDecomposition) {
+            // Cria o wrapper primeiro para saber o offset real do seu centro
+            // (filhos com top/left deslocam o centro do wrapper em relação à origem)
+            const childrenWrapper = new fabric.Group(childElements, {
+              subTargetCheck: true,
+              interactive: true,
+              originX: "center",
+              originY: "center",
+              selectable: false,
+              evented: true,
+              fill: 'transparent',
+              objectCaching: false,
+            });
+            childrenWrapper.set("cardenas_children_wrapper", true);
+
+            // O clip está no espaço LOCAL do wrapper (absolutePositioned: false).
+            // Se os filhos têm posições não-nulas, o centro do wrapper desloca.
+            // Compensamos subtraindo esse offset para que o clip cubra a fill-area corretamente.
+            pathClone.set({
+              left: decomposed.translateX - childrenWrapper.left,
+              top: decomposed.translateY - childrenWrapper.top,
+              scaleX: decomposed.scaleX,
+              scaleY: decomposed.scaleY,
+              angle: decomposed.angle,
+              skewX: decomposed.skewX,
+              originX: "center",
+              originY: "center",
+              absolutePositioned: false,
+              fill: "black",
+              inverted: false,
+              objectCaching: false,
+            });
+
+            childrenWrapper.clipPath = pathClone;
+            groupObjects = [selfShape, childrenWrapper];
+          } else {
+            groupObjects = [selfShape, ...childElements];
+          }
+        } else {
+          groupObjects = [selfShape, ...childElements];
+        }
+      } else {
+        groupObjects = selfShape ? [selfShape, ...childElements] : childElements;
+      }
+
+      const group = new fabric.Group(groupObjects, {
+        subTargetCheck: true,
+        interactive: true,
+        originX: "center",
+        originY: "center",
+      });
+      group.set({
+        cardenas_print: container.cardenas_print === undefined ? true : container.cardenas_print,
+        cardenas_overlay: container.cardenas_overlay,
+      });
+      if (isNested) {
+        group.set({
+          selectable: false,
+          evented: false,
+          hoverCursor: 'default',
+          moveCursor: 'default',
+          cardenas_tags: container.tags,
+          cardenas_tag_group: container.tagGroup,
+        });
+        return group;
+      }
+      return applyEditableBehavior(group, container.tags, container.tagGroup);
+    }
+
+    const leaf = obj as LeafShape;
+    const applyBehavior = <T extends fabric.Object>(o: T) => {
+      if (isNested) {
+        o.set({
+          selectable: false,
+          evented: false,
+          hoverCursor: 'default',
+          moveCursor: 'default',
+          cardenas_tags: leaf.tags,
+          cardenas_tag_group: leaf.tagGroup,
+        });
+        return o;
+      }
+      return applyEditableBehavior(o, leaf.tags, leaf.tagGroup);
+    };
+
+    switch (leaf.type) {
+      case "ellipse":
+        return applyBehavior(ellipse(leaf as shapeEllipse));
+      case "circle":
+        return applyBehavior(circle(leaf as shapeCircle));
+      case "rectangle":
+        return applyBehavior(rectangle(leaf as shapeRectangle));
+      case "custom": {
+        const x = await svgShape(leaf as shapeCustom);
+        x.set({ left: 0 });
+        return applyBehavior(x);
+      }
+      default:
+        return null;
+    }
+  };
 
   const elements: fabric.FabricObject[] = await Promise.all(
-    Object.values(objConfig?.objects).map(async (obj, k) => {
-      switch (obj.type) {
-        case "ellipse":
-          const typeEllipse = obj as shapeEllipse;
-          return ellipse(typeEllipse);
-        case "circle":
-          const typeCircle = obj as shapeCircle;
-          return circle(typeCircle);
-        case "rectangle":
-          const typeRectangle = obj as shapeRectangle;
-          return rectangle(typeRectangle);
-        case 'custom':
-          const typeCustom = obj as shapeCustom;
-          const x = await svgShape(typeCustom);
-          x.set({left:0})
-          return x
-      }
-    })
-  ).then(results => results.filter((el): el is fabric.FabricObject => el !== null));
-    
+    Object.values(objConfig?.objects).map((obj) => createElement(obj))
+  ).then((results) =>
+    results.filter((el): el is fabric.FabricObject => el !== null)
+  );
+
   if (elements.length > 0) {
-    elements.push(createMark(elements[0])); 
+    elements.push(createMark(elements[0]));
   }
 
-  return new fabric.Group(elements, {
+  const rootGroup = new fabric.Group(elements, {
     selectable: false,
     moveCursor: "default",
     hoverCursor: "default",
     cardenas_canvas: "true",
-    cardenas_type: model.shape
+    cardenas_type: model.shape,
+    subTargetCheck: true,
+    interactive: true,
   });
+
+  return rootGroup;
 };
 
 const ellipse = (config: shapeEllipse): fabric.FabricObject => {
   return new fabric.Ellipse({
     rx: fabric.util.parseUnit(`${config.width}mm`),
     ry: fabric.util.parseUnit(`${config.height}mm`),
-    fill: "white",
+    fill: config.color ?? "white",
     stroke: "#000",
     strokeWidth: config?.strokeWidth ?? 1,
     strokeDashArray: config?.strokeDashArray ?? [0, 0],
@@ -182,6 +397,9 @@ const ellipse = (config: shapeEllipse): fabric.FabricObject => {
     originX: "center",
     originY: "center",
     hoverCursor: "default",
+    top: fabric.util.parseUnit(`${Number(config?.top ?? 0)}mm`),
+    left: fabric.util.parseUnit(`${Number(config?.left ?? 0)}mm`),
+    angle: Number(config?.rotate ?? 0),
     cardenas_print:
       config.cardenas_print === undefined ? true : config.cardenas_print,
     cardenas_overlay: config?.cardenas_overlay
@@ -191,7 +409,7 @@ const ellipse = (config: shapeEllipse): fabric.FabricObject => {
 const circle = (config: shapeCircle) => {
   return new fabric.Circle({
     radius: fabric.util.parseUnit(`${config.radius/2}mm`),
-    fill: config.background ?? "#fff",
+    fill: config.color ?? config.background ?? "#fff",
     stroke: "#000",
     strokeWidth: config?.strokeWidth ?? 1,
     strokeDashArray: config?.strokeDashArray ?? [0, 0],
@@ -200,6 +418,9 @@ const circle = (config: shapeCircle) => {
     originX: "center",
     originY: "center",
     hoverCursor: "default",
+    top: fabric.util.parseUnit(`${Number(config?.top ?? 0)}mm`),
+    left: fabric.util.parseUnit(`${Number(config?.left ?? 0)}mm`),
+    angle: Number(config?.rotate ?? 0),
     cardenas_print: config.cardenas_print === undefined ? true: config.cardenas_print,
     cardenas_overlay: config?.cardenas_overlay
   });
@@ -209,7 +430,7 @@ const rectangle = (config: shapeRectangle) => {
   return new fabric.Rect({
     width: fabric.util.parseUnit(`${config.width}mm`),
     height: fabric.util.parseUnit(`${config.height}mm`),
-    fill: "white",
+    fill: config.color ?? "white",
     stroke: "#000",
     strokeWidth: config?.strokeWidth ?? 0.3,
     strokeDashArray: config?.strokeDashArray ?? [0, 0],
@@ -220,22 +441,55 @@ const rectangle = (config: shapeRectangle) => {
     hoverCursor: "default",
     rx: config?.radius ?? 0,
     ry: config?.radius ?? 0,
+    top: fabric.util.parseUnit(`${Number(config?.top ?? 0)}mm`),
+    left: fabric.util.parseUnit(`${Number(config?.left ?? 0)}mm`),
+    angle: Number(config?.rotate ?? 0),
     cardenas_print:
-      config.cardenas_print === undefined ? true : config.cardenas_print, 
+      config.cardenas_print === undefined ? true : config.cardenas_print,
     cardenas_overlay: config?.cardenas_overlay
   });
 };
 
+/** Reviver para preservar atributos do SVG (ex.: id) nos objetos Fabric ao carregar. */
+function svgReviver(
+  _el: Element,
+  obj: fabric.FabricObject & { id?: string }
+): void {
+  const el = _el as SVGElement;
+  const id = el.getAttribute?.("id");
+  if (id) obj.set("id", id);
+}
+
 export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject> => {
   const svgText = config.svg.replace(/\\+/g, '');
-  const loaded = await fabric.loadSVGFromString(svgText);
+  const loaded = await fabric.loadSVGFromString(svgText, svgReviver);
 
   if (!loaded || !loaded.objects?.length) {
-    return new fabric.Group([]);
+    return new fabric.Group([], { objectCaching: false });
   }
 
   const objects = loaded.objects.filter(Boolean) as fabric.Object[];
   const group = new fabric.Group(objects);
+
+  // Path de fill (cardenas-fill-area): sem cache para o color picker atualizar na tela.
+  // Marca com CARDENAS_FILL_AREA_ID para que getFillAreaObject sempre encontre o mesmo objeto,
+  // independente do valor atual do fill (evita inconsistência quando config.color é definido).
+  const fillPath = getFillAreaObject(group);
+  if (fillPath) {
+    fillPath.set("objectCaching", false);
+    // Sempre marca com CARDENAS_FILL_AREA_ID para lookup determinístico (ex: childrenWrapper.clipPath).
+    if (!(fillPath as fabric.Object & { id?: string }).id) {
+      (fillPath as fabric.Object & { id?: string }).id = CARDENAS_FILL_AREA_ID;
+    }
+    if (config.color) {
+      // cardenas_colorable: true indica que este fill é configurável via editor (config.color presente).
+      // O overlay clearing só limpa fills marcados com esta flag, preservando shapes cujo fill
+      // vem do próprio SVG (sem config.color).
+      (fillPath as fabric.Object & { cardenas_colorable?: boolean }).cardenas_colorable = true;
+      fillPath.set("fill", config.color);
+    }
+  }
+  group.set("objectCaching", false);
 
   // Convert mm to px for accurate scaling
   const targetWidthPx = fabric.util.parseUnit(`${config.width}mm`);
@@ -248,25 +502,83 @@ export const svgShape = async (config: shapeCustom): Promise<fabric.FabricObject
   group.set({
     scaleX: scale,
     scaleY: scale,
-    // fill:'transparent',
+
     originX: 'center',
     originY: 'center',
-    top: config?.top ?? 0,
-    left: config?.left ?? 0,
+    top: fabric.util.parseUnit(`${config?.top ?? 0}mm`),
+    left: fabric.util.parseUnit(`${config?.left ?? 0}mm`),
     angle: config?.rotate ?? 0,
-    // stroke: "none",
-    // strokeWidth: 0,
-    // backgroundColor: 'transparent',
     cardenas_print:
-      config.cardenas_print === undefined ? true : config.cardenas_print, 
-    cardenas_overlay: config?.cardenas_overlay
+      config.cardenas_print === undefined ? true : config.cardenas_print,
+    cardenas_overlay: config?.cardenas_overlay,
   });
+
 
   return group as fabric.FabricObject;
 };
 
+/**
+ * Retorna o path de área pintável de um Group (SVG normalizado).
+ * Ordem: id=CARDENAS_FILL_AREA_ID → path com fill e stroke none → primeiro path do grupo.
+ */
+export function getFillAreaObject(group: fabric.Group): fabric.Object | null {
+  const objects = group.getObjects();
+  const byId = objects.find((o) => (o as fabric.Object & { id?: string }).id === CARDENAS_FILL_AREA_ID);
+  if (byId) return byId;
+  const fillStrokeNone = objects.find((o) => {
+    const cast = o as fabric.Object & { fill?: unknown; stroke?: string };
+    return (o.type === "path" || "path" in o) && cast.fill != null && String(cast.stroke ?? "").toLowerCase() === "none";
+  });
+  if (fillStrokeNone) return fillStrokeNone;
+  return objects.find((o) => o.type === "path" || "path" in o) ?? null;
+}
+
+/**
+ * Remove o path de preenchimento (elemento de cor) de um Group.
+ * Usado na cópia do overlay para que a cópia mostre só o contorno, sem a área pintada.
+ */
+export function removeFillElementFromGroup(obj: fabric.Object): void {
+  if (obj.type !== "group") return;
+  const group = obj as fabric.Group;
+  const fillPath = getFillAreaObject(group);
+  if (fillPath) group.remove(fillPath);
+}
 
 export const generateSVG = (element: fabric.FabricObject) => {
   const viewBox = `${-element.width / 2} ${-element.height / 2} ${element.width} ${element.height}`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${element.width}" height="${element.height}" viewBox="${viewBox}">${element.toSVG()}</svg>`;
+};
+
+const applyEditableBehavior = <T extends fabric.Object>(
+  obj: T,
+  tags?: Record<string, string | Record<string, string>>,
+  tagGroup?: string
+): T => {
+  const editable = !!tags && Object.keys(tags).length > 0;
+
+  obj.set({
+    selectable: false,
+    evented: false,
+    hoverCursor: 'default',
+    moveCursor: 'default',
+  });
+
+  if (editable) {
+    obj.set({
+      cardenas_tags: tags,
+      cardenas_tag_group: tagGroup,
+    });
+  }
+
+  return obj;
+};
+
+const applySelectableOnly = <T extends fabric.Object>(obj: T): T => {
+  obj.set({
+    selectable: false,
+    evented: false,
+    hoverCursor: 'default',
+    moveCursor: 'default',
+  });
+  return obj;
 };

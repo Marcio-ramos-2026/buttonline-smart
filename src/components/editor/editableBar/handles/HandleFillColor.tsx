@@ -30,7 +30,7 @@ export const HandleFillColor = ({ object, canvas }: CanvasObjectType) => {
 
   return (
     <DropdownMenu>
-      <Tooltip content={t("bgColor")}>
+      <Tooltip content={t("fillColor")}>
         <DropdownMenuTrigger asChild>
           <button
             type="button"
@@ -42,12 +42,12 @@ export const HandleFillColor = ({ object, canvas }: CanvasObjectType) => {
       </Tooltip>
       <DropdownMenuContent className="h-auto w-64 px-4 py-3 rounded-md flex flex-col gap-1 items-center justify-center">
         <div className="flex justify-between w-full">
-          <span className="text-xs">{t("bgColor")}</span>
+          <span className="text-xs">{t("fillColor")}</span>
         </div>
         <ColorPicker
           value={color as string}
           onChange={handleChangeColor}
-          className="border-gray-300"
+          className="min-h-8 w-full border-gray-300"
         />
       </DropdownMenuContent>
     </DropdownMenu>

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import {
+  ArrowLeft,
   Baseline,
   ImageIcon,
   Redo2,
@@ -76,7 +77,13 @@ export const EditorProvider = ({ model, allowed_models, user }: EditorType) => {
 
 export function Editor({ user }: EditorProps) {
   const t = useTranslations("pages.editor.sideBar");
-  const { canvas, history } = useEditorContext();
+  const { canvas, history, currentModel } = useEditorContext();
+
+  const goToList = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("id");
+    window.location.href = url.toString();
+  };
 
   const data = {
     navMain: [
@@ -133,22 +140,35 @@ export function Editor({ user }: EditorProps) {
             /> */}
           <div className="flex gap-2.5 md:gap-4 items-center justify-between h-full md:w-full">
             <div className="flex gap-1.5 md:gap-3 flex-0 h-full">
-              <button
-                onClick={() => history("undo")}
-                className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
-              >
-                <Undo2 />
-              </button>
-              <button
-                onClick={() => history("redo")}
-                className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
-              >
-                <Redo2 />
-              </button>
-              <ClipButton />
-              <ChangeButtonCollor />
-              <ChangeModelDropdown />
-              {/* <EditableBar /> */}
+              {currentModel && (
+                <>
+                  <Tooltip content={t("backToList")}>
+                    <button
+                      type="button"
+                      onClick={goToList}
+                      className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20 inline-flex items-center gap-1.5 justify-center"
+                    >
+                      <ArrowLeft className="w-5 h-5 shrink-0" />
+                      <span className="text-sm">{t("back")}</span>
+                    </button>
+                  </Tooltip>
+                  <button
+                    onClick={() => history("undo")}
+                    className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
+                  >
+                    <Undo2 />
+                  </button>
+                  <button
+                    onClick={() => history("redo")}
+                    className="border border-solid border-gray-300 rounded-lg px-2 py-1 focus:outline-none bg-transparent hover:bg-gray-900/20"
+                  >
+                    <Redo2 />
+                  </button>
+                  <ClipButton />
+                  <ChangeButtonCollor />
+                  <ChangeModelDropdown />
+                </>
+              )}
             </div>
             <div className="flex gap-1.5 md:gap-3 items-center">
               <Permission has={[ALLOWED_PERMISSIONS.IS_ADMIN]}>
@@ -240,7 +260,7 @@ const ChangeModelDropdown = () => {
   const [modelPicked, setModelPicked] = useState<editor_canvas | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const isAdminView = new URL(window.location.href).searchParams.has('admin_view');
+  const isAdminView = typeof window !== "undefined" && new URL(window.location.href).searchParams.has("admin_view");
 
 
   const handleOnClose = () => {

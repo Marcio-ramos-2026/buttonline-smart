@@ -1,11 +1,10 @@
 "use client";
 
 import { useEditorContext } from "@/context/editor";
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction} from "react";
 import * as fabric from "fabric";
 import { EditText } from "./editText";
 import { EditImage } from "./editImage";
-import { RemoveActiveObject } from "./removeActiveObject";
 import { EditICon } from "./editableIcon";
 import { EditShapes } from "./editableShapes";
 
@@ -13,8 +12,6 @@ const shapesType = ["triangle", "circle", "rect", "polygon"];
 
 export const EditableBar = ({ object, setObject }: { object: fabric.Object, setObject: (object: SetStateAction<fabric.Object | null>) => void; }) => {
   const { canvas } = useEditorContext();
-
-  // console.log('OBJECT TYPEEEEEEE', object)
 
   if (!object?.type) return;
 
