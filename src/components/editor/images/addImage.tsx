@@ -211,6 +211,7 @@ export function AddImage() {
                   src={image.previewURL}
                   width={150}
                   height={200}
+                  unoptimized
                   className="w-full h-24 block rounded-md object-cover"
                 />
               </button>
