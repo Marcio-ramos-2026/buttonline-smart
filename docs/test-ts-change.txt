@@ -1,0 +1,104 @@
+==================================================================
+LOG DE ALTERAÇÃO — src/components/editor/printButton/test.ts
+==================================================================
+
+Branch: develop
+Status no git no momento: modificado, ainda NÃO commitado.
+
+------------------------------------------------------------------
+TRECHO ALTERADO (linhas 74-79)
+------------------------------------------------------------------
+
+ANTES:
+    if (!['group', 'image'].includes(clone.type ?? '') && !child.cardenas_mark) {
+      clone.set({ fill: 'transparent', backgroundColor: 'transparent' });
+    }
+    // Don't strip stroke from overlay objects — they may have decorative lines to preserve.
+    if (!child.cardenas_overlay && child.cardenas_tags?.background) stripStrokeForPdf(clone);
+
+DEPOIS:
+    if (!['group', 'image'].includes(clone.type ?? '') && !child.cardenas_mark) {
+      clone.set({ fill: 'transparent', backgroundColor: 'transparent' });
+    }
+    // Overlay custom SVGs: remove borders so only the fill/content shows in the PDF.
+    if (child.cardenas_overlay) stripStrokeForPdf(clone);
+    else if (child.cardenas_tags?.background) stripStrokeForPdf(clone);
+
+------------------------------------------------------------------
+O QUE A FUNÇÃO `stripStrokeForPdf` FAZ
+------------------------------------------------------------------
+
+Definida em test.ts:134-142. Ela apaga a borda (stroke) de um objeto
+do canvas Fabric:
+
+    obj.set({ stroke: 'transparent', strokeWidth: 0 });
+
+E aplica recursivamente em grupos. Em outras palavras: deixa o
+objeto SEM contorno, exibindo apenas o preenchimento.
+
+Isso é usado especificamente na hora de gerar o PDF de impressão —
+o canvas que vai pra impressão é uma cópia (clone) do canvas do
+editor, então mexer aqui NÃO afeta o que o usuário vê no editor,
+só o que sai no PDF final.
+
+------------------------------------------------------------------
+O QUE MUDOU NA PRÁTICA
+------------------------------------------------------------------
+
+Antes da alteração, o código tinha uma regra negativa:
+"se NÃO for overlay E tiver background → remova a borda".
+Ou seja, objetos com `cardenas_overlay = true` eram
+DELIBERADAMENTE preservados com borda no PDF, sob a justificativa
+(comentário antigo) de que "podem ter linhas decorativas a
+preservar".
+
+Depois da alteração, a regra inverteu para overlays:
+- Se for overlay (`cardenas_overlay`) → remova a borda também.
+- Senão, se tiver tag `background` → remova a borda (igual antes).
+
+Resumo: overlays agora também perdem o stroke no PDF. Sai apenas
+o preenchimento/conteúdo do SVG, sem o contorno.
+
+------------------------------------------------------------------
+POR QUE ESSA MUDANÇA FOI FEITA (inferido)
+------------------------------------------------------------------
+
+O comentário novo é explícito: "Overlay custom SVGs: remove
+borders so only the fill/content shows in the PDF."
+
+Provavelmente os SVGs customizados de overlay estavam saindo no
+PDF com bordas indesejadas (talvez bordas de auxílio visual do
+editor que não deveriam aparecer na impressão). A correção força
+a limpeza dessas bordas no momento da geração do PDF.
+
+------------------------------------------------------------------
+RISCO / O QUE OBSERVAR
+------------------------------------------------------------------
+
+O comentário antigo dizia que overlays "podem ter linhas
+decorativas a preservar". Se existir algum overlay legítimo cujo
+desenho dependa do stroke (e não só do fill) para ficar visível,
+ele agora vai sair "sem traço" no PDF — pode aparecer vazio ou
+diferente do esperado.
+
+Como verificar antes de commitar:
+1. Imprimir/exportar PDF de uma camiseta com overlay customizado
+   que antes funcionava bem.
+2. Conferir se o overlay aparece igual ou se perdeu detalhes.
+3. Se perder detalhes: significa que o overlay dependia do
+   stroke; aí precisaria de uma regra mais granular (por ex.,
+   só remover stroke quando o overlay tem fill definido).
+
+------------------------------------------------------------------
+RELAÇÃO COM CONTEXTO DO PROJETO
+------------------------------------------------------------------
+
+`cardenas_overlay` e a regra de fill (CARDENAS_FILL_AREA_ID) já
+têm histórico no projeto — ver memory/overlay.md. Esta alteração
+mexe com a mesma família de objetos (overlays Cardenas), mas no
+fluxo de PDF, não no fluxo de fill do editor. São coisas
+independentes; não há conflito direto, só convém lembrar que
+overlays são objetos sensíveis e mudanças neles devem ser
+testadas com vários modelos de camiseta.
+
+==================================================================

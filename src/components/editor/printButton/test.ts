@@ -74,8 +74,9 @@ export async function extractCardenasCanvas(
     if (!['group', 'image'].includes(clone.type ?? '') && !child.cardenas_mark) {
       clone.set({ fill: 'transparent', backgroundColor: 'transparent' });
     }
-    // Don't strip stroke from overlay objects — they may have decorative lines to preserve.
-    if (!child.cardenas_overlay && child.cardenas_tags?.background) stripStrokeForPdf(clone);
+    // Overlay custom SVGs: remove borders so only the fill/content shows in the PDF.
+    if (child.cardenas_overlay) stripStrokeForPdf(clone);
+    else if (child.cardenas_tags?.background) stripStrokeForPdf(clone);
 
     croppedCanvas.add(clone);
   }
