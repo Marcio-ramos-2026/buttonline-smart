@@ -1,0 +1,1243 @@
+{
+  "project_root": "/Users/viniciusrangel/Documents/dev/4p/buttonline_smart",
+  "generated_at": "2026-05-27T11:26:20-03:00",
+  "file_count": 247,
+  "total_tokens": 349068,
+  "files": {
+    ".eslintrc.json": {
+      "tokens": 10,
+      "type": "other",
+      "description": ""
+    },
+    ".gitignore": {
+      "tokens": 99,
+      "type": "other",
+      "description": ""
+    },
+    "README.md": {
+      "tokens": 346,
+      "type": "docs",
+      "description": ""
+    },
+    "components.json": {
+      "tokens": 86,
+      "type": "other",
+      "description": ""
+    },
+    "docs/configuracao-modelo.md": {
+      "tokens": 2884,
+      "type": "docs",
+      "description": ""
+    },
+    "docs/test-ts-change.txt": {
+      "tokens": 1167,
+      "type": "test",
+      "description": ""
+    },
+    "makefile": {
+      "tokens": 9,
+      "type": "other",
+      "description": ""
+    },
+    "messages/en.json": {
+      "tokens": 8079,
+      "type": "other",
+      "description": ""
+    },
+    "messages/es-ES.json": {
+      "tokens": 9068,
+      "type": "other",
+      "description": ""
+    },
+    "messages/pt-BR.json": {
+      "tokens": 8950,
+      "type": "other",
+      "description": ""
+    },
+    "next.config.mjs": {
+      "tokens": 181,
+      "type": "other",
+      "description": ""
+    },
+    "package-lock.json": {
+      "tokens": 113384,
+      "type": "other",
+      "description": ""
+    },
+    "package.json": {
+      "tokens": 844,
+      "type": "other",
+      "description": ""
+    },
+    "postcss.config.mjs": {
+      "tokens": 33,
+      "type": "other",
+      "description": ""
+    },
+    "prisma/migrations/20241111235946_initial_setup/migration.sql": {
+      "tokens": 499,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20241112153834_password_field_for_user/migration.sql": {
+      "tokens": 18,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20241112191239_editor_models/migration.sql": {
+      "tokens": 217,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20241116182650_rbac_model/migration.sql": {
+      "tokens": 256,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20241117155431_rbac_fix/migration.sql": {
+      "tokens": 753,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20241117160100_renaming_tables_to_snake_case/migration.sql": {
+      "tokens": 766,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20241126192630_fixing_database_namings_role_permission_table/migration.sql": {
+      "tokens": 786,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20241126231818_missing_fields_dates/migration.sql": {
+      "tokens": 90,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20241216205645_user_change_id_column/migration.sql": {
+      "tokens": 376,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20241218185753_config_for_mains_shapes/migration.sql": {
+      "tokens": 18,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20241222180435_active_column_to_the_canvas_editor/migration.sql": {
+      "tokens": 23,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20250103142126_voucher_column_to_user/migration.sql": {
+      "tokens": 19,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20250108191142_size_col/migration.sql": {
+      "tokens": 134,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20250115054708_fix_col_name/migration.sql": {
+      "tokens": 127,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20250116185121_new_tables_vouchers_and_passwordresettoken/migration.sql": {
+      "tokens": 177,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20250116212839_fix_errors_in_tables_vouchers_and_password_reset_token/migration.sql": {
+      "tokens": 271,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20250120205944_new_table_config/migration.sql": {
+      "tokens": 48,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20250121194100_change_config_table/migration.sql": {
+      "tokens": 59,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/20250212192812_longtext/migration.sql": {
+      "tokens": 18,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/migrations/migration_lock.toml": {
+      "tokens": 30,
+      "type": "migration",
+      "description": ""
+    },
+    "prisma/schema.prisma": {
+      "tokens": 1038,
+      "type": "other",
+      "description": ""
+    },
+    "prisma/seed.ts": {
+      "tokens": 732,
+      "type": "source",
+      "description": ""
+    },
+    "public/flags/argentina.svg": {
+      "tokens": 2085,
+      "type": "other",
+      "description": ""
+    },
+    "public/flags/brasil.svg": {
+      "tokens": 223,
+      "type": "other",
+      "description": ""
+    },
+    "public/flags/usa.svg": {
+      "tokens": 1086,
+      "type": "other",
+      "description": ""
+    },
+    "public/logo-inverse.png": {
+      "tokens": 747,
+      "type": "other",
+      "description": ""
+    },
+    "public/logo.svg": {
+      "tokens": 2671,
+      "type": "other",
+      "description": ""
+    },
+    "public/next.svg": {
+      "tokens": 343,
+      "type": "other",
+      "description": ""
+    },
+    "public/register.jpeg": {
+      "tokens": 25115,
+      "type": "other",
+      "description": ""
+    },
+    "public/svg/client/.gitkeep": {
+      "tokens": 0,
+      "type": "other",
+      "description": ""
+    },
+    "public/svg/client/camiseta-linha.svg": {
+      "tokens": 602,
+      "type": "other",
+      "description": ""
+    },
+    "public/svg/client/camiseta-pontilhado.svg": {
+      "tokens": 2141,
+      "type": "other",
+      "description": ""
+    },
+    "public/svg/output/.gitkeep": {
+      "tokens": 0,
+      "type": "other",
+      "description": ""
+    },
+    "public/svg/output/camiseta-linha.svg": {
+      "tokens": 4516,
+      "type": "other",
+      "description": ""
+    },
+    "public/svg/output/camiseta-linha.txt": {
+      "tokens": 4536,
+      "type": "docs",
+      "description": ""
+    },
+    "public/svg/output/camiseta-pontilhado.svg": {
+      "tokens": 2653,
+      "type": "other",
+      "description": ""
+    },
+    "public/svg/output/camiseta-pontilhado.txt": {
+      "tokens": 2801,
+      "type": "docs",
+      "description": ""
+    },
+    "public/vercel.svg": {
+      "tokens": 157,
+      "type": "other",
+      "description": ""
+    },
+    "scripts/README-normalize-svg.md": {
+      "tokens": 1293,
+      "type": "docs",
+      "description": ""
+    },
+    "scripts/fix-svg-clip-path.js": {
+      "tokens": 471,
+      "type": "source",
+      "description": ""
+    },
+    "scripts/fix-svg-fill.js": {
+      "tokens": 1341,
+      "type": "source",
+      "description": ""
+    },
+    "scripts/normalize-svg-pure-js.ts": {
+      "tokens": 559,
+      "type": "source",
+      "description": ""
+    },
+    "scripts/normalize-svg.js": {
+      "tokens": 2049,
+      "type": "source",
+      "description": ""
+    },
+    "scripts/prepare-svg-for-editor.ts": {
+      "tokens": 1032,
+      "type": "source",
+      "description": ""
+    },
+    "scripts/run-all-svg-pipeline.ts": {
+      "tokens": 1043,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(app)/editor.tsx": {
+      "tokens": 2705,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(app)/layout.tsx": {
+      "tokens": 114,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(app)/page.tsx": {
+      "tokens": 294,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(app)/user/[id]/layout.tsx": {
+      "tokens": 230,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(app)/user/[id]/loading.tsx": {
+      "tokens": 307,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(app)/user/[id]/page.tsx": {
+      "tokens": 228,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(auth)/cadastre-se/form.tsx": {
+      "tokens": 917,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(auth)/cadastre-se/page.tsx": {
+      "tokens": 403,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(auth)/layout.tsx": {
+      "tokens": 120,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(auth)/layoutFooter.tsx": {
+      "tokens": 98,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(auth)/login/formLogin.tsx": {
+      "tokens": 729,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(auth)/login/page.tsx": {
+      "tokens": 359,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(auth)/recuperarSenha/form.tsx": {
+      "tokens": 694,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(auth)/recuperarSenha/page.tsx": {
+      "tokens": 210,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(auth)/recuperarSenha/trocarSenha/form.tsx": {
+      "tokens": 767,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/(auth)/recuperarSenha/trocarSenha/page.tsx": {
+      "tokens": 299,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/actions/admin/create-admin.ts": {
+      "tokens": 648,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/actions/admin/create-client.ts": {
+      "tokens": 517,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/actions/admin/delete-admin.ts": {
+      "tokens": 283,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/actions/changePassword.ts": {
+      "tokens": 422,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/actions/editProfileAction.ts": {
+      "tokens": 523,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/actions/login.ts": {
+      "tokens": 259,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/actions/recoverPassword.ts": {
+      "tokens": 454,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/actions/register.ts": {
+      "tokens": 536,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/actions/updateClient.ts": {
+      "tokens": 424,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/actions/updateUser.ts": {
+      "tokens": 423,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/admin/clients/create-client.tsx": {
+      "tokens": 1320,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/admin/clients/list.tsx": {
+      "tokens": 1859,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/admin/clients/page.tsx": {
+      "tokens": 753,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/admin/clients/updateClientForm.tsx": {
+      "tokens": 885,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/admin/layout.tsx": {
+      "tokens": 296,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/admin/loading.tsx": {
+      "tokens": 384,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/admin/page.tsx": {
+      "tokens": 120,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/admin/user/[id]/loading.tsx": {
+      "tokens": 321,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/admin/user/[id]/page.tsx": {
+      "tokens": 213,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/admin/userProfile/page.tsx": {
+      "tokens": 65,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/admin/users/create-admin.tsx": {
+      "tokens": 1307,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/admin/users/list.tsx": {
+      "tokens": 1847,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/admin/users/page.tsx": {
+      "tokens": 768,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/admin/users/updateUserForm.tsx": {
+      "tokens": 882,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/api/auth/[...nextauth]/route.ts": {
+      "tokens": 28,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/api/cron/validateVouchers/route.ts": {
+      "tokens": 605,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/api/icons/route.ts": {
+      "tokens": 282,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/api/normalize-svg/route.ts": {
+      "tokens": 307,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/api/print/route.ts": {
+      "tokens": 1562,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/api/print_multiple/route.ts": {
+      "tokens": 614,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/dashboard/page.tsx": {
+      "tokens": 474,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/favicon.ico": {
+      "tokens": 6482,
+      "type": "other",
+      "description": ""
+    },
+    "src/app/globals.css": {
+      "tokens": 733,
+      "type": "other",
+      "description": ""
+    },
+    "src/app/layout.tsx": {
+      "tokens": 198,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/politica-cookies/page.tsx": {
+      "tokens": 856,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/politica-cookies/style.module.css": {
+      "tokens": 149,
+      "type": "other",
+      "description": ""
+    },
+    "src/app/politica-privacidade/page.tsx": {
+      "tokens": 2435,
+      "type": "source",
+      "description": ""
+    },
+    "src/app/politica-privacidade/style.module.css": {
+      "tokens": 141,
+      "type": "other",
+      "description": ""
+    },
+    "src/auth.ts": {
+      "tokens": 895,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/adminSideBar/app-sidebar.tsx": {
+      "tokens": 506,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/adminSideBar/triggerSideBar.tsx": {
+      "tokens": 131,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/alert/index.tsx": {
+      "tokens": 188,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/appSideBar/index.tsx": {
+      "tokens": 1077,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/appSideBar/mobile.tsx": {
+      "tokens": 604,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/appSideBar/selectableContent.tsx": {
+      "tokens": 59,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/colorPicker/index.tsx": {
+      "tokens": 486,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/cookieBanner.tsx": {
+      "tokens": 146,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/deniedPermission/index.tsx": {
+      "tokens": 109,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/divider/index.tsx": {
+      "tokens": 135,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/buttonIcon.tsx": {
+      "tokens": 133,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/editImage.tsx": {
+      "tokens": 156,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/editText.tsx": {
+      "tokens": 2573,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/editableIcon.tsx": {
+      "tokens": 246,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/editableShapes.tsx": {
+      "tokens": 248,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/HandleAlignText.tsx": {
+      "tokens": 389,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/HandleCenterCanvasX.tsx": {
+      "tokens": 175,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/HandleCenterCanvasY.tsx": {
+      "tokens": 164,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/HandleFillCanvasColor.tsx": {
+      "tokens": 852,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/HandleFillColor.tsx": {
+      "tokens": 466,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/HandleFontFamily.tsx": {
+      "tokens": 321,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/HandleFontSize.tsx": {
+      "tokens": 740,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/HandleLayer.tsx": {
+      "tokens": 731,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/HandleOpacity.tsx": {
+      "tokens": 465,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/HandleShadow.tsx": {
+      "tokens": 320,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/HandleStrokeColor.tsx": {
+      "tokens": 467,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/HandleTextBold.tsx": {
+      "tokens": 341,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/HandleTextColor.tsx": {
+      "tokens": 205,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/HandleTextItalico.tsx": {
+      "tokens": 349,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/HandleTextUnderline.tsx": {
+      "tokens": 291,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/handles/type.ts": {
+      "tokens": 37,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/index.tsx": {
+      "tokens": 417,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/editableBar/removeActiveObject.tsx": {
+      "tokens": 190,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/icons/index.tsx": {
+      "tokens": 598,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/images/addImage.tsx": {
+      "tokens": 1934,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/model.ts": {
+      "tokens": 4869,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/multiple/multiple.tsx": {
+      "tokens": 1761,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/printButton/index.tsx": {
+      "tokens": 1646,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/printButton/test.ts": {
+      "tokens": 2062,
+      "type": "test",
+      "description": ""
+    },
+    "src/components/editor/shapes/index.tsx": {
+      "tokens": 793,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/shapes/svg.js": {
+      "tokens": 1015,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/text/addText.tsx": {
+      "tokens": 3501,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/text/curvedText.tsx": {
+      "tokens": 570,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/editor/text/teste.tsx": {
+      "tokens": 868,
+      "type": "test",
+      "description": ""
+    },
+    "src/components/editor/text/verticalText.tsx": {
+      "tokens": 967,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/filterSection/index.tsx": {
+      "tokens": 881,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/language-selector.tsx": {
+      "tokens": 713,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/loading/index.tsx": {
+      "tokens": 338,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/nav-main.tsx": {
+      "tokens": 730,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/nav-projects.tsx": {
+      "tokens": 626,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/nav-user-admin.tsx": {
+      "tokens": 109,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/nav-user.tsx": {
+      "tokens": 104,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/navbar/admin.tsx": {
+      "tokens": 193,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/navbar/mobile.tsx": {
+      "tokens": 470,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/navbar/navbarAdmin.tsx": {
+      "tokens": 574,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/navbar/navbarDefault.tsx": {
+      "tokens": 206,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/navbar/userSection/userAdminSection.tsx": {
+      "tokens": 701,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/navbar/userSection/userProfile.tsx": {
+      "tokens": 1429,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/navbar/userSection/userSection.tsx": {
+      "tokens": 757,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/permission.tsx": {
+      "tokens": 194,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/searchInput/index.tsx": {
+      "tokens": 166,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/table/date.tsx": {
+      "tokens": 142,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/team-switcher.tsx": {
+      "tokens": 737,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/tooltip/tooltip.tsx": {
+      "tokens": 138,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/alert-dialog.tsx": {
+      "tokens": 1112,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/alert.tsx": {
+      "tokens": 433,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/avatar.tsx": {
+      "tokens": 354,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/breadcrumb.tsx": {
+      "tokens": 678,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/button.tsx": {
+      "tokens": 1474,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/collapsible.tsx": {
+      "tokens": 82,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/dialog.tsx": {
+      "tokens": 962,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/dropdown-menu.tsx": {
+      "tokens": 1843,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/form.tsx": {
+      "tokens": 1024,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/input.tsx": {
+      "tokens": 1648,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/inputNumber.tsx": {
+      "tokens": 690,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/inputPassword.tsx": {
+      "tokens": 144,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/label.tsx": {
+      "tokens": 181,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/pagination.tsx": {
+      "tokens": 797,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/popover.tsx": {
+      "tokens": 312,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/select.tsx": {
+      "tokens": 1441,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/separator.tsx": {
+      "tokens": 192,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/sheet.tsx": {
+      "tokens": 1108,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/sidebar-admin.tsx": {
+      "tokens": 5787,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/sidebar.tsx": {
+      "tokens": 5831,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/skeleton.tsx": {
+      "tokens": 65,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/slider.tsx": {
+      "tokens": 272,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/switch.tsx": {
+      "tokens": 288,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/table.tsx": {
+      "tokens": 3000,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/tabs.tsx": {
+      "tokens": 474,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/toast.tsx": {
+      "tokens": 1254,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/toaster.tsx": {
+      "tokens": 196,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/ui/tooltip.tsx": {
+      "tokens": 289,
+      "type": "source",
+      "description": ""
+    },
+    "src/components/voucherUser/index.tsx": {
+      "tokens": 454,
+      "type": "source",
+      "description": ""
+    },
+    "src/context/admin.tsx": {
+      "tokens": 262,
+      "type": "source",
+      "description": ""
+    },
+    "src/context/editor.tsx": {
+      "tokens": 4458,
+      "type": "source",
+      "description": ""
+    },
+    "src/context/styles.module.css": {
+      "tokens": 38,
+      "type": "other",
+      "description": ""
+    },
+    "src/emails/admin/firstAccess/firstAccessAdmin.tsx": {
+      "tokens": 1211,
+      "type": "source",
+      "description": ""
+    },
+    "src/emails/admin/welcome.tsx": {
+      "tokens": 1246,
+      "type": "source",
+      "description": ""
+    },
+    "src/emails/clients/welcome.tsx": {
+      "tokens": 1096,
+      "type": "source",
+      "description": ""
+    },
+    "src/emails/recoverPassword/recoverPassword.tsx": {
+      "tokens": 1036,
+      "type": "source",
+      "description": ""
+    },
+    "src/emails/static/logo-inverse.png": {
+      "tokens": 747,
+      "type": "other",
+      "description": ""
+    },
+    "src/fabric.d.ts": {
+      "tokens": 210,
+      "type": "source",
+      "description": ""
+    },
+    "src/hooks/use-mobile.tsx": {
+      "tokens": 141,
+      "type": "source",
+      "description": ""
+    },
+    "src/hooks/use-toast.ts": {
+      "tokens": 987,
+      "type": "source",
+      "description": ""
+    },
+    "src/hooks/useDebounceCallback.ts": {
+      "tokens": 382,
+      "type": "source",
+      "description": ""
+    },
+    "src/hooks/useInifiteScroll.ts": {
+      "tokens": 401,
+      "type": "source",
+      "description": ""
+    },
+    "src/hooks/useInifiteScrollImage.ts": {
+      "tokens": 439,
+      "type": "source",
+      "description": ""
+    },
+    "src/hooks/useIntersectionObserver.ts": {
+      "tokens": 846,
+      "type": "source",
+      "description": ""
+    },
+    "src/hooks/useIsMounted.ts": {
+      "tokens": 76,
+      "type": "source",
+      "description": ""
+    },
+    "src/hooks/useResizeObserver.ts": {
+      "tokens": 671,
+      "type": "source",
+      "description": ""
+    },
+    "src/hooks/useTableActions.ts": {
+      "tokens": 992,
+      "type": "source",
+      "description": ""
+    },
+    "src/hooks/useTableSorting.ts": {
+      "tokens": 123,
+      "type": "source",
+      "description": ""
+    },
+    "src/hooks/useUnmount.ts": {
+      "tokens": 55,
+      "type": "source",
+      "description": ""
+    },
+    "src/i18n/locale.ts": {
+      "tokens": 136,
+      "type": "source",
+      "description": ""
+    },
+    "src/i18n/request.ts": {
+      "tokens": 71,
+      "type": "source",
+      "description": ""
+    },
+    "src/lib/assets/shadowIcon.svg": {
+      "tokens": 73,
+      "type": "other",
+      "description": ""
+    },
+    "src/lib/dateUTC.ts": {
+      "tokens": 65,
+      "type": "source",
+      "description": ""
+    },
+    "src/lib/email.ts": {
+      "tokens": 158,
+      "type": "source",
+      "description": ""
+    },
+    "src/lib/fabricHistory.js": {
+      "tokens": 557,
+      "type": "source",
+      "description": ""
+    },
+    "src/lib/langs.ts": {
+      "tokens": 121,
+      "type": "source",
+      "description": ""
+    },
+    "src/lib/permission-server.ts": {
+      "tokens": 103,
+      "type": "source",
+      "description": ""
+    },
+    "src/lib/permissions.ts": {
+      "tokens": 284,
+      "type": "source",
+      "description": ""
+    },
+    "src/lib/prisma.ts": {
+      "tokens": 172,
+      "type": "source",
+      "description": ""
+    },
+    "src/lib/svg-normalizer.ts": {
+      "tokens": 3895,
+      "type": "source",
+      "description": ""
+    },
+    "src/lib/use-forwarded-ref.ts": {
+      "tokens": 92,
+      "type": "source",
+      "description": ""
+    },
+    "src/lib/utils.ts": {
+      "tokens": 41,
+      "type": "source",
+      "description": ""
+    },
+    "src/lib/validateVoucher.ts": {
+      "tokens": 430,
+      "type": "source",
+      "description": ""
+    },
+    "src/lib/zod-schemas.ts": {
+      "tokens": 927,
+      "type": "source",
+      "description": ""
+    },
+    "src/middleware.ts": {
+      "tokens": 353,
+      "type": "source",
+      "description": ""
+    },
+    "src/next-auth.d.ts": {
+      "tokens": 209,
+      "type": "source",
+      "description": ""
+    },
+    "src/react-table.d.ts": {
+      "tokens": 53,
+      "type": "source",
+      "description": ""
+    },
+    "tailwind.config.ts": {
+      "tokens": 1058,
+      "type": "source",
+      "description": ""
+    },
+    "tsconfig.json": {
+      "tokens": 156,
+      "type": "other",
+      "description": ""
+    }
+  }
+}
