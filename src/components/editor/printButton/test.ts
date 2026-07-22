@@ -57,7 +57,35 @@ export async function extractCardenasCanvas(
     croppedCanvas.add(await cloneToCanvas(cardenasChildren[0]));
   }
 
-  // Layer 2: design elements [1..n] — below user images (matches editor stacking)
+  // User-placed objects sit BELOW the model design so the model art/guides always print on
+  // top. Within the user objects: images + icons at the bottom, text above them.
+  const relevantObjects = originalCanvas.getObjects().filter(
+    obj => obj !== cardenasCanvasObject && rectsIntersect(bounds, obj.getBoundingRect())
+  );
+  const isUserText = (t?: string) => ['text', 'i-text', 'textbox'].includes(t ?? '');
+
+  const addUserObject = async (obj: fabric.Object): Promise<void> => {
+    const clone = await obj.clone();
+    clone.set({
+      left: (clone.left ?? 0) - bounds.left,
+      top: (clone.top ?? 0) - bounds.top,
+    });
+    if (clone.type === 'image') await convertImageToBase64(clone as fabric.Image);
+    croppedCanvas.add(clone);
+  };
+
+  // Layer 2: user images + icons — above the background, preserving editor z-order.
+  for (const obj of relevantObjects) {
+    if (isUserText(obj.type)) continue;
+    await addUserObject(obj);
+  }
+  // Layer 3: user text — above images/icons, preserving editor z-order.
+  for (const obj of relevantObjects) {
+    if (!isUserText(obj.type)) continue;
+    await addUserObject(obj);
+  }
+
+  // Layer 4: model design elements [1..n] — printed on top of all user objects.
   for (let i = 1; i < cardenasChildren.length; i++) {
     const child = cardenasChildren[i];
     const hasTags = !!child.cardenas_tags && Object.keys(child.cardenas_tags).length > 0;
@@ -78,20 +106,6 @@ export async function extractCardenasCanvas(
     if (child.cardenas_overlay) stripStrokeForPdf(clone);
     else if (child.cardenas_tags?.background) stripStrokeForPdf(clone);
 
-    croppedCanvas.add(clone);
-  }
-
-  // Layer 3: user-placed objects — on top of design elements (matches editor stacking)
-  const relevantObjects = originalCanvas.getObjects().filter(
-    obj => obj !== cardenasCanvasObject && rectsIntersect(bounds, obj.getBoundingRect())
-  );
-  for (const obj of relevantObjects) {
-    const clone = await obj.clone();
-    clone.set({
-      left: (clone.left ?? 0) - bounds.left,
-      top: (clone.top ?? 0) - bounds.top,
-    });
-    if (clone.type === 'image') await convertImageToBase64(clone as fabric.Image);
     croppedCanvas.add(clone);
   }
 
