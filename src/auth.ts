@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import {prisma} from '@/lib/prisma'
 import type { Adapter } from 'next-auth/adapters';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import { randomUUID } from "crypto";
 import { encode } from "next-auth/jwt";
 import type {User as UserType} from '@prisma/client'

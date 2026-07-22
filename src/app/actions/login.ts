@@ -4,7 +4,7 @@ import { signIn } from "@/auth";
 import { z } from "zod";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { redirect } from "next/navigation";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { SignInType, signInSchema } from "@/lib/zod-schemas";
 import { getTranslations } from "next-intl/server";
 

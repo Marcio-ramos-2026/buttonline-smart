@@ -4,7 +4,7 @@ import { hasPermission } from "@/lib/permission-server";
 import { ALLOWED_PERMISSIONS } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { getTranslations } from "next-intl/server";
 
 

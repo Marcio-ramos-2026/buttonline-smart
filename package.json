@@ -44,7 +44,7 @@
     "@react-email/components": "0.0.30",
     "@react-email/html": "0.0.11",
     "@tanstack/react-table": "^8.20.5",
-    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
     "canvas": "^2.11.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -79,7 +79,7 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.7",
-    "@types/bcrypt": "^5.0.2",
+    "@types/bcryptjs": "^2.4.6",
     "@types/lodash.debounce": "^4.0.9",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20.17.6",
