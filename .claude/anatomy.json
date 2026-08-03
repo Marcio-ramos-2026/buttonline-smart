@@ -1,11 +1,26 @@
 {
   "project_root": "/Users/viniciusrangel/Documents/dev/4p/buttonline_smart",
-  "generated_at": "2026-07-22T15:54:54-03:00",
-  "file_count": 248,
-  "total_tokens": 364001,
+  "generated_at": "2026-08-03T11:51:24-03:00",
+  "file_count": 251,
+  "total_tokens": 367291,
   "files": {
+    "public/svg/client/camiseta-camada-2-corte.svg": {
+      "tokens": 996,
+      "type": "other",
+      "description": ""
+    },
+    "public/svg/output/camiseta-camada-2-corte.svg": {
+      "tokens": 1089,
+      "type": "other",
+      "description": ""
+    },
+    "public/svg/output/camiseta-camada-2-corte.txt": {
+      "tokens": 1116,
+      "type": "docs",
+      "description": ""
+    },
     ".claude/anatomy.json": {
-      "tokens": 7542,
+      "tokens": 7666,
       "type": "other",
       "description": ""
     },
@@ -65,12 +80,12 @@
       "description": ""
     },
     "package-lock.json": {
-      "tokens": 120775,
+      "tokens": 120527,
       "type": "other",
       "description": ""
     },
     "package.json": {
-      "tokens": 844,
+      "tokens": 845,
       "type": "other",
       "description": ""
     },
@@ -185,7 +200,7 @@
       "description": ""
     },
     "prisma/seed.ts": {
-      "tokens": 732,
+      "tokens": 733,
       "type": "source",
       "description": ""
     },
@@ -385,7 +400,7 @@
       "description": ""
     },
     "src/app/actions/admin/create-admin.ts": {
-      "tokens": 648,
+      "tokens": 649,
       "type": "source",
       "description": ""
     },
@@ -395,12 +410,12 @@
       "description": ""
     },
     "src/app/actions/admin/delete-admin.ts": {
-      "tokens": 283,
+      "tokens": 284,
       "type": "source",
       "description": ""
     },
     "src/app/actions/changePassword.ts": {
-      "tokens": 422,
+      "tokens": 423,
       "type": "source",
       "description": ""
     },
@@ -410,7 +425,7 @@
       "description": ""
     },
     "src/app/actions/login.ts": {
-      "tokens": 259,
+      "tokens": 260,
       "type": "source",
       "description": ""
     },
@@ -575,7 +590,7 @@
       "description": ""
     },
     "src/auth.ts": {
-      "tokens": 895,
+      "tokens": 896,
       "type": "source",
       "description": ""
     },
@@ -755,7 +770,7 @@
       "description": ""
     },
     "src/components/editor/model.ts": {
-      "tokens": 4869,
+      "tokens": 4927,
       "type": "source",
       "description": ""
     },
@@ -770,7 +785,7 @@
       "description": ""
     },
     "src/components/editor/printButton/test.ts": {
-      "tokens": 2062,
+      "tokens": 2210,
       "type": "test",
       "description": ""
     },

@@ -6,6 +6,12 @@ import {
   injectFillPathFromD,
   prepareSvgForEditor,
 } from "@/lib/svg-normalizer";
+import {
+  Anchor,
+  FrameGeometry,
+  ObjectGeometry,
+  resolveAnchor,
+} from "./anchor";
 
 export type ModelType = {
   [key: string]: () => fabric.Object; // The key is a string and the value is a function returning an object
@@ -24,6 +30,10 @@ type Shape = {
   cardenas_overlay: boolean;
   tags?: Record<string, string | Record<string, string>>;
   tagGroup?: string;
+  /** Posiciona o objeto na moldura principal por ângulo de relógio. Só vale na raiz. */
+  anchor?: Anchor;
+  /** Marca qual objeto da raiz é a moldura. Sem isso, o primeiro do config é usado. */
+  main_frame?: boolean;
 };
 
 type shapeCustom =  {
@@ -209,7 +219,6 @@ export const createModel = async (model: editor_canvas): Promise<fabric.Object> 
               }
             }
             const x = await svgShape({ ...customConfig, svg: svgToLoad });
-            x.set({ left: 0 });
             selfShape = applyEditableBehavior(x);
             break;
           }
@@ -224,16 +233,20 @@ export const createModel = async (model: editor_canvas): Promise<fabric.Object> 
 
       // Converte a origem dos filhos de centro para top-left do pai.
       // top: 0, left: 0 no config corresponde ao canto superior esquerdo do selfShape.
-      // A fórmula compensa as meias-dimensões do filho (originX/Y: "center"):
-      //   left_final = config_left - halfParentW + halfChildW
-      // Assim left:0 = borda esquerda do filho na borda esquerda do pai.
+      // Parte do centro do pai (originX/Y: "center"), recua meia dimensão do pai para
+      // chegar na borda e avança meia dimensão do filho:
+      //   left_final = parent_left - halfParentW + config_left + halfChildW
+      // Incluir parent_left/parent_top mantém o alinhamento quando o pai tem top/left
+      // próprios (sem isso os filhos ficam deslocados pelo offset do pai).
       if (selfShape && childElements.length > 0) {
+        const parentLeft = selfShape.left ?? 0;
+        const parentTop = selfShape.top ?? 0;
         const halfParentW = selfShape.getScaledWidth() / 2;
         const halfParentH = selfShape.getScaledHeight() / 2;
         childElements.forEach((el) => {
           el.set({
-            left: (el.left ?? 0) - halfParentW + el.getScaledWidth() / 2,
-            top: (el.top ?? 0) - halfParentH + el.getScaledHeight() / 2,
+            left: parentLeft - halfParentW + (el.left ?? 0) + el.getScaledWidth() / 2,
+            top: parentTop - halfParentH + (el.top ?? 0) + el.getScaledHeight() / 2,
           });
           el.setCoords();
         });
@@ -353,7 +366,6 @@ export const createModel = async (model: editor_canvas): Promise<fabric.Object> 
         return applyBehavior(rectangle(leaf as shapeRectangle));
       case "custom": {
         const x = await svgShape(leaf as shapeCustom);
-        x.set({ left: 0 });
         return applyBehavior(x);
       }
       default:
@@ -361,8 +373,46 @@ export const createModel = async (model: editor_canvas): Promise<fabric.Object> 
     }
   };
 
+  const rootConfigs = Object.values(objConfig?.objects);
+
+  // Moldura principal: a marcada com main_frame, senão a primeira do config.
+  // É a mesma premissa que createMark(elements[0]) já faz mais abaixo.
+  const frameConfig = rootConfigs.find(
+    (o) => (o as Partial<Shape>).main_frame
+  ) ?? rootConfigs[0];
+
+  /**
+   * Resolve `anchor` em top/left (mm do centro do modelo) e rotate.
+   * top/left/rotate do config continuam valendo como ajuste fino sobre o que o anchor calculou,
+   * então sem anchor tudo soma zero e o posicionamento antigo não muda.
+   */
+  const applyAnchor = (obj: RecursiveShape): RecursiveShape => {
+    const anchor = (obj as Partial<Shape>).anchor;
+    if (!anchor || obj === frameConfig) return obj;
+
+    const config = obj as LeafShape;
+    const point = resolveAnchor(
+      anchor,
+      frameConfig as FrameGeometry,
+      config as ObjectGeometry
+    );
+    if (!point) {
+      console.warn(
+        "[anchor] moldura sem geometria analítica (circle, ellipse ou rectangle); anchor ignorado"
+      );
+      return obj;
+    }
+
+    return {
+      ...obj,
+      left: point.left + Number(config.left ?? 0),
+      top: point.top + Number(config.top ?? 0),
+      rotate: point.angle,
+    } as RecursiveShape;
+  };
+
   const elements: fabric.FabricObject[] = await Promise.all(
-    Object.values(objConfig?.objects).map((obj) => createElement(obj))
+    rootConfigs.map((obj) => createElement(applyAnchor(obj)))
   ).then((results) =>
     results.filter((el): el is fabric.FabricObject => el !== null)
   );
