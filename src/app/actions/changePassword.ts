@@ -2,7 +2,7 @@
 
 import { changePasswordSchema, ChangePasswordType } from "@/lib/zod-schemas";
 import { prisma } from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 export async function changePassword(
   data: ChangePasswordType,

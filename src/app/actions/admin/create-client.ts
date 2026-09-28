@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { randomBytes } from "crypto";
 import { createAdminSchema, CreateAdminType } from "@/lib/zod-schemas";
 import { getTranslations } from "next-intl/server";

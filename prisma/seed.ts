@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { ALLOWED_PERMISSIONS } from '@/lib/permissions';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 
 function getDefaultRoles() {
     return [

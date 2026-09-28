@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { renderClientWelcome } from "@/emails/clients/welcome";
 import { mailTransport } from "@/lib/email";
 import { getTranslations } from "next-intl/server";
