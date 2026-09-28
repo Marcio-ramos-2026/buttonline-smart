@@ -1,24 +1,9 @@
 {
   "project_root": "/Users/viniciusrangel/Documents/dev/4p/buttonline_smart",
-  "generated_at": "2026-08-03T11:51:24-03:00",
-  "file_count": 251,
-  "total_tokens": 367291,
+  "generated_at": "2026-09-28T15:03:04-03:00",
+  "file_count": 254,
+  "total_tokens": 369047,
   "files": {
-    "public/svg/client/camiseta-camada-2-corte.svg": {
-      "tokens": 996,
-      "type": "other",
-      "description": ""
-    },
-    "public/svg/output/camiseta-camada-2-corte.svg": {
-      "tokens": 1089,
-      "type": "other",
-      "description": ""
-    },
-    "public/svg/output/camiseta-camada-2-corte.txt": {
-      "tokens": 1116,
-      "type": "docs",
-      "description": ""
-    },
     ".claude/anatomy.json": {
       "tokens": 7666,
       "type": "other",
@@ -32,6 +17,11 @@
     ".gitignore": {
       "tokens": 99,
       "type": "other",
+      "description": ""
+    },
+    "CLAUDE.md": {
+      "tokens": 13,
+      "type": "docs",
       "description": ""
     },
     "README.md": {
@@ -244,6 +234,11 @@
       "type": "other",
       "description": ""
     },
+    "public/svg/client/camiseta-camada-2-corte.svg": {
+      "tokens": 996,
+      "type": "other",
+      "description": ""
+    },
     "public/svg/client/camiseta-linha.svg": {
       "tokens": 602,
       "type": "other",
@@ -257,6 +252,16 @@
     "public/svg/output/.gitkeep": {
       "tokens": 0,
       "type": "other",
+      "description": ""
+    },
+    "public/svg/output/camiseta-camada-2-corte.svg": {
+      "tokens": 1089,
+      "type": "other",
+      "description": ""
+    },
+    "public/svg/output/camiseta-camada-2-corte.txt": {
+      "tokens": 1116,
+      "type": "docs",
       "description": ""
     },
     "public/svg/output/camiseta-linha.svg": {
@@ -644,6 +649,11 @@
       "type": "source",
       "description": ""
     },
+    "src/components/editor/anchor.ts": {
+      "tokens": 1217,
+      "type": "source",
+      "description": ""
+    },
     "src/components/editor/editableBar/buttonIcon.tsx": {
       "tokens": 133,
       "type": "source",
@@ -770,7 +780,7 @@
       "description": ""
     },
     "src/components/editor/model.ts": {
-      "tokens": 4927,
+      "tokens": 5317,
       "type": "source",
       "description": ""
     },
@@ -1252,6 +1262,11 @@
     "tailwind.config.ts": {
       "tokens": 1058,
       "type": "source",
+      "description": ""
+    },
+    "test.svg": {
+      "tokens": 136,
+      "type": "test",
       "description": ""
     },
     "tsconfig.json": {
