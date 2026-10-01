@@ -1,11 +1,11 @@
 {
   "project_root": "/Users/viniciusrangel/Documents/dev/4p/buttonline_smart",
-  "generated_at": "2026-09-28T15:03:04-03:00",
+  "generated_at": "2026-09-30T17:13:21-03:00",
   "file_count": 254,
-  "total_tokens": 369047,
+  "total_tokens": 366434,
   "files": {
     ".claude/anatomy.json": {
-      "tokens": 7666,
+      "tokens": 7742,
       "type": "other",
       "description": ""
     },
@@ -70,12 +70,12 @@
       "description": ""
     },
     "package-lock.json": {
-      "tokens": 120527,
+      "tokens": 117850,
       "type": "other",
       "description": ""
     },
     "package.json": {
-      "tokens": 845,
+      "tokens": 833,
       "type": "other",
       "description": ""
     },

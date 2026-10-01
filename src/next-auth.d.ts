@@ -11,6 +11,7 @@ declare module "next-auth" {
     permissions: [string]
     user: {
       roleId: number
+      role?: string
       id: string
       name?: string | null
       email?: string | null

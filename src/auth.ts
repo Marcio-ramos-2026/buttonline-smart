@@ -96,6 +96,8 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         session.permissions = token.permissions;
         //@ts-ignore
         session.user.id = token.id
+        //@ts-ignore
+        session.user.role = token.role
       }
       return session;
     },
